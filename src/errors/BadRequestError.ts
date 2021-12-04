@@ -3,11 +3,11 @@ import { DefinedErrorCodes, ErrorCode, ErrorDetails, ErrorStatus } from "errors"
 
 class BadRequestError extends BaseError {
     statusCode: ErrorStatus = ErrorStatus.BadRequest;
-    errorCode: ErrorCode = "TODE0001";
+    errorCode: ErrorCode = "KMPW0001";
     details: ErrorDetails = [];
 
     constructor(
-        public message: string = DefinedErrorCodes.TODE0001,
+        public message: string = DefinedErrorCodes.KMPW0001,
         public errorDetails: ErrorDetails | string[] = []
     ) {
         super(message);

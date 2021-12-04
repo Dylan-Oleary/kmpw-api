@@ -3,11 +3,11 @@ import { DefinedErrorCodes, ErrorCode, ErrorDetails, ErrorStatus } from "errors"
 
 class AuthenticationError extends BaseError {
     statusCode: ErrorStatus = ErrorStatus.Unauthorized;
-    errorCode: ErrorCode = "TODE0002";
+    errorCode: ErrorCode = "KMPW0002";
     details: ErrorDetails = [];
 
     constructor(
-        public message: string = DefinedErrorCodes.TODE0002,
+        public message: string = DefinedErrorCodes.KMPW0002,
         public errorDetails: ErrorDetails | string[] = []
     ) {
         super(message);

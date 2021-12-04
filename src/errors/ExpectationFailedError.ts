@@ -3,11 +3,11 @@ import { DefinedErrorCodes, ErrorCode, ErrorDetails, ErrorStatus } from "errors"
 
 class ExpectationFailedError extends BaseError {
     statusCode: ErrorStatus = ErrorStatus.ExpectationFailed;
-    errorCode: ErrorCode = "TODE0006";
+    errorCode: ErrorCode = "KMPW0006";
     details: ErrorDetails = [];
 
     constructor(
-        public message: string = DefinedErrorCodes.TODE0006,
+        public message: string = DefinedErrorCodes.KMPW0006,
         public errorDetails: ErrorDetails | string[] = []
     ) {
         super(message);

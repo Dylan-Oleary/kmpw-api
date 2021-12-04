@@ -22,7 +22,7 @@ describe("catchAllHandler", () => {
 
         expect(mockNextFunction)
             .toBeCalledWith(
-                new NotFoundError(DefinedErrorCodes.TODE0003, [
+                new NotFoundError(DefinedErrorCodes.KMPW0003, [
                     "The requested resource could not be found or does not exist"
                 ])
             )
@@ -41,7 +41,7 @@ describe("catchAllHandler", () => {
 
         expect(mockNextFunction)
             .toBeCalledWith(
-                new NotFoundError(DefinedErrorCodes.TODE0003, ["/watch/out does not exist"])
+                new NotFoundError(DefinedErrorCodes.KMPW0003, ["/watch/out does not exist"])
             )
             .toBeCalledTimes(1);
     });

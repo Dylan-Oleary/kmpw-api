@@ -19,7 +19,7 @@ const catchAllHandler: (req: Request, res: Response, next: NextFunction) => void
 
     next(
         new NotFoundError(
-            DefinedErrorCodes.TODE0003,
+            DefinedErrorCodes.KMPW0003,
             params.length > 0
                 ? [`${params.join("")} does not exist`]
                 : ["The requested resource could not be found or does not exist"]

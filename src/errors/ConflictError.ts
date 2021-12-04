@@ -3,11 +3,11 @@ import { DefinedErrorCodes, ErrorCode, ErrorDetails, ErrorStatus } from "errors"
 
 class ConflictError extends BaseError {
     statusCode: ErrorStatus = ErrorStatus.Conflict;
-    errorCode: ErrorCode = "TODE0005";
+    errorCode: ErrorCode = "KMPW0005";
     details: ErrorDetails = [];
 
     constructor(
-        public message: string = DefinedErrorCodes.TODE0005,
+        public message: string = DefinedErrorCodes.KMPW0005,
         public errorDetails: ErrorDetails | string[] = []
     ) {
         super(message);

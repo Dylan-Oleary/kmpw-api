@@ -3,11 +3,11 @@ import { DefinedErrorCodes, ErrorCode, ErrorDetails, ErrorStatus } from "errors"
 
 class NotFoundError extends BaseError {
     statusCode: ErrorStatus = ErrorStatus.NotFound;
-    errorCode: ErrorCode = "TODE0003";
+    errorCode: ErrorCode = "KMPW0003";
     details: ErrorDetails = [];
 
     constructor(
-        public message: string = DefinedErrorCodes.TODE0003,
+        public message: string = DefinedErrorCodes.KMPW0003,
         public errorDetails: ErrorDetails | string[] = []
     ) {
         super(message);

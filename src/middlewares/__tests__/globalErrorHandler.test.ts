@@ -16,7 +16,7 @@ describe("globalErrorHandler", () => {
         globalErrorHandler({ name: "Error" }, mockResponse);
 
         expect(mockResponse.json).toBeCalledWith(
-            expect.objectContaining({ message: DefinedErrorCodes.TODE0000 })
+            expect.objectContaining({ message: DefinedErrorCodes.KMPW0000 })
         );
     });
 
@@ -40,7 +40,7 @@ describe("globalErrorHandler", () => {
         globalErrorHandler(new Error("It's still broken, sorry"), mockResponse as Response);
 
         expect(mockResponse.json).toBeCalledWith(
-            expect.objectContaining({ errorCode: "TODE0000" })
+            expect.objectContaining({ errorCode: "KMPW0000" })
         );
     });
 }); // close describe("globalErrorHandler")

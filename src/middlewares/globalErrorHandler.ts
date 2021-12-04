@@ -21,15 +21,15 @@ const globalErrorHandler: (error: Error, res: Response) => Response<ReturnableEr
     error,
     res
 ) => {
-    const message = error?.message || DefinedErrorCodes.TODE0000;
+    const message = error?.message || DefinedErrorCodes.KMPW0000;
     let status = ErrorStatus.ServerError;
     let details: ErrorDetails = [];
-    let errorCode: ErrorCode = "TODE0000";
+    let errorCode: ErrorCode = "KMPW0000";
 
     if (error instanceof BaseError) {
         status = error?.statusCode || ErrorStatus.ServerError;
         details = error?.details || [];
-        errorCode = error?.errorCode || "TODE0000";
+        errorCode = error?.errorCode || "KMPW0000";
     }
 
     return res.status(status).json({

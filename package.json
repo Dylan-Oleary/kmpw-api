@@ -1,11 +1,11 @@
 {
-  "name": "@theonlydevsever/ts-express-starter",
+  "name": "kmpw-api",
   "version": "1.0.0",
-  "description": "A basic express boilerplate built with Typescript",
+  "description": "API application for Keep My Paws Warm",
   "main": "dist/server.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/theonlydevsever/ts-express-starter.git"
+    "url": "https://github.com/Dylan-Oleary/kmpw-api"
   },
   "author": "Dylan O'Leary <dylanolearydev@gmail.com>",
   "license": "MIT",
@@ -75,6 +75,7 @@
     "@theonlydevsever/utilities": "^1.8.2",
     "compression": "^1.7.4",
     "dotenv": "^10.0.0",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "module-alias": "^2.2.2"
   }
 }

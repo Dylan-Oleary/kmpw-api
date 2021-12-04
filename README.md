@@ -1,6 +1,6 @@
-# @theonlydevsever/ts-express-starter
+# Keep My Paws Warm API
 
-A boilerplate [Express](https://expressjs.com/) application built with [TypeScript](https://www.typescriptlang.org/) and tested with [Jest](https://jestjs.io/)
+The API application for Keep My Paws Warm!
 
 ## Environment Setup
 

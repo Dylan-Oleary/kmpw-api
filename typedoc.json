@@ -2,7 +2,7 @@
   "includeVersion": true,
   "entryPoints": ["src/server.ts"],
   "exclude": ["**/node_modules/**", "*.test.ts"],
-  "name": "@theonlydevsever/ts-express-starter",
+  "name": "Keep My Paws Warm API",
   "readme": "./README.md",
   "out": "docs"
 }
