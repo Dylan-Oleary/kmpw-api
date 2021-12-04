@@ -4,6 +4,8 @@ dist
 *.log
 *.lock
 *.json
+*.sql
+*.toml
 docs
 node_modules
 public

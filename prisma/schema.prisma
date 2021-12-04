@@ -1,0 +1,76 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model BreedGroup {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  name        String
+  breeds      Breed[]
+  description String?  @db.Text
+}
+
+model Breed {
+  id                String           @id @default(uuid())
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  name              String
+  description       String?          @db.Text
+  altNames          String?
+  bredFor           BreedAttribute[] @relation("bredFor")
+  countryCode       String?
+  experimental      Boolean          @default(false)
+  hairless          Boolean          @default(false)
+  heightImperialMin Int
+  heightImperialMax Int
+  heightImperialAvg Int
+  heightMetricMin   Int
+  heightMetricMax   Int
+  heightMetricAvg   Int
+  hypoallergenic    Boolean          @default(false)
+  lifeSpanMin       Int
+  lifeSpanMax       Int
+  lifeSpanAvg       Int
+  natural           Boolean          @default(false)
+  origin            String
+  temperament       BreedAttribute[] @relation("temperament")
+  weightImperialMin Int
+  weightImperialMax Int
+  weightImperialAvg Int
+  weightMetricMin   Int
+  weightMetricMax   Int
+  weightMetricAvg   Int
+  wikipediaUrl      String?
+  BreedGroup        BreedGroup       @relation(fields: [breedGroupId], references: [id])
+  breedGroupId      String
+  BreedAttribute    BreedAttribute[]
+}
+
+model BreedAttribute {
+  id                   String             @id @default(uuid())
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+  label                String
+  value                String
+  type                 BreedAttributeType
+  includesTemperament  Breed?             @relation("temperament", fields: [includeTemperamentId], references: [id])
+  includeTemperamentId String?
+  includesBredFor      Breed?             @relation("bredFor", fields: [includeBredForId], references: [id])
+  includeBredForId     String?
+  Breed                Breed?             @relation(fields: [breedId], references: [id])
+  breedId              String?
+}
+
+enum BreedAttributeType {
+  BRED_FOR
+  TEMPERAMENT
+}

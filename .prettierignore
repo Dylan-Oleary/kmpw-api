@@ -8,3 +8,5 @@ db
 *.svg
 *.DS_Store
 *.d.ts
+*.sql
+*.toml
