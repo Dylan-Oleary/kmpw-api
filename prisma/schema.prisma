@@ -11,38 +11,39 @@ datasource db {
 }
 
 model BreedGroup {
-  id          String   @id @default(uuid())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id          String                       @id @default(uuid())
+  createdAt   DateTime                     @default(now())
+  updatedAt   DateTime                     @updatedAt
+  isDeleted   Boolean                      @default(false)
   name        String
   breeds      Breed[]
-  description String?  @db.Text
+  description String?                      @db.Text
+  attributes  DogAttributesOnBreedGroups[]
 }
 
 model Breed {
-  id                String           @id @default(uuid())
-  createdAt         DateTime         @default(now())
-  updatedAt         DateTime         @updatedAt
+  id                String                  @id @default(uuid())
+  createdAt         DateTime                @default(now())
+  updatedAt         DateTime                @updatedAt
+  isDeleted         Boolean                 @default(false)
   name              String
-  description       String?          @db.Text
+  description       String?                 @db.Text
   altNames          String?
-  bredFor           BreedAttribute[] @relation("bredFor")
   countryCode       String?
-  experimental      Boolean          @default(false)
-  hairless          Boolean          @default(false)
+  experimental      Boolean                 @default(false)
+  hairless          Boolean                 @default(false)
   heightImperialMin Int
   heightImperialMax Int
   heightImperialAvg Int
   heightMetricMin   Int
   heightMetricMax   Int
   heightMetricAvg   Int
-  hypoallergenic    Boolean          @default(false)
+  hypoallergenic    Boolean                 @default(false)
   lifeSpanMin       Int
   lifeSpanMax       Int
   lifeSpanAvg       Int
-  natural           Boolean          @default(false)
+  natural           Boolean                 @default(false)
   origin            String
-  temperament       BreedAttribute[] @relation("temperament")
   weightImperialMin Int
   weightImperialMax Int
   weightImperialAvg Int
@@ -50,27 +51,49 @@ model Breed {
   weightMetricMax   Int
   weightMetricAvg   Int
   wikipediaUrl      String?
-  BreedGroup        BreedGroup       @relation(fields: [breedGroupId], references: [id])
+  attributes        DogAttributesOnBreeds[]
+  breedGroup        BreedGroup              @relation(fields: [breedGroupId], references: [id])
   breedGroupId      String
-  BreedAttribute    BreedAttribute[]
 }
 
-model BreedAttribute {
-  id                   String             @id @default(uuid())
-  createdAt            DateTime           @default(now())
-  updatedAt            DateTime           @updatedAt
-  label                String
-  value                String
-  type                 BreedAttributeType
-  includesTemperament  Breed?             @relation("temperament", fields: [includeTemperamentId], references: [id])
-  includeTemperamentId String?
-  includesBredFor      Breed?             @relation("bredFor", fields: [includeBredForId], references: [id])
-  includeBredForId     String?
-  Breed                Breed?             @relation(fields: [breedId], references: [id])
-  breedId              String?
+model DogAttribute {
+  id                String                       @id @default(uuid())
+  createdAt         DateTime                     @default(now())
+  updatedAt         DateTime                     @updatedAt
+  isDeleted         Boolean                      @default(false)
+  isGeneratedByUser Boolean                      @default(false)
+  label             String
+  value             String
+  type              DogAttributeType
+  breeds            DogAttributesOnBreeds[]
+  breedGroups       DogAttributesOnBreedGroups[]
 }
 
-enum BreedAttributeType {
+model DogAttributesOnBreeds {
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  isDeleted      Boolean      @default(false)
+  breed          Breed        @relation(fields: [breedId], references: [id])
+  breedId        String
+  dogAttribute   DogAttribute @relation(fields: [dogAttributeId], references: [id])
+  dogAttributeId String
+
+  @@id([breedId, dogAttributeId])
+}
+
+model DogAttributesOnBreedGroups {
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  isDeleted      Boolean      @default(false)
+  breedGroup     BreedGroup   @relation(fields: [breedGroupId], references: [id])
+  breedGroupId   String
+  dogAttribute   DogAttribute @relation(fields: [dogAttributeId], references: [id])
+  dogAttributeId String
+
+  @@id([breedGroupId, dogAttributeId])
+}
+
+enum DogAttributeType {
   BRED_FOR
   TEMPERAMENT
 }
