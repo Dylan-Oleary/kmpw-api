@@ -7,6 +7,7 @@ CREATE TABLE `BreedGroup` (
     `name` VARCHAR(191) NOT NULL,
     `description` TEXT NULL,
 
+    UNIQUE INDEX `BreedGroup_name_key`(`name`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -22,27 +23,28 @@ CREATE TABLE `Breed` (
     `countryCode` VARCHAR(191) NULL,
     `experimental` BOOLEAN NOT NULL DEFAULT false,
     `hairless` BOOLEAN NOT NULL DEFAULT false,
-    `heightImperialMin` INTEGER NOT NULL,
-    `heightImperialMax` INTEGER NOT NULL,
-    `heightImperialAvg` INTEGER NOT NULL,
-    `heightMetricMin` INTEGER NOT NULL,
-    `heightMetricMax` INTEGER NOT NULL,
-    `heightMetricAvg` INTEGER NOT NULL,
+    `heightImperialMin` DOUBLE NOT NULL,
+    `heightImperialMax` DOUBLE NOT NULL,
+    `heightImperialAvg` DOUBLE NOT NULL,
+    `heightMetricMin` DOUBLE NOT NULL,
+    `heightMetricMax` DOUBLE NOT NULL,
+    `heightMetricAvg` DOUBLE NOT NULL,
     `hypoallergenic` BOOLEAN NOT NULL DEFAULT false,
-    `lifeSpanMin` INTEGER NOT NULL,
-    `lifeSpanMax` INTEGER NOT NULL,
-    `lifeSpanAvg` INTEGER NOT NULL,
+    `lifeSpanMin` DOUBLE NOT NULL,
+    `lifeSpanMax` DOUBLE NOT NULL,
+    `lifeSpanAvg` DOUBLE NOT NULL,
     `natural` BOOLEAN NOT NULL DEFAULT false,
     `origin` VARCHAR(191) NOT NULL,
-    `weightImperialMin` INTEGER NOT NULL,
-    `weightImperialMax` INTEGER NOT NULL,
-    `weightImperialAvg` INTEGER NOT NULL,
-    `weightMetricMin` INTEGER NOT NULL,
-    `weightMetricMax` INTEGER NOT NULL,
-    `weightMetricAvg` INTEGER NOT NULL,
+    `weightImperialMin` DOUBLE NOT NULL,
+    `weightImperialMax` DOUBLE NOT NULL,
+    `weightImperialAvg` DOUBLE NOT NULL,
+    `weightMetricMin` DOUBLE NOT NULL,
+    `weightMetricMax` DOUBLE NOT NULL,
+    `weightMetricAvg` DOUBLE NOT NULL,
     `wikipediaUrl` VARCHAR(191) NULL,
     `breedGroupId` VARCHAR(191) NOT NULL,
 
+    UNIQUE INDEX `Breed_name_key`(`name`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 

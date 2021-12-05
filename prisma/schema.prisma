@@ -15,7 +15,7 @@ model BreedGroup {
   createdAt   DateTime                     @default(now())
   updatedAt   DateTime                     @updatedAt
   isDeleted   Boolean                      @default(false)
-  name        String
+  name        String                       @unique
   breeds      Breed[]
   description String?                      @db.Text
   attributes  DogAttributesOnBreedGroups[]
@@ -26,30 +26,30 @@ model Breed {
   createdAt         DateTime                @default(now())
   updatedAt         DateTime                @updatedAt
   isDeleted         Boolean                 @default(false)
-  name              String
+  name              String                  @unique
   description       String?                 @db.Text
   altNames          String?
   countryCode       String?
   experimental      Boolean                 @default(false)
   hairless          Boolean                 @default(false)
-  heightImperialMin Int
-  heightImperialMax Int
-  heightImperialAvg Int
-  heightMetricMin   Int
-  heightMetricMax   Int
-  heightMetricAvg   Int
+  heightImperialMin Float
+  heightImperialMax Float
+  heightImperialAvg Float
+  heightMetricMin   Float
+  heightMetricMax   Float
+  heightMetricAvg   Float
   hypoallergenic    Boolean                 @default(false)
-  lifeSpanMin       Int
-  lifeSpanMax       Int
-  lifeSpanAvg       Int
+  lifeSpanMin       Float
+  lifeSpanMax       Float
+  lifeSpanAvg       Float
   natural           Boolean                 @default(false)
   origin            String
-  weightImperialMin Int
-  weightImperialMax Int
-  weightImperialAvg Int
-  weightMetricMin   Int
-  weightMetricMax   Int
-  weightMetricAvg   Int
+  weightImperialMin Float
+  weightImperialMax Float
+  weightImperialAvg Float
+  weightMetricMin   Float
+  weightMetricMax   Float
+  weightMetricAvg   Float
   wikipediaUrl      String?
   attributes        DogAttributesOnBreeds[]
   breedGroup        BreedGroup              @relation(fields: [breedGroupId], references: [id])
