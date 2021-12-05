@@ -23,6 +23,7 @@ model BreedGroup {
 
 model Breed {
   id                String                  @id @default(uuid())
+  dogApiId          Int                     @unique
   createdAt         DateTime                @default(now())
   updatedAt         DateTime                @updatedAt
   isDeleted         Boolean                 @default(false)
