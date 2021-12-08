@@ -46,6 +46,7 @@
   "devDependencies": {
     "@theonlydevsever/eslint-config": "^1.0.2",
     "@theonlydevsever/prettier": "^1.0.0",
+    "@types/axios": "^0.14.0",
     "@types/express": "^4.17.13",
     "@types/jest": "^27.0.1",
     "@types/node": "^16.9.1",
@@ -80,6 +81,7 @@
   "dependencies": {
     "@prisma/client": "3.6.0",
     "@theonlydevsever/utilities": "^1.8.2",
+    "axios": "^0.24.0",
     "compression": "^1.7.4",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",

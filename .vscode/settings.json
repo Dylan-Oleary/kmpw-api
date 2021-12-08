@@ -6,5 +6,6 @@
   "editor.insertSpaces": true,
   "[prisma]": {
     "editor.defaultFormatter": "Prisma.prisma"
-  }
+  },
+  "jest.autoRun": "off"
 }

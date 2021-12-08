@@ -1,15 +1,15 @@
 import { PrismaClient } from "@prisma/client";
 
+import { DogApiService } from "../src/services";
+
 const prisma = new PrismaClient();
 
 async function seed() {
-    await prisma.breedGroup.upsert({
-        where: { name: "Hound" },
-        create: {
-            name: "Hound"
-        },
-        update: {}
-    });
+    const dogApi = new DogApiService();
+
+    const breeds = await dogApi.getBreeds();
+
+    console.info(breeds);
 }
 
 seed()

@@ -14,7 +14,9 @@
       "lib/*": ["lib/*"],
       "middlewares/*": ["middlewares/*"],
       "root/*": ["*"],
-      "routes/*": ["routes/*"]
+      "routes/*": ["routes/*"],
+      "services/*": ["services/*"],
+      "types/*": ["types/*"]
     }
   },
   "include": ["./src/**/*.ts"],
