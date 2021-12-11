@@ -13,12 +13,14 @@ module.exports = {
         "^lib/(.*)$": "<rootDir>/src/lib/$1",
         "^middlewares/(.*)$": "<rootDir>/src/middlewares/$1",
         "^root/(.*)$": "<rootDir>/src/$1",
-        "^routes/(.*)$": "<rootDir>/src/routes/$1"
+        "^routes/(.*)$": "<rootDir>/src/routes/$1",
+        "^services/(.*)$": "<rootDir>/src/services/$1",
+        "^types/(.*)$": "<rootDir>/src/types/$1"
     },
     preset: "ts-jest",
     roots: ["<rootDir>/src"],
     setupFiles: ["./jest/setEnvVars.js"],
-    setupFilesAfterEnv: ["./jest/testSetup.js"],
+    setupFilesAfterEnv: ["./jest/testSetup.js", "jest-extended/all"],
     testEnvironment: "node",
     testTimeout: 30000,
     transform: {

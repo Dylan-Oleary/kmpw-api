@@ -29,6 +29,7 @@ model Breed {
   name              String                  @unique
   description       String?                 @db.Text
   altNames          String?
+  countryCode       String?
   heightImperialMin Float?
   heightImperialMax Float?
   heightImperialAvg Float?

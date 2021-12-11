@@ -9,7 +9,7 @@ async function seed() {
     const breeds = await dogApi.getBreeds();
 
     for (const breed of breeds) {
-        const { description, id, name, origin } = breed;
+        const { country_code: countryCode, description, id, name, origin } = breed;
         const breedGroup = dogApi.getBreedGroupFromBreed(breed);
 
         const breedGroupRecord = await prisma.breedGroup.upsert({
@@ -20,6 +20,7 @@ async function seed() {
 
         const breedUpsertData = {
             breedGroupId: breedGroupRecord.id,
+            countryCode,
             description,
             dogApiId: id,
             name,

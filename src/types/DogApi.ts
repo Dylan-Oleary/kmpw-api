@@ -2,6 +2,7 @@ export interface IDogApiBreed {
     id: number;
     bred_for: string;
     breed_group: string;
+    country_code?: string;
     description?: string;
     height: {
         imperial: string;

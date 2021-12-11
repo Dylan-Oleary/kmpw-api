@@ -1,5 +1,5 @@
 import { Breed } from "@prisma/client";
-import { capitalize } from "@theonlydevsever/utilities";
+import { capitalize, isValueOfType } from "@theonlydevsever/utilities";
 import axios, { AxiosInstance, AxiosResponse } from "axios";
 
 import { IDogApiBreed, IDogApiGetBreedsParams } from "types";
@@ -104,18 +104,22 @@ class DogApiService {
         max?: number;
         avg?: number;
     } {
-        const splitValue = measurement
-            ?.replace("-", " ")
-            ?.split(" ")
-            ?.filter((v) => !isNaN(parseFloat(v)))
-            ?.map((v) => parseFloat(v));
+        if (isValueOfType(measurement, "string")) {
+            const splitValue = measurement
+                ?.replace("-", " ")
+                ?.split(" ")
+                ?.filter((v) => !isNaN(parseFloat(v)))
+                ?.map((v) => parseFloat(v));
 
-        if (splitValue?.length > 0) {
-            const min = splitValue[0];
-            const max = splitValue[1] || min;
-            const avg = (min + max) / 2;
+            if (splitValue?.length > 0) {
+                const min = splitValue[0];
+                const max = splitValue[1] || min;
+                const avg = (min + max) / 2;
 
-            return { avg, max, min };
+                return { avg, max, min };
+            }
+
+            return {};
         }
 
         return {};
