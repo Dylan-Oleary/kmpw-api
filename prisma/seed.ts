@@ -1,4 +1,5 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, DogAttributeType } from "@prisma/client";
+import { capitalize } from "@theonlydevsever/utilities";
 
 import { DogApiService } from "../src/services";
 
@@ -9,7 +10,15 @@ async function seed() {
     const breeds = await dogApi.getBreeds();
 
     for (const breed of breeds) {
-        const { country_code: countryCode, description, id, name, origin } = breed;
+        const {
+            bred_for = "",
+            country_code: countryCode,
+            description,
+            id,
+            name,
+            origin,
+            temperament = ""
+        } = breed;
         const breedGroup = dogApi.getBreedGroupFromBreed(breed);
 
         const breedGroupRecord = await prisma.breedGroup.upsert({
@@ -28,11 +37,73 @@ async function seed() {
             ...dogApi.formatBreedMeasurements(breed)
         };
 
-        await prisma.breed.upsert({
+        const breedRecord = await prisma.breed.upsert({
             where: { name },
             update: breedUpsertData,
             create: breedUpsertData
         });
+
+        const bredForData: string[] = bred_for.split(",").filter((v) => v?.trim()?.length > 0);
+        const temperamentData: string[] = temperament
+            .split(",")
+            .filter((v) => v?.trim()?.length > 0);
+        const attributeData = [
+            {
+                data: bredForData,
+                type: DogAttributeType.BRED_FOR
+            },
+            {
+                data: temperamentData,
+                type: DogAttributeType.TEMPERAMENT
+            }
+        ];
+
+        for (const { type, data } of attributeData) {
+            for (const attr of data) {
+                const value = attr
+                    ?.split(" ")
+                    ?.filter((v) => v.trim().length > 0 && v.trim().toLowerCase() !== "and")
+                    ?.join("-")
+                    ?.replace(/['"]+/g, "")
+                    ?.toLowerCase();
+                const label = capitalize(
+                    attr
+                        ?.split(" ")
+                        ?.filter((v) => v.trim().length > 0 && v.trim().toLowerCase() !== "and")
+                        ?.join(" ")
+                        ?.replace(/['"]+/g, "")
+                );
+
+                const attribute = await prisma.dogAttribute.upsert({
+                    where: {
+                        type_value: {
+                            type,
+                            value
+                        }
+                    },
+                    update: {},
+                    create: {
+                        isGeneratedByUser: false,
+                        label,
+                        type,
+                        value
+                    }
+                });
+                await prisma.dogAttributesOnBreeds.upsert({
+                    where: {
+                        breedId_dogAttributeId: {
+                            breedId: breedRecord.id,
+                            dogAttributeId: attribute.id
+                        }
+                    },
+                    update: {},
+                    create: {
+                        breedId: breedRecord.id,
+                        dogAttributeId: attribute.id
+                    }
+                });
+            }
+        }
     }
 }
 
