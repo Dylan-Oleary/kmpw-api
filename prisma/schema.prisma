@@ -11,14 +11,13 @@ datasource db {
 }
 
 model BreedGroup {
-  id          String                       @id @default(uuid())
-  createdAt   DateTime                     @default(now())
-  updatedAt   DateTime                     @updatedAt
-  isDeleted   Boolean                      @default(false)
-  name        String                       @unique
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  isDeleted   Boolean  @default(false)
+  name        String   @unique
   breeds      Breed[]
-  description String?                      @db.Text
-  attributes  DogAttributesOnBreedGroups[]
+  description String?  @db.Text
 }
 
 model Breed {
@@ -30,27 +29,22 @@ model Breed {
   name              String                  @unique
   description       String?                 @db.Text
   altNames          String?
-  countryCode       String?
-  experimental      Boolean                 @default(false)
-  hairless          Boolean                 @default(false)
-  heightImperialMin Float
-  heightImperialMax Float
-  heightImperialAvg Float
-  heightMetricMin   Float
-  heightMetricMax   Float
-  heightMetricAvg   Float
-  hypoallergenic    Boolean                 @default(false)
-  lifeSpanMin       Float
-  lifeSpanMax       Float
-  lifeSpanAvg       Float
-  natural           Boolean                 @default(false)
-  origin            String
-  weightImperialMin Float
-  weightImperialMax Float
-  weightImperialAvg Float
-  weightMetricMin   Float
-  weightMetricMax   Float
-  weightMetricAvg   Float
+  heightImperialMin Float?
+  heightImperialMax Float?
+  heightImperialAvg Float?
+  heightMetricMin   Float?
+  heightMetricMax   Float?
+  heightMetricAvg   Float?
+  lifeSpanMin       Float?
+  lifeSpanMax       Float?
+  lifeSpanAvg       Float?
+  origin            String?
+  weightImperialMin Float?
+  weightImperialMax Float?
+  weightImperialAvg Float?
+  weightMetricMin   Float?
+  weightMetricMax   Float?
+  weightMetricAvg   Float?
   wikipediaUrl      String?
   attributes        DogAttributesOnBreeds[]
   breedGroup        BreedGroup              @relation(fields: [breedGroupId], references: [id])
@@ -58,16 +52,15 @@ model Breed {
 }
 
 model DogAttribute {
-  id                String                       @id @default(uuid())
-  createdAt         DateTime                     @default(now())
-  updatedAt         DateTime                     @updatedAt
-  isDeleted         Boolean                      @default(false)
-  isGeneratedByUser Boolean                      @default(false)
+  id                String                  @id @default(uuid())
+  createdAt         DateTime                @default(now())
+  updatedAt         DateTime                @updatedAt
+  isDeleted         Boolean                 @default(false)
+  isGeneratedByUser Boolean                 @default(false)
   label             String
   value             String
   type              DogAttributeType
   breeds            DogAttributesOnBreeds[]
-  breedGroups       DogAttributesOnBreedGroups[]
 }
 
 model DogAttributesOnBreeds {
@@ -80,18 +73,6 @@ model DogAttributesOnBreeds {
   dogAttributeId String
 
   @@id([breedId, dogAttributeId])
-}
-
-model DogAttributesOnBreedGroups {
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-  isDeleted      Boolean      @default(false)
-  breedGroup     BreedGroup   @relation(fields: [breedGroupId], references: [id])
-  breedGroupId   String
-  dogAttribute   DogAttribute @relation(fields: [dogAttributeId], references: [id])
-  dogAttributeId String
-
-  @@id([breedGroupId, dogAttributeId])
 }
 
 enum DogAttributeType {

@@ -21,27 +21,22 @@ CREATE TABLE `Breed` (
     `name` VARCHAR(191) NOT NULL,
     `description` TEXT NULL,
     `altNames` VARCHAR(191) NULL,
-    `countryCode` VARCHAR(191) NULL,
-    `experimental` BOOLEAN NOT NULL DEFAULT false,
-    `hairless` BOOLEAN NOT NULL DEFAULT false,
-    `heightImperialMin` DOUBLE NOT NULL,
-    `heightImperialMax` DOUBLE NOT NULL,
-    `heightImperialAvg` DOUBLE NOT NULL,
-    `heightMetricMin` DOUBLE NOT NULL,
-    `heightMetricMax` DOUBLE NOT NULL,
-    `heightMetricAvg` DOUBLE NOT NULL,
-    `hypoallergenic` BOOLEAN NOT NULL DEFAULT false,
-    `lifeSpanMin` DOUBLE NOT NULL,
-    `lifeSpanMax` DOUBLE NOT NULL,
-    `lifeSpanAvg` DOUBLE NOT NULL,
-    `natural` BOOLEAN NOT NULL DEFAULT false,
-    `origin` VARCHAR(191) NOT NULL,
-    `weightImperialMin` DOUBLE NOT NULL,
-    `weightImperialMax` DOUBLE NOT NULL,
-    `weightImperialAvg` DOUBLE NOT NULL,
-    `weightMetricMin` DOUBLE NOT NULL,
-    `weightMetricMax` DOUBLE NOT NULL,
-    `weightMetricAvg` DOUBLE NOT NULL,
+    `heightImperialMin` DOUBLE NULL,
+    `heightImperialMax` DOUBLE NULL,
+    `heightImperialAvg` DOUBLE NULL,
+    `heightMetricMin` DOUBLE NULL,
+    `heightMetricMax` DOUBLE NULL,
+    `heightMetricAvg` DOUBLE NULL,
+    `lifeSpanMin` DOUBLE NULL,
+    `lifeSpanMax` DOUBLE NULL,
+    `lifeSpanAvg` DOUBLE NULL,
+    `origin` VARCHAR(191) NULL,
+    `weightImperialMin` DOUBLE NULL,
+    `weightImperialMax` DOUBLE NULL,
+    `weightImperialAvg` DOUBLE NULL,
+    `weightMetricMin` DOUBLE NULL,
+    `weightMetricMax` DOUBLE NULL,
+    `weightMetricAvg` DOUBLE NULL,
     `wikipediaUrl` VARCHAR(191) NULL,
     `breedGroupId` VARCHAR(191) NOT NULL,
 
@@ -75,17 +70,6 @@ CREATE TABLE `DogAttributesOnBreeds` (
     PRIMARY KEY (`breedId`, `dogAttributeId`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
--- CreateTable
-CREATE TABLE `DogAttributesOnBreedGroups` (
-    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updatedAt` DATETIME(3) NOT NULL,
-    `isDeleted` BOOLEAN NOT NULL DEFAULT false,
-    `breedGroupId` VARCHAR(191) NOT NULL,
-    `dogAttributeId` VARCHAR(191) NOT NULL,
-
-    PRIMARY KEY (`breedGroupId`, `dogAttributeId`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
 -- AddForeignKey
 ALTER TABLE `Breed` ADD CONSTRAINT `Breed_breedGroupId_fkey` FOREIGN KEY (`breedGroupId`) REFERENCES `BreedGroup`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
@@ -94,9 +78,3 @@ ALTER TABLE `DogAttributesOnBreeds` ADD CONSTRAINT `DogAttributesOnBreeds_breedI
 
 -- AddForeignKey
 ALTER TABLE `DogAttributesOnBreeds` ADD CONSTRAINT `DogAttributesOnBreeds_dogAttributeId_fkey` FOREIGN KEY (`dogAttributeId`) REFERENCES `DogAttribute`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `DogAttributesOnBreedGroups` ADD CONSTRAINT `DogAttributesOnBreedGroups_breedGroupId_fkey` FOREIGN KEY (`breedGroupId`) REFERENCES `BreedGroup`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `DogAttributesOnBreedGroups` ADD CONSTRAINT `DogAttributesOnBreedGroups_dogAttributeId_fkey` FOREIGN KEY (`dogAttributeId`) REFERENCES `DogAttribute`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

@@ -36,6 +36,7 @@
     "prettier:fix": "prettier --write \"./src/*\"",
     "prisma:migrate": "npx prisma migrate dev",
     "prisma:reset": "npx prisma migrate reset",
+    "prisma:seed": "ts-node prisma/seed.ts",
     "prisma:studio": "npx prisma studio",
     "start": "node -r ./buildPaths.js ./dist/server.js",
     "start:dev": "ts-node -r tsconfig-paths/register ./src/server.ts",
