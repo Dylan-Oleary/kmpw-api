@@ -1,3 +1,5 @@
+import { Breed } from "@prisma/client";
+import { capitalize } from "@theonlydevsever/utilities";
 import axios, { AxiosInstance, AxiosResponse } from "axios";
 
 import { IDogApiBreed, IDogApiGetBreedsParams } from "types";
@@ -17,8 +19,124 @@ class DogApiService {
     }
 
     /**
+     * Formats height, weight, & life span measurements from the Dog API to an object
+     * that matches the `Breed` model in Prisma
+     *
+     * @param breed A breed record from the Dog API
+     * @returns An object containing formatted breed measurements that match the Prisma schema
+     */
+    public formatBreedMeasurements(breed: IDogApiBreed): Partial<Breed> {
+        const { height, life_span, weight } = breed;
+        const measurementData = [
+            {
+                key: "height",
+                value: height
+            },
+            {
+                key: "weight",
+                value: weight
+            },
+            {
+                key: "lifeSpan",
+                value: life_span
+            }
+        ];
+        let formattedMeasurements: Partial<Breed> = {};
+
+        for (const { key, value } of measurementData) {
+            if (value) {
+                let measurementsToAdd: Partial<Breed> = {};
+
+                if (key === "lifeSpan") {
+                    const {
+                        avg: lifeSpanAvg,
+                        min: lifeSpanMin,
+                        max: lifeSpanMax
+                    } = this.formatSingleBreedMeasurement(value as string);
+
+                    measurementsToAdd = {
+                        ...measurementsToAdd,
+                        lifeSpanAvg,
+                        lifeSpanMin,
+                        lifeSpanMax
+                    };
+                } else {
+                    for (const unit of ["imperial", "metric"]) {
+                        if (value?.[unit]) {
+                            const objKeyPrefix = `${key}${capitalize(unit)}`;
+                            const { avg, min, max } = this.formatSingleBreedMeasurement(
+                                value[unit]
+                            );
+
+                            measurementsToAdd = {
+                                ...measurementsToAdd,
+                                [`${objKeyPrefix}Min`]: min,
+                                [`${objKeyPrefix}Max`]: max,
+                                [`${objKeyPrefix}Avg`]: avg
+                            };
+                        }
+                    }
+                }
+
+                formattedMeasurements = {
+                    ...formattedMeasurements,
+                    ...measurementsToAdd
+                };
+            }
+        }
+
+        return formattedMeasurements;
+    }
+
+    /**
+     * Returns the maximum, minimum, & average value of the measurement
+     *
+     * @example
+     * ```
+     * "10 - 20 years" => { avg: 15, min: 10, max: 20}
+     * ```
+     *
+     * @param measurement A single measurement string
+     * @returns An object containing the maximum, minimum, & average value of the measurement
+     */
+    public formatSingleBreedMeasurement(measurement: string): {
+        min?: number;
+        max?: number;
+        avg?: number;
+    } {
+        const splitValue = measurement
+            ?.replace("-", " ")
+            ?.split(" ")
+            ?.filter((v) => !isNaN(parseFloat(v)))
+            ?.map((v) => parseFloat(v));
+
+        if (splitValue?.length > 0) {
+            const min = splitValue[0];
+            const max = splitValue[1] || min;
+            const avg = (min + max) / 2;
+
+            return { avg, max, min };
+        }
+
+        return {};
+    }
+
+    /**
+     * Returns the breed group that the breed belongs to.
+     *
+     * @param breed A breed record from the Dog API
+     * @returns The breed group that the breed belongs to or 'Other' if no breed group exists
+     */
+    public getBreedGroupFromBreed(breed: IDogApiBreed): string {
+        const { breed_group } = breed;
+
+        return !breed_group || breed_group?.trim().length === 0 ? "Other" : breed_group;
+    }
+
+    /**
      * Requests breed records from the Dog API
      *
+     * @param requestParams The request parameters used in the request
      * @returns An array of breed records from the Dog API
      */
     public getBreeds(requestParams: IDogApiGetBreedsParams = {}): Promise<IDogApiBreed[]> {

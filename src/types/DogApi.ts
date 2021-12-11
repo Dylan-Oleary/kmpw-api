@@ -1,6 +1,5 @@
 export interface IDogApiBreed {
     id: number;
-    alt_names: string;
     bred_for: string;
     breed_group: string;
     description?: string;
