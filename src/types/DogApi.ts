@@ -6,7 +6,6 @@ export interface IDogApiBreed {
     description?: string;
     height: {
         imperial: string;
-        metric: string;
     };
     life_span: string;
     name: string;
@@ -14,7 +13,6 @@ export interface IDogApiBreed {
     temperament: string;
     weight: {
         imperial: string;
-        metric: string;
     };
 }
 

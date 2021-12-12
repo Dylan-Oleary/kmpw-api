@@ -16,8 +16,8 @@ model BreedGroup {
   updatedAt   DateTime @updatedAt
   isDeleted   Boolean  @default(false)
   name        String   @unique
-  breeds      Breed[]
   description String?  @db.Text
+  breeds      Breed[]
 }
 
 model Breed {
@@ -50,6 +50,8 @@ model Breed {
   attributes        DogAttributesOnBreeds[]
   breedGroup        BreedGroup              @relation(fields: [breedGroupId], references: [id])
   breedGroupId      String
+  size              DogSize                 @relation(fields: [sizeId], references: [id])
+  sizeId            String
 }
 
 model DogAttribute {
@@ -78,7 +80,33 @@ model DogAttributesOnBreeds {
   @@id([breedId, dogAttributeId])
 }
 
+model DogSize {
+  id                          String      @id @default(uuid())
+  createdAt                   DateTime    @default(now())
+  updatedAt                   DateTime    @updatedAt
+  isDeleted                   Boolean     @default(false)
+  weightClass                 WeightClass @unique
+  weightImperialMin           Float
+  weightImperialMax           Float
+  weightImperialAvg           Float
+  weightMetricMin             Float
+  weightMetricMax             Float
+  weightMetricAvg             Float
+  levelOneDegreeRangeSize     Int
+  levelTwoDegreeRangeSize     Int
+  levelThreeDegreeRangeSize   Int
+  noColdRiskFarenheitTemp     Int
+  dangerColdRiskFarenheitTemp Int
+  Breed                       Breed[]
+}
+
 enum DogAttributeType {
   BRED_FOR
   TEMPERAMENT
+}
+
+enum WeightClass {
+  SMALL
+  MEDIUM
+  LARGE
 }

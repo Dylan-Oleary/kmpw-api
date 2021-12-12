@@ -1,10 +1,29 @@
-import { PrismaClient, DogAttributeType } from "@prisma/client";
+import { DogAttributeType, DogSize, PrismaClient } from "@prisma/client";
 
+import { dogSizes } from "./data/sizes";
 import { DogApiService } from "../src/services";
 
 const prisma = new PrismaClient();
 
 async function seed() {
+    /**
+     * Upsert Dog Sizes
+     */
+    const dogSizeRecords: DogSize[] = [];
+
+    for (const size of dogSizes) {
+        const dogSizeRecord = await prisma.dogSize.upsert({
+            where: { weightClass: size.weightClass },
+            update: size,
+            create: size
+        });
+
+        dogSizeRecords.push(dogSizeRecord);
+    }
+
+    /**
+     * Fetch & Upsert Breed Groups & Breeds
+     */
     const dogApi = new DogApiService();
     const breeds = await dogApi.getBreeds();
 
@@ -26,14 +45,25 @@ async function seed() {
             create: { name: breedGroup }
         });
 
+        const breedMeasurements = dogApi.formatBreedMeasurements(breed);
+        const { weightImperialAvg } = breedMeasurements;
+        const breedSize =
+            weightImperialAvg >= 99
+                ? dogSizeRecords.find(({ weightClass }) => weightClass === "LARGE")
+                : dogSizeRecords.find(
+                      ({ weightImperialMin, weightImperialMax }) =>
+                          weightImperialAvg >= weightImperialMin &&
+                          weightImperialAvg < weightImperialMax
+                  );
         const breedUpsertData = {
             breedGroupId: breedGroupRecord.id,
+            sizeId: breedSize.id,
             countryCode,
             description,
             dogApiId: id,
             name,
             origin,
-            ...dogApi.formatBreedMeasurements(breed)
+            ...breedMeasurements
         };
 
         const breedRecord = await prisma.breed.upsert({
@@ -42,6 +72,9 @@ async function seed() {
             create: breedUpsertData
         });
 
+        /**
+         * Format & Add Attributes
+         */
         const bredForData: string[] = bred_for.split(",").filter((v) => v?.trim()?.length > 0);
         const temperamentData: string[] = temperament
             .split(",")

@@ -85,22 +85,32 @@ class DogApiService {
                         lifeSpanMin,
                         lifeSpanMax
                     };
-                } else {
-                    for (const unit of ["imperial", "metric"]) {
-                        if (value?.[unit]) {
-                            const objKeyPrefix = `${key}${capitalize(unit)}`;
-                            const { avg, min, max } = this.formatSingleBreedMeasurement(
-                                value[unit]
-                            );
+                } else if (value?.["imperial"]) {
+                    const imperialToMetric = 2.205;
+                    const metricKeyPrefix = `${key}Metric`;
+                    const imperialKeyPrefix = `${key}Imperial`;
+                    const {
+                        avg: imperialAvg,
+                        min: imperialMin,
+                        max: imperialMax
+                    } = this.formatSingleBreedMeasurement(value["imperial"]);
+                    const convertedMin = (imperialMin / imperialToMetric).toFixed(1);
+                    const convertedMax = (imperialMax / imperialToMetric).toFixed(1);
+                    const {
+                        avg: metricAvg,
+                        min: metricMin,
+                        max: metricMax
+                    } = this.formatSingleBreedMeasurement(`${convertedMin} - ${convertedMax}`);
 
-                            measurementsToAdd = {
-                                ...measurementsToAdd,
-                                [`${objKeyPrefix}Min`]: min,
-                                [`${objKeyPrefix}Max`]: max,
-                                [`${objKeyPrefix}Avg`]: avg
-                            };
-                        }
-                    }
+                    measurementsToAdd = {
+                        ...measurementsToAdd,
+                        [`${imperialKeyPrefix}Min`]: imperialMin,
+                        [`${imperialKeyPrefix}Max`]: imperialMax,
+                        [`${imperialKeyPrefix}Avg`]: imperialAvg,
+                        [`${metricKeyPrefix}Min`]: metricMin,
+                        [`${metricKeyPrefix}Max`]: metricMax,
+                        [`${metricKeyPrefix}Avg`]: metricAvg
+                    };
                 }
 
                 formattedMeasurements = {
@@ -137,9 +147,9 @@ class DogApiService {
                 ?.map((v) => parseFloat(v));
 
             if (splitValue?.length > 0) {
-                const min = splitValue[0];
-                const max = splitValue[1] || min;
-                const avg = (min + max) / 2;
+                const min = Number(splitValue[0].toFixed(1));
+                const max = Number((splitValue[1] || min).toFixed(1));
+                const avg = Number(((min + max) / 2).toFixed(1));
 
                 return { avg, max, min };
             }

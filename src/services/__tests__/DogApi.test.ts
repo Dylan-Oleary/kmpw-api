@@ -7,8 +7,7 @@ describe("Dog API Service", () => {
             bred_for: "Small rodent hunting, lapdog",
             breed_group: "Toy",
             height: {
-                imperial: "9 - 11.5",
-                metric: "23 - 29"
+                imperial: "9 - 11.5"
             },
             id: 1,
             life_span: "10 - 12 years",
@@ -16,8 +15,7 @@ describe("Dog API Service", () => {
             origin: "Germany, France",
             temperament: "Stubborn, Curious, Playful, Adventurous, Active, Fun-loving",
             weight: {
-                imperial: "6 - 13",
-                metric: "3 - 6"
+                imperial: "6 - 13"
             }
         },
         {
@@ -25,8 +23,7 @@ describe("Dog API Service", () => {
             breed_group: "Hound",
             country_code: "AG",
             height: {
-                imperial: "25 - 27",
-                metric: "64 - 69"
+                imperial: "25 - 27"
             },
             id: 2,
             life_span: "10 - 13 years",
@@ -34,8 +31,7 @@ describe("Dog API Service", () => {
             origin: "Afghanistan, Iran, Pakistan",
             temperament: "Aloof, Clownish, Dignified, Independent, Happy",
             weight: {
-                imperial: "50 - 60",
-                metric: "23 - 27"
+                imperial: "50 - 60"
             }
         },
         {
@@ -43,16 +39,14 @@ describe("Dog API Service", () => {
             breed_group: "Terrier",
             country_code: "AU",
             height: {
-                imperial: "10 - 11",
-                metric: "25 - 28"
+                imperial: "10 - 11"
             },
             id: 24,
             life_span: "50 years",
             name: "Australian Terrier",
             temperament: "Spirited, Alert, Loyal, Companionable, Even Tempered, Courageous",
             weight: {
-                imperial: "14 - 16",
-                metric: "6 - 7"
+                imperial: "14 - 16"
             }
         }
     ];
@@ -105,16 +99,16 @@ describe("Dog API Service", () => {
             const expectedMeasurements = {
                 heightImperialMin: 9,
                 heightImperialMax: 11.5,
-                heightImperialAvg: 10.25,
-                heightMetricMin: 23,
-                heightMetricMax: 29,
-                heightMetricAvg: 26,
+                heightImperialAvg: 10.3,
+                heightMetricMin: 4.1,
+                heightMetricMax: 5.2,
+                heightMetricAvg: 4.7,
                 weightImperialMin: 6,
                 weightImperialMax: 13,
                 weightImperialAvg: 9.5,
-                weightMetricMin: 3,
-                weightMetricMax: 6,
-                weightMetricAvg: 4.5,
+                weightMetricMin: 2.7,
+                weightMetricMax: 5.9,
+                weightMetricAvg: 4.3,
                 lifeSpanAvg: 11,
                 lifeSpanMin: 10,
                 lifeSpanMax: 12
