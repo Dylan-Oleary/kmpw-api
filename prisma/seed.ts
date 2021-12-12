@@ -1,5 +1,4 @@
 import { PrismaClient, DogAttributeType } from "@prisma/client";
-import { capitalize } from "@theonlydevsever/utilities";
 
 import { DogApiService } from "../src/services";
 
@@ -60,19 +59,7 @@ async function seed() {
 
         for (const { type, data } of attributeData) {
             for (const attr of data) {
-                const value = attr
-                    ?.split(" ")
-                    ?.filter((v) => v.trim().length > 0 && v.trim().toLowerCase() !== "and")
-                    ?.join("-")
-                    ?.replace(/['"]+/g, "")
-                    ?.toLowerCase();
-                const label = capitalize(
-                    attr
-                        ?.split(" ")
-                        ?.filter((v) => v.trim().length > 0 && v.trim().toLowerCase() !== "and")
-                        ?.join(" ")
-                        ?.replace(/['"]+/g, "")
-                );
+                const { label, value } = dogApi.buildAttributeLabelAndValue(attr);
 
                 const attribute = await prisma.dogAttribute.upsert({
                     where: {
@@ -82,12 +69,7 @@ async function seed() {
                         }
                     },
                     update: {},
-                    create: {
-                        isGeneratedByUser: false,
-                        label,
-                        type,
-                        value
-                    }
+                    create: { label, type, value }
                 });
                 await prisma.dogAttributesOnBreeds.upsert({
                     where: {

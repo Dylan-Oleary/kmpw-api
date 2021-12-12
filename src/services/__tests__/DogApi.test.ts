@@ -57,6 +57,47 @@ describe("Dog API Service", () => {
         }
     ];
 
+    describe("buildAttributeLabelAndValue", () => {
+        const testData = [
+            {
+                attr: "caring",
+                expected: {
+                    label: "Caring",
+                    value: "caring"
+                }
+            },
+            {
+                attr: "and is really fun",
+                expected: {
+                    label: "Is really fun",
+                    value: "is-really-fun"
+                }
+            },
+            {
+                attr: "FUN",
+                expected: {
+                    label: "Fun",
+                    value: "fun"
+                }
+            },
+            {
+                attr: "Hyper-active puppy",
+                expected: {
+                    label: "Hyper-active puppy",
+                    value: "hyper-active-puppy"
+                }
+            }
+        ];
+
+        for (const { attr, expected } of testData) {
+            test(`returns expected value when '${attr}' is passed`, () => {
+                const service = new DogApiService();
+
+                expect(service.buildAttributeLabelAndValue(attr)).toEqual(expected);
+            });
+        }
+    }); // close describe("buildAttributeLabelAndValue")
+
     describe("formatBreedMeasurements", () => {
         test("returns the expected values", () => {
             const service = new DogApiService();

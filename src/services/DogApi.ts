@@ -19,6 +19,31 @@ class DogApiService {
     }
 
     /**
+     * Builds a label and value from a passed string
+     *
+     * @param attr A string
+     * @returns A label and value built from the passed attribute value
+     */
+    public buildAttributeLabelAndValue(attr: string): { label: string; value: string } {
+        const value = attr
+            ?.split(" ")
+            ?.filter((v) => v.trim().length > 0 && v.trim().toLowerCase() !== "and")
+            ?.join("-")
+            ?.replace(/['"]+/g, "")
+            ?.toLowerCase();
+        const label = capitalize(
+            attr
+                ?.split(" ")
+                ?.filter((v) => v.trim().length > 0 && v.trim().toLowerCase() !== "and")
+                ?.join(" ")
+                ?.replace(/['"]+/g, "")
+                ?.toLowerCase()
+        );
+
+        return { label, value };
+    }
+
+    /**
      * Formats height, weight, & life span measurements from the Dog API to an object
      * that matches the `Breed` model in Prisma
      *
