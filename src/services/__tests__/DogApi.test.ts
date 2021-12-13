@@ -1,3 +1,5 @@
+import convert from "convert-units";
+
 import { DogApiService } from "../index";
 
 describe("Dog API Service", () => {
@@ -100,15 +102,27 @@ describe("Dog API Service", () => {
                 heightImperialMin: 9,
                 heightImperialMax: 11.5,
                 heightImperialAvg: 10.3,
-                heightMetricMin: 4.1,
-                heightMetricMax: 5.2,
-                heightMetricAvg: 4.7,
+                get heightMetricMin() {
+                    return Number(convert(this.heightImperialMin).from("in").to("cm").toFixed(1));
+                },
+                get heightMetricMax() {
+                    return Number(convert(this.heightImperialMax).from("in").to("cm").toFixed(1));
+                },
+                get heightMetricAvg() {
+                    return Number(((this.heightMetricMin + this.heightMetricMax) / 2).toFixed(1));
+                },
                 weightImperialMin: 6,
                 weightImperialMax: 13,
                 weightImperialAvg: 9.5,
-                weightMetricMin: 2.7,
-                weightMetricMax: 5.9,
-                weightMetricAvg: 4.3,
+                get weightMetricMin() {
+                    return Number(convert(this.weightImperialMin).from("lb").to("kg").toFixed(1));
+                },
+                get weightMetricMax() {
+                    return Number(convert(this.weightImperialMax).from("lb").to("kg").toFixed(1));
+                },
+                get weightMetricAvg() {
+                    return Number(((this.weightMetricMin + this.weightMetricMax) / 2).toFixed(1));
+                },
                 lifeSpanAvg: 11,
                 lifeSpanMin: 10,
                 lifeSpanMax: 12

@@ -1,4 +1,5 @@
 import { WeightClass } from "@prisma/client";
+import convert from "convert-units";
 
 export const dogSizes = [
     {
@@ -6,9 +7,15 @@ export const dogSizes = [
         weightImperialMin: 0,
         weightImperialMax: 24,
         weightImperialAvg: 12,
-        weightMetricMin: 0,
-        weightMetricMax: 10.9,
-        weightMetricAvg: 5.5,
+        get weightMetricMin() {
+            return Number(convert(this.weightImperialMin).from("lb").to("kg").toFixed(1));
+        },
+        get weightMetricMax() {
+            return Number(convert(this.weightImperialMax).from("lb").to("kg").toFixed(1));
+        },
+        get weightMetricAvg() {
+            return Number(((this.weightMetricMin + this.weightMetricMax) / 2).toFixed(1));
+        },
         levelOneDegreeRangeSize: 10,
         levelTwoDegreeRangeSize: 15,
         levelThreeDegreeRangeSize: 5,
@@ -20,9 +27,15 @@ export const dogSizes = [
         weightImperialMin: 24,
         weightImperialMax: 57,
         weightImperialAvg: 40.5,
-        weightMetricMin: 10.9,
-        weightMetricMax: 25.9,
-        weightMetricAvg: 18.4,
+        get weightMetricMin() {
+            return Number(convert(this.weightImperialMin).from("lb").to("kg").toFixed(1));
+        },
+        get weightMetricMax() {
+            return Number(convert(this.weightImperialMax).from("lb").to("kg").toFixed(1));
+        },
+        get weightMetricAvg() {
+            return Number(((this.weightMetricMin + this.weightMetricMax) / 2).toFixed(1));
+        },
         levelOneDegreeRangeSize: 5,
         levelTwoDegreeRangeSize: 15,
         levelThreeDegreeRangeSize: 15,
@@ -34,9 +47,15 @@ export const dogSizes = [
         weightImperialMin: 57,
         weightImperialMax: 99,
         weightImperialAvg: 78,
-        weightMetricMin: 25.9,
-        weightMetricMax: 44.9,
-        weightMetricAvg: 35.4,
+        get weightMetricMin() {
+            return Number(convert(this.weightImperialMin).from("lb").to("kg").toFixed(1));
+        },
+        get weightMetricMax() {
+            return Number(convert(this.weightImperialMax).from("lb").to("kg").toFixed(1));
+        },
+        get weightMetricAvg() {
+            return Number(((this.weightMetricMin + this.weightMetricMax) / 2).toFixed(1));
+        },
         levelOneDegreeRangeSize: 5,
         levelTwoDegreeRangeSize: 20,
         levelThreeDegreeRangeSize: 5,

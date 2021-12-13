@@ -1,6 +1,7 @@
 import { Breed } from "@prisma/client";
 import { capitalize, isValueOfType } from "@theonlydevsever/utilities";
 import axios, { AxiosInstance, AxiosResponse } from "axios";
+import convert from "convert-units";
 
 import { IDogApiBreed, IDogApiGetBreedsParams } from "types";
 
@@ -86,7 +87,6 @@ class DogApiService {
                         lifeSpanMax
                     };
                 } else if (value?.["imperial"]) {
-                    const imperialToMetric = 2.205;
                     const metricKeyPrefix = `${key}Metric`;
                     const imperialKeyPrefix = `${key}Imperial`;
                     const {
@@ -94,8 +94,11 @@ class DogApiService {
                         min: imperialMin,
                         max: imperialMax
                     } = this.formatSingleBreedMeasurement(value["imperial"]);
-                    const convertedMin = (imperialMin / imperialToMetric).toFixed(1);
-                    const convertedMax = (imperialMax / imperialToMetric).toFixed(1);
+
+                    const conversionFrom = key === "weight" ? "lb" : "in";
+                    const conversionTo = key === "weight" ? "kg" : "cm";
+                    const convertedMin = convert(imperialMin).from(conversionFrom).to(conversionTo);
+                    const convertedMax = convert(imperialMax).from(conversionFrom).to(conversionTo);
                     const {
                         avg: metricAvg,
                         min: metricMin,
