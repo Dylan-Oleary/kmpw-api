@@ -3,7 +3,7 @@
     "declaration": true,
     "module": "commonjs",
     "esModuleInterop": true,
-    "target": "es6",
+    "target": "es2020",
     "moduleResolution": "node",
     "sourceMap": true,
     "outDir": "dist",
@@ -11,6 +11,7 @@
     "baseUrl": "./src",
     "paths": {
       "errors/*": ["errors/*"],
+      "gql/*": ["gql/*"],
       "lib/*": ["lib/*"],
       "middlewares/*": ["middlewares/*"],
       "root/*": ["*"],

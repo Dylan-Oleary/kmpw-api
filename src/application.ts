@@ -1,6 +1,8 @@
-import express, { Express, NextFunction, Request, Response } from "express";
+import { ApolloServer } from "apollo-server-express";
 import compression from "compression";
+import express, { Express, NextFunction, Request, Response } from "express";
 
+import { buildGqlSchema } from "gql";
 import { catchAllHandler, globalErrorHandler } from "middlewares";
 import { baseRouter } from "routes";
 
@@ -9,7 +11,7 @@ import { baseRouter } from "routes";
  *
  * @returns An express application
  */
-const initializeApplication: () => Express = () => {
+const initializeApplication: () => Promise<Express> = async () => {
     const app = express();
 
     try {
@@ -18,6 +20,15 @@ const initializeApplication: () => Express = () => {
         app.use(compression());
 
         app.use("/", baseRouter);
+
+        const gqlServer = new ApolloServer({ schema: buildGqlSchema() });
+
+        await gqlServer.start();
+        gqlServer.applyMiddleware({
+            app,
+            path: "/gql"
+        });
+
         app.use("*", catchAllHandler);
 
         // Disable linting for `next` as it is unused, but required as an argument

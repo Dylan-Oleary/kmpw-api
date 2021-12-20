@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { Express, NextFunction, Request, Response } from "express";
 import request from "supertest";
 
 import { DefinedErrorCodes, NotFoundError } from "errors";
@@ -6,7 +6,13 @@ import { catchAllHandler } from "middlewares";
 import { initializeApplication } from "root/application";
 
 describe("catchAllHandler", () => {
-    const application = initializeApplication();
+    let application: Express;
+
+    beforeAll(() =>
+        initializeApplication().then((app) => {
+            application = app;
+        })
+    );
 
     test("returns a 404 error when the route does not exist", () =>
         request(application).get("/idonotexist").expect(404));

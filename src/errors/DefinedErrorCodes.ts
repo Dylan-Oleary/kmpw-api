@@ -20,7 +20,8 @@ const DefinedErrorCodes = {
     KMPW0004: "Not Allowed Error",
     KMPW0005: "Conflict Error",
     KMPW0006: "Expectation Failed Error",
-    KMPW0007: "Internal Server Error"
+    KMPW0007: "Internal Server Error",
+    KMPW0008: "Invalid query parameter passed"
 };
 
 export default DefinedErrorCodes;

@@ -50,6 +50,7 @@
     "@types/axios": "^0.14.0",
     "@types/convert-units": "^2.3.5",
     "@types/express": "^4.17.13",
+    "@types/extend": "^3.0.1",
     "@types/jest": "^27.0.1",
     "@types/node": "^16.9.1",
     "@typescript-eslint/eslint-plugin": "^4.31.0",
@@ -81,13 +82,17 @@
     "typescript": "^4.4.3"
   },
   "dependencies": {
+    "@graphql-tools/schema": "^8.3.1",
     "@prisma/client": "3.6.0",
     "@theonlydevsever/utilities": "^1.8.2",
+    "apollo-server-express": "^3.5.0",
     "axios": "^0.24.0",
     "compression": "^1.7.4",
     "convert-units": "^2.3.4",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "extend": "^3.0.2",
+    "graphql": "^16.2.0",
     "module-alias": "^2.2.2",
     "tsconfig-paths": "^3.11.0"
   }

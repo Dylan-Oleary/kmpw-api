@@ -1,9 +1,16 @@
+import { Express } from "express";
 import request from "supertest";
 
 import { initializeApplication } from "root/application";
 
 describe("Base Router", () => {
-    const application = initializeApplication();
+    let application: Express;
+
+    beforeAll(() =>
+        initializeApplication().then((app) => {
+            application = app;
+        })
+    );
 
     describe("/ endpoint", () => {
         describe("GET", () => {
