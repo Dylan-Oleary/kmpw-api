@@ -770,10 +770,10 @@
   resolved "https://registry.yarnpkg.com/@theonlydevsever/prettier/-/prettier-1.0.0.tgz#4b4d1b277eb74987e4c85296721c8721a373bb7d"
   integrity sha512-X2hfJdZhpxd3soZDazOz0PdX9RjoaaDj9kXS7+08WWtqTp25XDHHy2kspxAx/DighgabWRjJhDl/Ju82Ul+U9g==
 
-"@theonlydevsever/utilities@^1.8.3":
-  version "1.8.3"
-  resolved "https://registry.yarnpkg.com/@theonlydevsever/utilities/-/utilities-1.8.3.tgz#06b120b3171eb6eb8a172333a47009d0698806a5"
-  integrity sha512-aAxSVyuCavlSquEU59wQgVkxteLFzT1ErvVg3PIeZ66zvNHhKRPExwPsdUlilYagUK7L3iBNbkO8ioyb7I7anw==
+"@theonlydevsever/utilities@^1.8.4":
+  version "1.8.4"
+  resolved "https://registry.yarnpkg.com/@theonlydevsever/utilities/-/utilities-1.8.4.tgz#77095b66d89812aabbb6822e304ff525227b217c"
+  integrity sha512-LLXU5XLyc4SH9UtsWW/EN3CxdQDksZQpXOnJhfJB6YBn1PRyHIS8CxxCi/7IEvRSztQUGB0MEX3Tf7VsypbyMQ==
 
 "@tootallnate/once@1":
   version "1.1.2"
