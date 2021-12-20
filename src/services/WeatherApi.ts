@@ -35,16 +35,18 @@ class WeatherApiService {
     getCurrentWeather(opts: ICurrentWeatherWhere): Promise<ICurrentWeatherResponse> {
         const { q = "", aqi = false } = opts;
 
-        if (!isValueOfType(q, "string"))
+        if (!isValueOfType(q, "string")) {
             return Promise.reject(
-                new BadRequestError(
-                    `Incorrect parameter type: Expected 'string' but got ${typeof q}`
-                ).setErrorCode("KMPW0008")
+                new BadRequestError("Incorrect parameter type", [
+                    `Expected 'string' but got ${typeof q}`
+                ]).setErrorCode("KMPW0008")
             );
-        if (q.trim().length === 0)
+        }
+        if (q.trim().length === 0) {
             return Promise.reject(
                 new BadRequestError("Query parameter cannot be empty").setErrorCode("KMPW0008")
             );
+        }
 
         return this.request
             .get("/current.json", { params: { aqi: aqi ? "yes" : "no", q } })

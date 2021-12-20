@@ -84,7 +84,7 @@
   "dependencies": {
     "@graphql-tools/schema": "^8.3.1",
     "@prisma/client": "3.6.0",
-    "@theonlydevsever/utilities": "^1.8.2",
+    "@theonlydevsever/utilities": "^1.8.3",
     "apollo-server-express": "^3.5.0",
     "axios": "^0.24.0",
     "compression": "^1.7.4",
