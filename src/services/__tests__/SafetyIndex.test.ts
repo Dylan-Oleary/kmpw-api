@@ -3,30 +3,9 @@ import { SafetyIndexService } from "../index";
 describe("Safety Index Service", () => {
     const getRandomIndex = (arr) => Math.floor(Math.random() * arr.length);
 
-    describe("constructor", () => {
-        test("throws an error when an invalid temperature option is passed", () => {
-            try {
-                const invalidValues = [true, "test", null, undefined, [1, 2, 3]];
-                new SafetyIndexService({
-                    //@ts-ignore - Setting an invalid value
-                    temperatureFarenheit: invalidValues[getRandomIndex(invalidValues)]
-                });
-            } catch (error) {
-                expect(error).toEqual(
-                    expect.objectContaining({
-                        details: [],
-                        errorCode: "KMPW0009",
-                        message: "Temperature must be a number",
-                        statusCode: 422
-                    })
-                );
-            }
-        });
-    }); // close describe("constructor")
-
     describe("getters", () => {
         describe("safetyIndex", () => {
-            const service = new SafetyIndexService({ temperatureFarenheit: 50 });
+            const service = new SafetyIndexService();
 
             test("returns the correct 'safetyIndex' property", () => {
                 expect(service.safetyIndex).toEqual(1);
@@ -34,18 +13,103 @@ describe("Safety Index Service", () => {
         }); // close describe("safetyIndex")
 
         describe("temperatureFarenheit", () => {
-            const temperatureFarenheit = 22;
-            const service = new SafetyIndexService({ temperatureFarenheit });
+            const service = new SafetyIndexService().setTemperature(10);
 
             test("returns the correct 'temperatureFarenheit' property", () => {
-                expect(service.temperatureFarenheit).toEqual(temperatureFarenheit);
+                expect(service.temperatureFarenheit).toEqual(10);
             });
-        }); // close describe("temperatureFarenheit")
+        });
     }); // close describe("getters")
 
     describe("setters", () => {
+        describe("dog", () => {
+            test("throws an error if the passed data is not an object", () => {
+                const service = new SafetyIndexService();
+                const invalidValues = [true, "test", null, undefined, [1, 2, 3]];
+
+                return (
+                    service
+                        //@ts-ignore - Passing invalid value
+                        .setDog(invalidValues[getRandomIndex(invalidValues)])
+                        .catch((error) => {
+                            expect(error).toEqual(
+                                expect.objectContaining({
+                                    details: [],
+                                    errorCode: "KMPW0009",
+                                    message: "Dog data must be an object",
+                                    statusCode: 422
+                                })
+                            );
+                        })
+                );
+            });
+
+            test("throws an error if the passed id is not a string", () => {
+                const service = new SafetyIndexService();
+
+                return service
+                    .setDog({
+                        //@ts-ignore - Passing invalid value
+                        id: 905
+                    })
+                    .catch((error) => {
+                        expect(error).toEqual(
+                            expect.objectContaining({
+                                details: [],
+                                errorCode: "KMPW0009",
+                                message: "Dog ID must be a string",
+                                statusCode: 422
+                            })
+                        );
+                    });
+            });
+
+            test("throws an error if the passed weight is less than 0", () => {
+                const service = new SafetyIndexService();
+
+                return service
+                    .setDog({
+                        id: "abc123",
+                        model: "Breed",
+                        weightImperial: -100
+                    })
+                    .catch((error) => {
+                        expect(error).toEqual(
+                            expect.objectContaining({
+                                details: [],
+                                errorCode: "KMPW0009",
+                                message: "Weight cannot be less than 0",
+                                statusCode: 422
+                            })
+                        );
+                    });
+            });
+
+            test("throws an error if the passed model is invalid", () => {
+                const service = new SafetyIndexService();
+
+                return service
+                    .setDog({
+                        id: "abc123",
+                        //@ts-ignore - Passing invalid value
+                        model: "People",
+                        weightImperial: 50
+                    })
+                    .catch((error) => {
+                        expect(error).toEqual(
+                            expect.objectContaining({
+                                details: [],
+                                errorCode: "KMPW0009",
+                                message: "Invalid model passed",
+                                statusCode: 422
+                            })
+                        );
+                    });
+            });
+        }); // close describe("dog")
+
         describe("safetyIndex", () => {
-            const service = new SafetyIndexService({ temperatureFarenheit: 50 });
+            const service = new SafetyIndexService();
 
             test("sets the correct value", () => {
                 //@ts-ignore - Accessing private setter
@@ -91,28 +155,33 @@ describe("Safety Index Service", () => {
         }); // close describe("safetyIndex")
 
         describe("temperatureFarenheit", () => {
-            const service = new SafetyIndexService({ temperatureFarenheit: 50 });
-
             test("sets the correct value", () => {
-                //@ts-ignore - Accessing private setter
-                service.temperatureFarenheit = 66;
+                const service = new SafetyIndexService();
+                service.setTemperature(50);
 
-                expect(service.temperatureFarenheit).toEqual(66);
+                expect(service.temperatureFarenheit).toEqual(50);
+            });
+
+            test("returns the service", () => {
+                const serviceReturned = new SafetyIndexService().setTemperature(20);
+
+                expect(serviceReturned).toBeInstanceOf(SafetyIndexService);
             });
 
             test("sets the value to -100 if the passed value is less than -100", () => {
-                //@ts-ignore - Accessing private setter
-                service.temperatureFarenheit = -499;
+                const service = new SafetyIndexService();
+                service.setTemperature(-200);
 
                 expect(service.temperatureFarenheit).toEqual(-100);
             });
 
-            test("throws an error when the value passed is not a number", () => {
+            test("throws an error if the passed value is not a number", () => {
+                const service = new SafetyIndexService();
                 const invalidValues = [true, "test", null, undefined, [1, 2, 3]];
 
                 try {
-                    //@ts-ignore - Accessing private setter
-                    service.temperatureFarenheit = invalidValues[getRandomIndex(invalidValues)];
+                    //@ts-ignore - Passing invalid value
+                    service.setTemperature(invalidValues[getRandomIndex(invalidValues)]);
                 } catch (error) {
                     expect(error).toEqual(
                         expect.objectContaining({
@@ -124,6 +193,6 @@ describe("Safety Index Service", () => {
                     );
                 }
             });
-        }); // close describe("temperatureFarenheit")
+        });
     }); // close describe("setters")
 }); // close describe("Safety Index Service")

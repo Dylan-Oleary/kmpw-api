@@ -53,17 +53,4 @@ describe("Weather API Service", () => {
                 });
         });
     }); // close describe("getCurrentWeather")
-
-    describe("getGqlTypeDefinitions", () => {
-        test("returns a valid document node", () => {
-            const typeDefs = WeatherApiService.getGqlTypeDefinitions();
-
-            expect(typeof typeDefs).toEqual("object");
-            expect(typeDefs).toEqual(
-                expect.objectContaining({
-                    kind: "Document"
-                })
-            );
-        });
-    }); // close describe("getGqlTypeDefinitions")
 }); // close describe("Weather API Service")

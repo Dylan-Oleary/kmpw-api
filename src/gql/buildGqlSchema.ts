@@ -4,29 +4,19 @@ import { GraphQLSchema } from "graphql";
 import { makeExecutableSchema } from "@graphql-tools/schema";
 
 import { resolvers, typeDefinitions } from "./models";
-import { WeatherApiService } from "services";
 
 /**
  * Builds an executable GraphQL schema
  *
  * @returns A configured GraphQL schema
  */
-export const buildGqlSchema: () => GraphQLSchema = () => {
-    const weatherApiService = new WeatherApiService();
-
-    return makeExecutableSchema({
+export const buildGqlSchema: () => GraphQLSchema = () =>
+    makeExecutableSchema({
         typeDefs: gql`
             type Query {
                 _: Boolean
             }
-            ${WeatherApiService.getGqlTypeDefinitions()}
             ${typeDefinitions}
         `,
-        resolvers: extend(
-            true,
-            { Query: { _: () => true } },
-            weatherApiService.getGqlTypeResolvers(),
-            resolvers
-        )
+        resolvers: extend(true, { Query: { _: () => true } }, resolvers)
     });
-};

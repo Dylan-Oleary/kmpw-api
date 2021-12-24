@@ -30,9 +30,12 @@ export const resolvers = {
         getSafetyIndex: (_, args) => {
             const { dog, temperatureFarenheit } = args;
 
-            return new SafetyIndexService({ temperatureFarenheit }).setDog(dog).then(() => {
-                return { level: 1, message: "test" };
-            });
+            return new SafetyIndexService()
+                .setTemperature(temperatureFarenheit)
+                .setDog(dog)
+                .then(() => {
+                    return { level: 1, message: "test" };
+                });
         }
     }
 };

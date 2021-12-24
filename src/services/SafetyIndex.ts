@@ -15,41 +15,29 @@ type SafetyIndexDog = {
     weightImperial: number;
 };
 
-interface ISafetyIndexServiceConstructorOptions {
-    /**
-     * The temperature in farenheuit
-     */
-    temperatureFarenheit: number;
-}
-
 class SafetyIndexService {
     private _safetyIndex = 1;
     private _temperatureFarenheit: number;
     private _dog: SafetyIndexDog;
 
-    constructor(options: ISafetyIndexServiceConstructorOptions) {
-        this.temperatureFarenheit = options?.temperatureFarenheit;
-    }
+    constructor() {}
 
     public get dog(): SafetyIndexDog {
         return this._dog;
     }
 
-    public async setDog(data: {
-        id: string;
-        model: "Breed";
-        weightImperial?: number;
-    }): Promise<this> {
+    public setDog(data: { id: string; model: "Breed"; weightImperial?: number }): Promise<this> {
+        if (!isValueOfType(data, "object")) {
+            return Promise.reject(new ValidationError("Dog data must be an object"));
+        }
+
         const { id, model = "", weightImperial } = data;
 
-        if (!isValueOfType(data, "object")) {
-            throw new ValidationError("Dog data must be an object");
-        }
         if (!isValueOfType(id, "string")) {
-            throw new ValidationError("Dog ID must be a string");
+            return Promise.reject(new ValidationError("Dog ID must be a string"));
         }
-        if (isValueOfType(weightImperial, "number")) {
-            if (weightImperial < 0) throw new ValidationError("Weight cannot be less than 0");
+        if (isValueOfType(weightImperial, "number") && weightImperial < 0) {
+            return Promise.reject(new ValidationError("Weight cannot be less than 0"));
         }
 
         if (model.toLowerCase() === "breed") {
@@ -134,8 +122,22 @@ class SafetyIndexService {
                 return this;
             });
         } else {
-            return Promise.reject(new ValidationError("Invalid dog model passed"));
+            return Promise.reject(new ValidationError("Invalid model passed"));
         }
+    }
+
+    public get temperatureFarenheit(): number {
+        return this._temperatureFarenheit;
+    }
+
+    public setTemperature(temp: number): this {
+        if (!isValueOfType(temp, "number")) {
+            throw new ValidationError("Temperature must be a number");
+        }
+
+        this._temperatureFarenheit = temp < -100 ? -100 : temp;
+
+        return this;
     }
 
     public get safetyIndex(): number {
@@ -148,18 +150,6 @@ class SafetyIndexService {
         }
 
         this._safetyIndex = newIndex >= 0 ? Math.floor(newIndex) : 0;
-    }
-
-    public get temperatureFarenheit(): number {
-        return this._temperatureFarenheit;
-    }
-
-    private set temperatureFarenheit(temp: number) {
-        if (!isValueOfType(temp, "number")) {
-            throw new ValidationError("Temperature must be a number");
-        }
-
-        this._temperatureFarenheit = temp < -100 ? -100 : temp;
     }
 }
 
