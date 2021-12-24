@@ -1,9 +1,8 @@
-import { DogAttributeType, DogSize, PrismaClient } from "@prisma/client";
+import { DogAttributeType, DogSize } from "@prisma/client";
 
-import { dogSizes } from "./data/sizes";
+import { dogSizes, safetyIndices } from "./data";
 import { DogApiService } from "../src/services";
-
-const prisma = new PrismaClient();
+import { prismaClient } from "../src/lib";
 
 async function seed() {
     /**
@@ -12,7 +11,7 @@ async function seed() {
     const dogSizeRecords: DogSize[] = [];
 
     for (const size of dogSizes) {
-        const dogSizeRecord = await prisma.dogSize.upsert({
+        const dogSizeRecord = await prismaClient.dogSize.upsert({
             where: { weightClass: size.weightClass },
             update: size,
             create: size
@@ -39,7 +38,7 @@ async function seed() {
         } = breed;
         const breedGroup = dogApi.getBreedGroupFromBreed(breed);
 
-        const breedGroupRecord = await prisma.breedGroup.upsert({
+        const breedGroupRecord = await prismaClient.breedGroup.upsert({
             where: { name: breedGroup },
             update: {},
             create: { name: breedGroup }
@@ -66,7 +65,7 @@ async function seed() {
             ...breedMeasurements
         };
 
-        const breedRecord = await prisma.breed.upsert({
+        const breedRecord = await prismaClient.breed.upsert({
             where: { name },
             update: breedUpsertData,
             create: breedUpsertData
@@ -94,7 +93,7 @@ async function seed() {
             for (const attr of data) {
                 const { label, value } = dogApi.buildAttributeLabelAndValue(attr);
 
-                const attribute = await prisma.dogAttribute.upsert({
+                const attribute = await prismaClient.dogAttribute.upsert({
                     where: {
                         type_value: {
                             type,
@@ -104,7 +103,7 @@ async function seed() {
                     update: {},
                     create: { label, type, value }
                 });
-                await prisma.dogAttributesOnBreeds.upsert({
+                await prismaClient.dogAttributesOnBreeds.upsert({
                     where: {
                         breedId_dogAttributeId: {
                             breedId: breedRecord.id,
@@ -120,6 +119,17 @@ async function seed() {
             }
         }
     }
+
+    /**
+     * Upsert Safety Indices
+     */
+    for (const { level, message } of safetyIndices) {
+        await prismaClient.safetyIndex.upsert({
+            where: { level },
+            update: { message },
+            create: { level, message }
+        });
+    }
 }
 
 seed()
@@ -129,5 +139,5 @@ seed()
         process.exit(1);
     })
     .finally(async () => {
-        await prisma.$disconnect();
+        await prismaClient.$disconnect();
     });
