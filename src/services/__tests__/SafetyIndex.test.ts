@@ -1,3 +1,5 @@
+import { WeightClass } from "@prisma/client";
+
 import { SafetyIndexService } from "../index";
 
 describe("Safety Index Service", () => {
@@ -195,4 +197,32 @@ describe("Safety Index Service", () => {
             });
         });
     }); // close describe("setters")
+
+    describe("buildDogSizeWhere", () => {
+        const service = new SafetyIndexService();
+
+        test("returns the correct value when the passed value is greater than 99", () => {
+            //@ts-ignore - Testing private function
+            const where = service.buildDogSizeWhere(120);
+
+            expect(where).toEqual(
+                expect.objectContaining({
+                    weightClass: { equals: WeightClass.LARGE }
+                })
+            );
+        });
+
+        test("returns the correct value when the passed value is less than 99", () => {
+            const weightImperial = 58;
+            //@ts-ignore - Testing private function
+            const where = service.buildDogSizeWhere(weightImperial);
+
+            expect(where).toEqual(
+                expect.objectContaining({
+                    weightImperialMax: { gte: weightImperial },
+                    weightImperialMin: { lte: weightImperial }
+                })
+            );
+        });
+    }); // close describe("buildDogSizeWhere")
 }); // close describe("Safety Index Service")
