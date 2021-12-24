@@ -3,6 +3,7 @@ import extend from "extend";
 import { GraphQLSchema } from "graphql";
 import { makeExecutableSchema } from "@graphql-tools/schema";
 
+import { resolvers, typeDefinitions } from "./models";
 import { WeatherApiService } from "services";
 
 /**
@@ -19,11 +20,13 @@ export const buildGqlSchema: () => GraphQLSchema = () => {
                 _: Boolean
             }
             ${WeatherApiService.getGqlTypeDefinitions()}
+            ${typeDefinitions}
         `,
         resolvers: extend(
             true,
             { Query: { _: () => true } },
-            weatherApiService.getGqlTypeResolvers()
+            weatherApiService.getGqlTypeResolvers(),
+            resolvers
         )
     });
 };

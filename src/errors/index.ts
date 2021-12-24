@@ -6,3 +6,4 @@ export * from "./ExpectationFailedError";
 export * from "./NotAllowedError";
 export * from "./NotFoundError";
 export * from "./ServerError";
+export * from "./ValidationError";

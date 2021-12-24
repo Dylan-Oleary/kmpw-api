@@ -9,6 +9,7 @@ enum ErrorStatus {
     "NotAllowed" = 405,
     "Conflict" = 409,
     "ExpectationFailed" = 417,
+    "UnprocessableEntity" = 422,
     "ServerError" = 500
 }
 
@@ -21,7 +22,8 @@ const DefinedErrorCodes = {
     KMPW0005: "Conflict Error",
     KMPW0006: "Expectation Failed Error",
     KMPW0007: "Internal Server Error",
-    KMPW0008: "Invalid query parameter passed"
+    KMPW0008: "Invalid query parameter passed",
+    KMPW0009: "Validation Error"
 };
 
 export default DefinedErrorCodes;
