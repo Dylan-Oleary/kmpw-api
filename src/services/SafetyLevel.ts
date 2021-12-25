@@ -1,17 +1,17 @@
-import { DogSize, SafetyIndex, WeightClass } from "@prisma/client";
+import { DogSize, SafetyLevel, WeightClass } from "@prisma/client";
 import { isValueOfType } from "@theonlydevsever/utilities";
 
 import { NotFoundError, ValidationError } from "errors";
 import { prismaClient } from "lib";
-import { ISafetyIndexSetDogData, SafetyIndexDog, SafetyIndexDogSizeWhere } from "types";
+import { ISafetyLevelSetDogData, SafetyLevelDog, SafetyLevelDogSizeWhere } from "types";
 
 /**
  * A service used to determine whether or not it is safe for a dog to go outside for a walk.
  */
-class SafetyIndexService {
+class SafetyLevelService {
     private _safetyLevel = 1;
     private _temperatureFarenheit: number;
-    private _dog: SafetyIndexDog;
+    private _dog: SafetyLevelDog;
     private readonly _prismaSizeSelectConfig = {
         weightClass: true,
         coldSafetyLevelOneFarenheitTemp: true,
@@ -29,7 +29,7 @@ class SafetyIndexService {
      * @param weightImperial The weight of the dog in lbs
      * @returns A `where` clause that is formatted for Prisma
      */
-    private buildDogSizeWhere(weightImperial: number): SafetyIndexDogSizeWhere {
+    private buildDogSizeWhere(weightImperial: number): SafetyLevelDogSizeWhere {
         return weightImperial > 99
             ? { weightClass: { equals: WeightClass.LARGE } }
             : {
@@ -42,8 +42,8 @@ class SafetyIndexService {
               };
     }
 
-    public calculateSafetyIndex(): this {
-        if (this.temperatureFarenheit < 0) {
+    public calculateSafetyLevel(): this {
+        if (this._temperatureFarenheit < 0) {
             this.setSafetyLevel(5);
 
             return this;
@@ -55,7 +55,7 @@ class SafetyIndexService {
             .sort((a, b) => b - a);
 
         for (let i = temperatures.length - 1; i >= 0; i--) {
-            if (i === temperatures.length - 1 && this.temperatureFarenheit < temperatures[i - 1]) {
+            if (i === temperatures.length - 1 && this._temperatureFarenheit < temperatures[i - 1]) {
                 this.setSafetyLevel(i + 1);
 
                 break;
@@ -72,8 +72,13 @@ class SafetyIndexService {
         return this;
     }
 
-    public getSafetyIndex(): Promise<SafetyIndex> {
-        return prismaClient.safetyIndex.findUnique({ where: { level: this._safetyLevel } });
+    /**
+     * Finds the safety level record in the database based on the currently set level
+     *
+     * @returns A `SafetyLevel` record from the database
+     */
+    public getSafetyLevel(): Promise<SafetyLevel> {
+        return prismaClient.safetyLevel.findUnique({ where: { level: this._safetyLevel } });
     }
 
     /**
@@ -84,7 +89,7 @@ class SafetyIndexService {
      * @param data Data used to find and set the correct values needed when calculating the safety index
      * @returns The instantiated service
      */
-    public setDog(data: ISafetyIndexSetDogData): Promise<this> {
+    public setDog(data: ISafetyLevelSetDogData): Promise<this> {
         if (!isValueOfType(data, "object")) {
             return Promise.reject(new ValidationError("Dog data must be an object"));
         }
@@ -158,6 +163,22 @@ class SafetyIndexService {
     }
 
     /**
+     * Sets a new safety level
+     *
+     * @param level The new safety level
+     * @returns The instantiated service
+     */
+    private setSafetyLevel(level: number): this {
+        if (!isValueOfType(level, "number")) {
+            throw new ValidationError("Safety level must be a number");
+        }
+
+        this._safetyLevel = level >= 1 ? Math.floor(level) : 1;
+
+        return this;
+    }
+
+    /**
      * Sets the temperature to be used when calculating the safety index.
      *
      * @param temp The temperature in farenheit
@@ -172,19 +193,7 @@ class SafetyIndexService {
 
         return this;
     }
-
-    public get temperatureFarenheit(): number {
-        return this._temperatureFarenheit;
-    }
-
-    private setSafetyLevel(level: number) {
-        if (!isValueOfType(level, "number")) {
-            throw new ValidationError("Safety level must be a number");
-        }
-
-        this._safetyLevel = level >= 1 ? Math.floor(level) : 1;
-    }
 }
 
-export default SafetyIndexService;
-export { SafetyIndexService };
+export default SafetyLevelService;
+export { SafetyLevelService };

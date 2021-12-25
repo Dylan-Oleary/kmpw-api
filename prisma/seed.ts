@@ -1,6 +1,6 @@
 import { DogAttributeType, DogSize } from "@prisma/client";
 
-import { dogSizes, safetyIndices } from "./data";
+import { dogSizes, safetyLevels } from "./data";
 import { DogApiService } from "../src/services";
 import { prismaClient } from "../src/lib";
 
@@ -121,10 +121,10 @@ async function seed() {
     }
 
     /**
-     * Upsert Safety Indices
+     * Upsert Safety Levels
      */
-    for (const { level, message } of safetyIndices) {
-        await prismaClient.safetyIndex.upsert({
+    for (const { level, message } of safetyLevels) {
+        await prismaClient.safetyLevel.upsert({
             where: { level },
             update: { message },
             create: { level, message }

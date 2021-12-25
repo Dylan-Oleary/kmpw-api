@@ -1,12 +1,12 @@
 import { WeightClass } from "@prisma/client";
 
-export interface ISafetyIndexSetDogData {
+export interface ISafetyLevelSetDogData {
     id: string;
     model: "Breed";
     weightImperial?: number;
 }
 
-export type SafetyIndexDog = {
+export type SafetyLevelDog = {
     id: string;
     coldSafetyLevelOneFarenheitTemp: number;
     coldSafetyLevelTwoFarenheitTemp: number;
@@ -17,6 +17,6 @@ export type SafetyIndexDog = {
     weightImperial: number;
 };
 
-export type SafetyIndexDogSizeWhere =
+export type SafetyLevelDogSizeWhere =
     | { weightClass: { equals: WeightClass } }
     | { weightImperialMin: { lte: number }; weightImperialMax: { gte: number } };

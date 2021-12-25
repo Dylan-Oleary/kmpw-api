@@ -1,2 +1,2 @@
-export * from "./safetyIndex";
+export * from "./safetyLevels";
 export * from "./sizes";

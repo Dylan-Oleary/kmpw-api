@@ -100,7 +100,7 @@ model DogSize {
   Breed                             Breed[]
 }
 
-model SafetyIndex {
+model SafetyLevel {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

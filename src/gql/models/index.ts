@@ -3,23 +3,23 @@ import { DocumentNode } from "graphql";
 import extend from "extend";
 
 import {
-    resolvers as safetyIndexResolvers,
-    typeDefinitions as safetyIndexTypeDefs
-} from "./safetyIndex";
+    resolvers as safetyLevelResolvers,
+    typeDefinitions as safetyLevelTypeDefs
+} from "./safetyLevel";
 import {
     resolvers as weatherApiResolvers,
     typeDefinitions as weatherApiTypeDefs
 } from "./weatherApi";
 
 const typeDefinitions: DocumentNode = gql`
-    ${safetyIndexTypeDefs}
+    ${safetyLevelTypeDefs}
     ${weatherApiTypeDefs}
 `;
 
 const resolvers = extend(
     true,
     { Query: { _: () => true } },
-    safetyIndexResolvers,
+    safetyLevelResolvers,
     weatherApiResolvers
 );
 

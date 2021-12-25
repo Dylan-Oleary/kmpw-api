@@ -1,4 +1,4 @@
-export const safetyIndices = [
+export const safetyLevels = [
     { level: 1, message: "Good to go!" },
     { level: 2, message: "Have fun - but be safe." },
     { level: 3, message: "Be cautious - keep an eye out." },

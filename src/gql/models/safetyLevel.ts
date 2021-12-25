@@ -1,39 +1,39 @@
 import { gql } from "apollo-server-express";
 import { DocumentNode } from "graphql";
 
-import { SafetyIndexService } from "services";
+import { SafetyLevelService } from "services";
 
 export const typeDefinitions: DocumentNode = gql`
-    type SafetyIndex {
+    type SafetyLevel {
         level: Int!
         message: String!
     }
 
-    enum SafetyIndexModel {
+    enum SafetyLevelModel {
         BREED
         DOG
     }
 
-    input SafetyIndexDogData {
+    input SafetyLevelDogData {
         id: String!
-        model: SafetyIndexModel!
+        model: SafetyLevelModel!
         weightImperial: Float
     }
 
     extend type Query {
-        getSafetyIndex(temperatureFarenheit: Float!, dog: SafetyIndexDogData!): SafetyIndex
+        getSafetyLevel(temperatureFarenheit: Float!, dog: SafetyLevelDogData!): SafetyLevel
     }
 `;
 
 export const resolvers = {
     Query: {
-        getSafetyIndex: (_, args) => {
+        getSafetyLevel: (_, args) => {
             const { dog, temperatureFarenheit } = args;
 
-            return new SafetyIndexService()
+            return new SafetyLevelService()
                 .setTemperature(temperatureFarenheit)
                 .setDog(dog)
-                .then((service) => service.calculateSafetyIndex().getSafetyIndex());
+                .then((service) => service.calculateSafetyLevel().getSafetyLevel());
         }
     }
 };
