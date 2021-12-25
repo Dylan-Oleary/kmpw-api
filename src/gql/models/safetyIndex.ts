@@ -21,7 +21,7 @@ export const typeDefinitions: DocumentNode = gql`
     }
 
     extend type Query {
-        getSafetyIndex(temperatureFarenheit: Int!, dog: SafetyIndexDogData!): SafetyIndex
+        getSafetyIndex(temperatureFarenheit: Float!, dog: SafetyIndexDogData!): SafetyIndex
     }
 `;
 
@@ -33,9 +33,7 @@ export const resolvers = {
             return new SafetyIndexService()
                 .setTemperature(temperatureFarenheit)
                 .setDog(dog)
-                .then(() => {
-                    return { level: 1, message: "test" };
-                });
+                .then((service) => service.calculateSafetyIndex().getSafetyIndex());
         }
     }
 };

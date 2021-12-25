@@ -16,11 +16,11 @@ export const dogSizes = [
         get weightMetricAvg() {
             return Number(((this.weightMetricMin + this.weightMetricMax) / 2).toFixed(1));
         },
-        levelOneDegreeRangeSize: 10,
-        levelTwoDegreeRangeSize: 15,
-        levelThreeDegreeRangeSize: 5,
-        noColdRiskFarenheitTemp: 55,
-        dangerColdRiskFarenheitTemp: 24
+        coldSafetyLevelOneFarenheitTemp: 55,
+        coldSafetyLevelTwoFarenheitTemp: 45,
+        coldSafetyLevelThreeFarenheitTemp: 30,
+        coldSafetyLevelFourFarenheitTemp: 25,
+        coldSafetyLevelFiveFarenheitTemp: 0
     },
     {
         weightClass: WeightClass.MEDIUM,
@@ -36,11 +36,11 @@ export const dogSizes = [
         get weightMetricAvg() {
             return Number(((this.weightMetricMin + this.weightMetricMax) / 2).toFixed(1));
         },
-        levelOneDegreeRangeSize: 5,
-        levelTwoDegreeRangeSize: 15,
-        levelThreeDegreeRangeSize: 15,
-        noColdRiskFarenheitTemp: 50,
-        dangerColdRiskFarenheitTemp: 14
+        coldSafetyLevelOneFarenheitTemp: 50,
+        coldSafetyLevelTwoFarenheitTemp: 45,
+        coldSafetyLevelThreeFarenheitTemp: 30,
+        coldSafetyLevelFourFarenheitTemp: 15,
+        coldSafetyLevelFiveFarenheitTemp: 0
     },
     {
         weightClass: WeightClass.LARGE,
@@ -56,10 +56,10 @@ export const dogSizes = [
         get weightMetricAvg() {
             return Number(((this.weightMetricMin + this.weightMetricMax) / 2).toFixed(1));
         },
-        levelOneDegreeRangeSize: 5,
-        levelTwoDegreeRangeSize: 20,
-        levelThreeDegreeRangeSize: 5,
-        noColdRiskFarenheitTemp: 45,
-        dangerColdRiskFarenheitTemp: 14
+        coldSafetyLevelOneFarenheitTemp: 45,
+        coldSafetyLevelTwoFarenheitTemp: 40,
+        coldSafetyLevelThreeFarenheitTemp: 20,
+        coldSafetyLevelFourFarenheitTemp: 15,
+        coldSafetyLevelFiveFarenheitTemp: 0
     }
 ];

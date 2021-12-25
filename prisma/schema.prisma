@@ -81,23 +81,23 @@ model DogAttributesOnBreeds {
 }
 
 model DogSize {
-  id                          String      @id @default(uuid())
-  createdAt                   DateTime    @default(now())
-  updatedAt                   DateTime    @updatedAt
-  isDeleted                   Boolean     @default(false)
-  weightClass                 WeightClass @unique
-  weightImperialMin           Float
-  weightImperialMax           Float
-  weightImperialAvg           Float
-  weightMetricMin             Float
-  weightMetricMax             Float
-  weightMetricAvg             Float
-  levelOneDegreeRangeSize     Int
-  levelTwoDegreeRangeSize     Int
-  levelThreeDegreeRangeSize   Int
-  noColdRiskFarenheitTemp     Int
-  dangerColdRiskFarenheitTemp Int
-  Breed                       Breed[]
+  id                                String      @id @default(uuid())
+  createdAt                         DateTime    @default(now())
+  updatedAt                         DateTime    @updatedAt
+  isDeleted                         Boolean     @default(false)
+  weightClass                       WeightClass @unique
+  weightImperialMin                 Float
+  weightImperialMax                 Float
+  weightImperialAvg                 Float
+  weightMetricMin                   Float
+  weightMetricMax                   Float
+  weightMetricAvg                   Float
+  coldSafetyLevelOneFarenheitTemp   Int
+  coldSafetyLevelTwoFarenheitTemp   Int
+  coldSafetyLevelThreeFarenheitTemp Int
+  coldSafetyLevelFourFarenheitTemp  Int
+  coldSafetyLevelFiveFarenheitTemp  Int
+  Breed                             Breed[]
 }
 
 model SafetyIndex {

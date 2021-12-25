@@ -8,11 +8,11 @@ export interface ISafetyIndexSetDogData {
 
 export type SafetyIndexDog = {
     id: string;
-    dangerColdRiskFarenheitTemp: number;
-    levelOneDegreeRangeSize: number;
-    levelTwoDegreeRangeSize: number;
-    levelThreeDegreeRangeSize: number;
-    noColdRiskFarenheitTemp: number;
+    coldSafetyLevelOneFarenheitTemp: number;
+    coldSafetyLevelTwoFarenheitTemp: number;
+    coldSafetyLevelThreeFarenheitTemp: number;
+    coldSafetyLevelFourFarenheitTemp: number;
+    coldSafetyLevelFiveFarenheitTemp: number;
     weightClass: WeightClass;
     weightImperial: number;
 };
