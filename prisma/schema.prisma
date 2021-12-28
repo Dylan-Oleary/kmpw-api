@@ -52,6 +52,30 @@ model Breed {
   breedGroupId      String
   size              DogSize                 @relation(fields: [sizeId], references: [id])
   sizeId            String
+  Dog               Dog[]
+}
+
+model Dog {
+  id             String                @id @default(uuid())
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
+  isDeleted      Boolean               @default(false)
+  name           String
+  description    String?               @db.Text
+  birthday       DateTime?
+  profilePicture String?
+  heightImperial Float?
+  heightMetric   Float?
+  weightImperial Float?
+  weightMetric   Float?
+  altNames       String?
+  attributes     DogAttributesOnDogs[]
+  breed          Breed                 @relation(fields: [breedId], references: [id])
+  breedId        String
+  size           DogSize               @relation(fields: [sizeId], references: [id])
+  sizeId         String
+  User           User?                 @relation(fields: [userId], references: [id])
+  userId         String?
 }
 
 model DogAttribute {
@@ -64,6 +88,7 @@ model DogAttribute {
   value             String
   type              DogAttributeType
   breeds            DogAttributesOnBreeds[]
+  dogs              DogAttributesOnDogs[]
 
   @@unique([type, value])
 }
@@ -78,6 +103,18 @@ model DogAttributesOnBreeds {
   dogAttributeId String
 
   @@id([breedId, dogAttributeId])
+}
+
+model DogAttributesOnDogs {
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  isDeleted      Boolean      @default(false)
+  dog            Dog          @relation(fields: [dogId], references: [id])
+  dogId          String
+  dogAttribute   DogAttribute @relation(fields: [dogAttributeId], references: [id])
+  dogAttributeId String
+
+  @@id([dogId, dogAttributeId])
 }
 
 model DogSize {
@@ -98,6 +135,7 @@ model DogSize {
   coldSafetyLevelFourFarenheitTemp  Int
   coldSafetyLevelFiveFarenheitTemp  Int
   Breed                             Breed[]
+  Dog                               Dog[]
 }
 
 model SafetyLevel {
@@ -109,6 +147,21 @@ model SafetyLevel {
   message   String   @unique
 
   @@unique([level, message])
+}
+
+model User {
+  id               String               @id @default(uuid())
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+  isDeleted        Boolean              @default(false)
+  email            String               @unique
+  password         String
+  identityProvider UserIdentityProvider
+  dogs             Dog[]
+}
+
+enum UserIdentityProvider {
+  LOCAL
 }
 
 enum DogAttributeType {
