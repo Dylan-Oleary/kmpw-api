@@ -6,7 +6,7 @@ describe("Weather API Service", () => {
     describe("getCurrentWeather", () => {
         test("throws an error when the 'q' parameter is not a string", () => {
             const service = new WeatherApiService();
-            const invalidValues = [0, false, null, undefined, { id: 1 }];
+            const invalidValues = [0, false, null, { id: 1 }];
             const q = invalidValues[getRandomIndex(invalidValues)];
 
             return (

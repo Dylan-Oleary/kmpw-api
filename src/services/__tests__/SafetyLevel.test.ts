@@ -4,6 +4,38 @@ import { SafetyLevelService } from "../index";
 
 describe("Safety Level Service", () => {
     const getRandomIndex = (arr) => Math.floor(Math.random() * arr.length);
+    const testDogs = [
+        {
+            id: "small-guy",
+            weightClass: WeightClass.SMALL,
+            weightImperial: 12,
+            coldSafetyLevelOneFarenheitTemp: 55,
+            coldSafetyLevelTwoFarenheitTemp: 45,
+            coldSafetyLevelThreeFarenheitTemp: 30,
+            coldSafetyLevelFourFarenheitTemp: 25,
+            coldSafetyLevelFiveFarenheitTemp: 0
+        },
+        {
+            id: "medium-guy",
+            weightClass: WeightClass.MEDIUM,
+            weightImperial: 40.5,
+            coldSafetyLevelOneFarenheitTemp: 50,
+            coldSafetyLevelTwoFarenheitTemp: 45,
+            coldSafetyLevelThreeFarenheitTemp: 30,
+            coldSafetyLevelFourFarenheitTemp: 15,
+            coldSafetyLevelFiveFarenheitTemp: 0
+        },
+        {
+            id: "large-guy",
+            weightClass: WeightClass.LARGE,
+            weightImperial: 78,
+            coldSafetyLevelOneFarenheitTemp: 45,
+            coldSafetyLevelTwoFarenheitTemp: 40,
+            coldSafetyLevelThreeFarenheitTemp: 20,
+            coldSafetyLevelFourFarenheitTemp: 15,
+            coldSafetyLevelFiveFarenheitTemp: 0
+        }
+    ];
 
     describe("buildDogSizeWhere", () => {
         const service = new SafetyLevelService();
@@ -32,6 +64,32 @@ describe("Safety Level Service", () => {
             );
         });
     }); // close describe("buildDogSizeWhere")
+
+    describe("calculateSafetyLevel", () => {
+        test("sets the safety level to 5 when the temperature is less than 0", () => {
+            const service = new SafetyLevelService();
+
+            //@ts-ignore - Overriding instance variable
+            service._temperatureFarenheit = -100;
+            service.calculateSafetyLevel();
+
+            //@ts-ignore - Accessing private variable
+            expect(service._safetyLevel).toEqual(5);
+        });
+
+        test("returns the service", () => {
+            //@ts-ignore - Accessing private function
+            const service = new SafetyLevelService();
+
+            service.setTemperature(20);
+            //@ts-ignore - Overriding instance variable
+            service._dog = testDogs[0];
+
+            const serviceReturned = service.calculateSafetyLevel();
+
+            expect(serviceReturned).toBeInstanceOf(SafetyLevelService);
+        });
+    }); // close describe("calculateSafetyLevel")
 
     describe("setDog", () => {
         test("throws an error if the passed data is not an object", () => {
