@@ -4,7 +4,7 @@ import express, { Express, NextFunction, Request, Response } from "express";
 
 import { buildGqlSchema } from "gql";
 import { catchAllHandler, globalErrorHandler } from "middlewares";
-import { baseRouter } from "routes";
+import { authRouter, baseRouter } from "routes";
 
 /**
  * Initializes and configures an express application
@@ -20,6 +20,7 @@ const initializeApplication: () => Promise<Express> = async () => {
         app.use(compression());
 
         app.use("/", baseRouter);
+        app.use("/auth", authRouter);
 
         const gqlServer = new ApolloServer({ schema: buildGqlSchema() });
 
