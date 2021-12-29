@@ -1,34 +1,15 @@
 import { UserIdentityProvider } from "@prisma/client";
-import { isValueOfType } from "@theonlydevsever/utilities";
 import { NextFunction, Request, Response, Router } from "express";
 
-import { BadRequestError, NotAllowedError } from "errors";
+import { NotAllowedError } from "errors";
+import { validateUserAuthRequestBody } from "middlewares/auth";
 import { UserService } from "services";
 
 const authRouter = Router({ caseSensitive: true });
 
-const validateCredentialsRequestBody = (req: Request, res: Response, next: NextFunction) => {
-    const { email, password } = req.body;
-
-    for (const { key, value } of [
-        { key: "email", value: email },
-        { key: "password", value: password }
-    ]) {
-        if (!isValueOfType(value, "string")) {
-            return next(
-                new BadRequestError("Incorrect parameter type", [
-                    `Expected string for '${key}' but received: ${typeof value}`
-                ])
-            );
-        }
-    }
-
-    next();
-};
-
 authRouter
     .route("/login")
-    .post(validateCredentialsRequestBody, (req: Request, res: Response, next: NextFunction) => {
+    .post(validateUserAuthRequestBody, (req: Request, res: Response, next: NextFunction) => {
         const { email, password } = req.body;
 
         return new UserService()
@@ -43,7 +24,7 @@ authRouter
 
 authRouter
     .route("/register")
-    .post(validateCredentialsRequestBody, (req: Request, res: Response, next: NextFunction) => {
+    .post(validateUserAuthRequestBody, (req: Request, res: Response, next: NextFunction) => {
         const { email, password } = req.body;
 
         return new UserService()
