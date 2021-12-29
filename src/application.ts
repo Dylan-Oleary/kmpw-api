@@ -1,7 +1,9 @@
 import { ApolloServer } from "apollo-server-express";
 import compression from "compression";
 import express, { Express, NextFunction, Request, Response } from "express";
+import Redis from "ioredis";
 
+import { REDIS } from "config";
 import { buildGqlSchema } from "gql";
 import { catchAllHandler, globalErrorHandler } from "middlewares";
 import { authRouter, baseRouter } from "routes";
@@ -15,6 +17,8 @@ const initializeApplication: () => Promise<Express> = async () => {
     const app = express();
 
     try {
+        app.set(REDIS, new Redis(parseInt(process?.env?.REDIS_PORT) || 6379));
+
         app.use(express.json());
         app.use(express.urlencoded({ extended: true }));
         app.use(compression());

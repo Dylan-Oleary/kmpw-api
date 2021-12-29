@@ -4,7 +4,8 @@ module.exports = {
         "!src/lib/printEnv.ts",
         "!src/**/index.ts",
         "!src/types/*",
-        "!src/gql/**/*"
+        "!src/gql/**/*",
+        "!src/config/*"
     ],
     coverageDirectory: "coverage",
     globals: {
@@ -15,7 +16,9 @@ module.exports = {
     },
     moduleDirectories: ["node_modules", "src"],
     moduleNameMapper: {
+        "^config/(.*)$": "<rootDir>/src/config/$1",
         "^errors/(.*)$": "<rootDir>/src/errors/$1",
+        "^gql/(.*)$": "<rootDir>/src/gql/$1",
         "^lib/(.*)$": "<rootDir>/src/lib/$1",
         "^middlewares/(.*)$": "<rootDir>/src/middlewares/$1",
         "^root/(.*)$": "<rootDir>/src/$1",
