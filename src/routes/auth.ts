@@ -3,7 +3,7 @@ import { NextFunction, Request, Response, Router } from "express";
 
 import { NotAllowedError } from "errors";
 import { validateUserAuthRequestBody } from "middlewares/auth";
-import { UserService } from "services";
+import { AuthorizationService, UserService } from "services";
 
 const authRouter = Router({ caseSensitive: true });
 
@@ -11,10 +11,20 @@ authRouter
     .route("/login")
     .post(validateUserAuthRequestBody, (req: Request, res: Response, next: NextFunction) => {
         const { email, password } = req.body;
+        const auth = new AuthorizationService();
 
         return new UserService()
             .authenticateUser(email, password)
-            .then((user) => res.status(200).json(user))
+            .then((user) => auth.generateTokenSetFromUser(user))
+            .then(([accessToken, refreshToken]) => {
+                res.cookie("refresh", refreshToken, {
+                    httpOnly: process?.env?.NODE_ENV === "production",
+                    maxAge: auth.getTokenExpiry(refreshToken),
+                    path: "/refresh"
+                });
+
+                return res.status(200).json({ accessToken });
+            })
             .catch(next);
     })
     .get((req: Request, res: Response, next: NextFunction) => next(new NotAllowedError()))

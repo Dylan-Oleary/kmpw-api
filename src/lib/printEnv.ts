@@ -12,7 +12,14 @@ const printEnv: () => void = () => {
     console.info("");
     console.info(`Environment: ${process.env.NODE_ENV}`);
 
-    const envKeys = ["PORT", "REDIS_PORT"];
+    const envKeys = [
+        "PORT",
+        "REDIS_PORT",
+        "ACCESS_TOKEN_SECRET",
+        "ACCESS_TOKEN_LIFESPAN",
+        "REFRESH_TOKEN_SECRET",
+        "REFRESH_TOKEN_LIFESPAN"
+    ];
 
     envKeys.sort();
 

@@ -23,7 +23,8 @@ const DefinedErrorCodes = {
     KMPW0006: "Expectation Failed Error",
     KMPW0007: "Internal Server Error",
     KMPW0008: "Invalid query parameter passed",
-    KMPW0009: "Validation Error"
+    KMPW0009: "Validation Error",
+    KMPW0010: "Token generation error"
 };
 
 export default DefinedErrorCodes;
