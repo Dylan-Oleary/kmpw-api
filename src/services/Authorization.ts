@@ -1,5 +1,4 @@
 import { User } from "@prisma/client";
-import RedisClient, { Redis } from "ioredis";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import ms from "ms";
 import { nanoid } from "nanoid";
@@ -9,14 +8,12 @@ import { SessionService } from "services";
 import { AccessToken, IGenerateTokenOptions, RefreshToken } from "types";
 
 class AuthorizationService {
-    private redis: Redis;
     private accessTokenSecret: string;
     private accessTokenLifespan: number;
     private refreshTokenSecret: string;
     private refreshTokenLifespan: number;
 
     constructor() {
-        this.redis = new RedisClient(parseInt(process?.env?.REDIS_PORT) || 6379);
         this.accessTokenSecret = process?.env?.ACCESS_TOKEN_SECRET || "access-secret";
         this.accessTokenLifespan = ms(process?.env?.ACCESS_TOKEN_LIFESPAN || "15m") / 1000;
         this.refreshTokenSecret = process?.env?.REFRESH_TOKEN_SECRET || "refresh-secret";
@@ -173,6 +170,26 @@ class AuthorizationService {
         const decoded = jwt.decode(token);
 
         return (decoded as JwtPayload).exp;
+    }
+
+    public verifyAccessToken(token: string): Promise<JwtPayload> {
+        return new Promise((resolve, reject) => {
+            jwt.verify(token, this.accessTokenSecret, (error, decoded) => {
+                if (error) {
+                    return reject(
+                        new AuthenticationError(DefinedErrorCodes.KMPW0012, [
+                            `Error verifying token: ${error?.message || error}`
+                        ]).setErrorCode("KMPW0012")
+                    );
+                }
+
+                return resolve(decoded);
+            });
+        });
+    }
+
+    public getRefreshTokenLifespan(): number {
+        return this.refreshTokenLifespan;
     }
 }
 

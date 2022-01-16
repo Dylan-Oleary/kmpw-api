@@ -1,9 +1,9 @@
 import { UserIdentityProvider } from "@prisma/client";
 import { NextFunction, Request, Response, Router } from "express";
 
-import { AuthenticationError, NotAllowedError } from "errors";
-import { validateUserAuthRequestBody } from "middlewares";
-import { AuthorizationService, UserService } from "services";
+import { NotAllowedError } from "errors";
+import { getRefreshToken, validateUserAuthRequestBody, verifyAccessToken } from "middlewares";
+import { AuthorizationService, SessionService, UserService } from "services";
 
 const authRouter = Router({ caseSensitive: true });
 
@@ -33,12 +33,36 @@ authRouter
     .delete((req: Request, res: Response, next: NextFunction) => next(new NotAllowedError()));
 
 authRouter
+    .route("/logout")
+    .post(verifyAccessToken, (req: Request, res: Response, next: NextFunction) => {
+        const { tokenClaims } = res.locals;
+
+        return new SessionService()
+            .addSessionToBlacklist(
+                tokenClaims.sid,
+                new AuthorizationService().getRefreshTokenLifespan()
+            )
+            .then(() => {
+                res.locals = {};
+                res.cookie("refresh", "", {
+                    expires: new Date(0),
+                    httpOnly: process?.env?.NODE_ENV === "production",
+                    path: "/auth/refresh"
+                });
+
+                return res.status(200).send("Successfully logged out");
+            })
+            .catch(next);
+    })
+    .get((req: Request, res: Response, next: NextFunction) => next(new NotAllowedError()))
+    .patch((req: Request, res: Response, next: NextFunction) => next(new NotAllowedError()))
+    .put((req: Request, res: Response, next: NextFunction) => next(new NotAllowedError()))
+    .delete((req: Request, res: Response, next: NextFunction) => next(new NotAllowedError()));
+
+authRouter
     .route("/refresh")
-    .get((req: Request, res: Response, next: NextFunction) => {
-        const { refresh } = req.cookies;
-
-        if (!refresh) return next(new AuthenticationError("Refresh token missing"));
-
+    .get(getRefreshToken, (req: Request, res: Response, next: NextFunction) => {
+        const { refresh } = res.locals;
         const auth = new AuthorizationService();
 
         return auth
