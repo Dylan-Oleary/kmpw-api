@@ -159,6 +159,15 @@ class AuthorizationService {
     }
 
     /**
+     * Returns the number of seconds a refresh token is valid for
+     *
+     * @returns The lifespan of the refresh token in seconds
+     */
+    public getRefreshTokenLifespan(): number {
+        return this.refreshTokenLifespan;
+    }
+
+    /**
      * Decodes the passed token and returns a `NumericDate` value
      *
      * `NumericDate` is defined as the number of seconds since Epoch
@@ -174,22 +183,37 @@ class AuthorizationService {
 
     public verifyAccessToken(token: string): Promise<JwtPayload> {
         return new Promise((resolve, reject) => {
-            jwt.verify(token, this.accessTokenSecret, (error, decoded) => {
+            jwt.verify(token, this.accessTokenSecret, async (error, decoded) => {
                 if (error) {
                     return reject(
-                        new AuthenticationError(DefinedErrorCodes.KMPW0012, [
-                            `Error verifying token: ${error?.message || error}`
+                        new AuthenticationError("Invalid token", [
+                            `${error?.message || error}`
                         ]).setErrorCode("KMPW0012")
                     );
                 }
 
-                return resolve(decoded);
+                try {
+                    // Check if session is currently present in the blacklist
+                    const sessionId = decoded.sid;
+                    const isSessionBlacklisted = await new SessionService().isSessionBlacklisted(
+                        sessionId
+                    );
+
+                    // If the session is present in the blacklist – the token is invalid
+                    if (isSessionBlacklisted) {
+                        return reject(
+                            new AuthenticationError("Invalid token", [
+                                "Session no longer exists"
+                            ]).setErrorCode("KMPW0012")
+                        );
+                    }
+
+                    return resolve(decoded);
+                } catch (e) {
+                    return reject(e);
+                }
             });
         });
-    }
-
-    public getRefreshTokenLifespan(): number {
-        return this.refreshTokenLifespan;
     }
 }
 
