@@ -37,7 +37,6 @@ const verifyAccessToken: (req: Request, res: Response, next: NextFunction) => vo
     return new AuthorizationService()
         .verifyAccessToken(accessToken)
         .then((tokenClaims) => {
-            //TODO: Ensure All Properties Exist
             res.locals.tokenClaims = tokenClaims;
 
             return next();

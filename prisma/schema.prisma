@@ -150,14 +150,15 @@ model SafetyLevel {
 }
 
 model User {
-  id               String               @id @default(uuid())
-  createdAt        DateTime             @default(now())
-  updatedAt        DateTime             @updatedAt
-  isDeleted        Boolean              @default(false)
-  email            String               @unique
-  password         String
-  identityProvider UserIdentityProvider
-  dogs             Dog[]
+  id                 String               @id @default(uuid())
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  reauthenticationAt DateTime?
+  isDeleted          Boolean              @default(false)
+  email              String               @unique
+  password           String
+  identityProvider   UserIdentityProvider
+  dogs               Dog[]
 }
 
 enum UserIdentityProvider {

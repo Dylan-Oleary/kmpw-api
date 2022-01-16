@@ -14,3 +14,18 @@ export interface ICreateUserData {
      */
     identityProvider: UserIdentityProvider;
 }
+
+export interface IGetUserWhere {
+    /**
+     * The id of the user
+     */
+    id?: string;
+    /**
+     * The email of the user
+     */
+    email?: string;
+    /**
+     * The deletion status of the user
+     */
+    isDeleted?: boolean;
+}

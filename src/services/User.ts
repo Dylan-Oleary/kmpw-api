@@ -1,9 +1,10 @@
 import { User } from "@prisma/client";
+import { isValueOfType } from "@theonlydevsever/utilities";
 import bcrypt from "bcrypt";
 
 import { AuthenticationError, ConflictError, NotFoundError } from "errors";
 import { prismaClient } from "lib";
-import { ICreateUserData } from "types";
+import { ICreateUserData, IGetUserWhere } from "types";
 
 class UserService {
     private readonly _prismaUserSelectConfig = {
@@ -12,6 +13,7 @@ class UserService {
         email: true,
         createdAt: true,
         updatedAt: true,
+        reauthenticationAt: true,
         password: true
     };
 
@@ -86,6 +88,34 @@ class UserService {
                 })
             )
             .then((newUser) => this.cleanUserRecord(newUser));
+    }
+
+    /**
+     * Returns a user record based on the passed options
+     *
+     * @param opts Options used to filter for the correct user
+     * @returns A user record
+     */
+    public getUser(opts: IGetUserWhere): Promise<Partial<User>> {
+        const where: IGetUserWhere = {
+            email: opts?.email,
+            id: opts?.id,
+            isDeleted: opts?.isDeleted || false
+        };
+
+        for (const [key, value] of Object.entries(where)) {
+            if (isValueOfType(value, "undefined")) delete where[key];
+        }
+
+        return prismaClient.user
+            .findFirst({ where, select: this._prismaUserSelectConfig })
+            .then((user) => {
+                if (!user) {
+                    return Promise.reject(new NotFoundError("User not found"));
+                }
+
+                return this.cleanUserRecord(user);
+            });
     }
 
     /**

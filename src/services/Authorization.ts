@@ -4,7 +4,7 @@ import ms from "ms";
 import { nanoid } from "nanoid";
 
 import { AuthenticationError, DefinedErrorCodes, ServerError } from "errors";
-import { SessionService } from "services";
+import { SessionService, UserService } from "services";
 import { AccessToken, IGenerateTokenOptions, RefreshToken } from "types";
 
 class AuthorizationService {
@@ -12,12 +12,16 @@ class AuthorizationService {
     private accessTokenLifespan: number;
     private refreshTokenSecret: string;
     private refreshTokenLifespan: number;
+    private tokenAud: string;
+    private tokenIss: string;
 
     constructor() {
         this.accessTokenSecret = process?.env?.ACCESS_TOKEN_SECRET || "access-secret";
         this.accessTokenLifespan = ms(process?.env?.ACCESS_TOKEN_LIFESPAN || "15m") / 1000;
         this.refreshTokenSecret = process?.env?.REFRESH_TOKEN_SECRET || "refresh-secret";
         this.refreshTokenLifespan = ms(process?.env?.REFRESH_TOKEN_LIFESPAN || "7d") / 1000;
+        this.tokenAud = "kmpw-user";
+        this.tokenIss = "kmpw-api";
     }
 
     /**
@@ -65,6 +69,7 @@ class AuthorizationService {
         const tokenClaims = await jwt.verify(
             token,
             this.refreshTokenSecret,
+            { audience: this.tokenAud, issuer: this.tokenIss },
             async (error, decoded) => {
                 if (error) {
                     try {
@@ -86,21 +91,39 @@ class AuthorizationService {
                     }
                 }
 
-                return decoded;
+                try {
+                    const { iat, sid, sub } = decoded;
+                    const [isSessionBlacklisted, isUserRequiredToReauthenticate] =
+                        await Promise.all([
+                            session.isSessionBlacklisted(sid),
+                            this.isUserRequiredToReauthenticate(sub, iat)
+                        ]);
+
+                    // If the session is present in the blacklist – the token is invalid
+                    if (isSessionBlacklisted) {
+                        return Promise.reject(
+                            new AuthenticationError(DefinedErrorCodes.KMPW0012, [
+                                "Session no longer exists"
+                            ]).setErrorCode("KMPW0012")
+                        );
+                    }
+
+                    if (isUserRequiredToReauthenticate) {
+                        await session.addSessionToBlacklist(sid, this.refreshTokenLifespan);
+
+                        return Promise.reject(
+                            new AuthenticationError(DefinedErrorCodes.KMPW0012, [
+                                "Session no longer exists"
+                            ]).setErrorCode("KMPW0012")
+                        );
+                    }
+
+                    return decoded;
+                } catch (e) {
+                    return Promise.reject(e);
+                }
             }
         );
-
-        // Check if session is currently present in the blacklist
-        //@ts-ignore - Token Claims Type Error from `jsonwebtoken`
-        const sessionId = tokenClaims.sid;
-        const isSessionBlacklisted = await session.isSessionBlacklisted(sessionId);
-
-        // If the session is present in the blacklist – the request is unauthorized
-        if (isSessionBlacklisted) {
-            return Promise.reject(
-                new AuthenticationError("Invalid token").setErrorCode("KMPW0012")
-            );
-        }
 
         // If the token & session are valid, generate a new token set
         //@ts-ignore - Token Claims Type Error from `jsonwebtoken`
@@ -140,8 +163,8 @@ class AuthorizationService {
         }
 
         const tokenOptions = {
-            aud: "kmpw-user",
-            iss: "kmpw-api",
+            aud: this.tokenAud,
+            iss: this.tokenIss,
             sid: nanoid(),
             sub: user.id
         };
@@ -181,38 +204,78 @@ class AuthorizationService {
         return (decoded as JwtPayload).exp;
     }
 
+    /**
+     * Verifies whether or not the user must re-authenticate based on the passed timestamp
+     *
+     * @param id The user id
+     * @param tokenIssuedAt The `iat` (seconds since Epoch) property of a JSON Web Token – This is the timestamp of the date the token was issued
+     * @returns `true` if the user's `reauthenticationAt` value is later than the date the token was issued
+     */
+    private isUserRequiredToReauthenticate(id: string, tokenIssuedAt: number): Promise<boolean> {
+        return new UserService().getUser({ id }).then((user) => {
+            const { reauthenticationAt } = user;
+
+            if (!reauthenticationAt) return false;
+
+            return Math.floor(reauthenticationAt.getTime() / 1000) > tokenIssuedAt;
+        });
+    }
+
+    /**
+     * Verifies the passed access token and returns the extracted payload
+     *
+     * @param token A JSON Web Token
+     * @returns The decoded token payload
+     */
     public verifyAccessToken(token: string): Promise<JwtPayload> {
         return new Promise((resolve, reject) => {
-            jwt.verify(token, this.accessTokenSecret, async (error, decoded) => {
-                if (error) {
-                    return reject(
-                        new AuthenticationError("Invalid token", [
-                            `${error?.message || error}`
-                        ]).setErrorCode("KMPW0012")
-                    );
-                }
-
-                try {
-                    // Check if session is currently present in the blacklist
-                    const sessionId = decoded.sid;
-                    const isSessionBlacklisted = await new SessionService().isSessionBlacklisted(
-                        sessionId
-                    );
-
-                    // If the session is present in the blacklist – the token is invalid
-                    if (isSessionBlacklisted) {
+            jwt.verify(
+                token,
+                this.accessTokenSecret,
+                { audience: this.tokenAud, issuer: this.tokenIss },
+                async (error, decoded) => {
+                    if (error) {
                         return reject(
-                            new AuthenticationError("Invalid token", [
-                                "Session no longer exists"
+                            new AuthenticationError(DefinedErrorCodes.KMPW0012, [
+                                `Error verifying token: ${error?.message || error}`
                             ]).setErrorCode("KMPW0012")
                         );
                     }
 
-                    return resolve(decoded);
-                } catch (e) {
-                    return reject(e);
+                    try {
+                        const session = new SessionService();
+                        const { iat, sid, sub } = decoded;
+                        const [isSessionBlacklisted, isUserRequiredToReauthenticate] =
+                            await Promise.all([
+                                session.isSessionBlacklisted(sid),
+                                this.isUserRequiredToReauthenticate(sub, iat)
+                            ]);
+
+                        // If the session is present in the blacklist – the token is invalid
+                        if (isSessionBlacklisted) {
+                            return reject(
+                                new AuthenticationError(DefinedErrorCodes.KMPW0012, [
+                                    "Session no longer exists"
+                                ]).setErrorCode("KMPW0012")
+                            );
+                        }
+
+                        if (isUserRequiredToReauthenticate) {
+                            await session.addSessionToBlacklist(sid, this.refreshTokenLifespan);
+
+                            return reject(
+                                new AuthenticationError(DefinedErrorCodes.KMPW0012, [
+                                    "Session no longer exists"
+                                ]).setErrorCode("KMPW0012")
+                            );
+                        }
+
+                        return resolve(decoded);
+                    } catch (e) {
+                        return reject(e);
+                    }
                 }
-            });
+            );
         });
     }
 }
