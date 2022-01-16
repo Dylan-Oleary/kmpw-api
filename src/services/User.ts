@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 
 import { AuthenticationError, ConflictError, NotFoundError } from "errors";
 import { prismaClient } from "lib";
-import { ICreateUserData, IGetUserWhere } from "types";
+import { ICreateUserData, IEditUserData, IGetUserWhere } from "types";
 
 class UserService {
     private readonly _prismaUserSelectConfig = {
@@ -88,6 +88,29 @@ class UserService {
                 })
             )
             .then((newUser) => this.cleanUserRecord(newUser));
+    }
+
+    /**
+     * Updates an existing user record in the system
+     *
+     * @param id The id of the user to update
+     * @param data The data to update the user with
+     * @returns The updated user record
+     */
+    public updateUser(id: string, data: IEditUserData): Promise<Partial<User>> {
+        const editData = { ...data };
+
+        for (const [key, value] of Object.entries(editData)) {
+            if (isValueOfType(value, "undefined")) delete editData[key];
+        }
+
+        return prismaClient.user.update({ where: { id }, data: editData }).then((user) => {
+            if (!user) {
+                return Promise.reject(new NotFoundError("User not found"));
+            }
+
+            return this.cleanUserRecord(user);
+        });
     }
 
     /**

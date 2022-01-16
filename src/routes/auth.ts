@@ -33,6 +33,36 @@ authRouter
     .delete((req: Request, res: Response, next: NextFunction) => next(new NotAllowedError()));
 
 authRouter
+    .route("/logout/global")
+    .post(verifyAccessToken, (req: Request, res: Response, next: NextFunction) => {
+        const { tokenClaims } = res.locals;
+        const { sid, sub } = tokenClaims;
+
+        return Promise.all([
+            new SessionService().addSessionToBlacklist(
+                sid,
+                new AuthorizationService().getRefreshTokenLifespan()
+            ),
+            new UserService().updateUser(sub, { reauthenticationAt: new Date() })
+        ])
+            .then(() => {
+                res.locals = {};
+                res.cookie("refresh", "", {
+                    expires: new Date(0),
+                    httpOnly: process?.env?.NODE_ENV === "production",
+                    path: "/auth/refresh"
+                });
+
+                return res.status(200).send("Successfully logged out");
+            })
+            .catch(next);
+    })
+    .get((req: Request, res: Response, next: NextFunction) => next(new NotAllowedError()))
+    .patch((req: Request, res: Response, next: NextFunction) => next(new NotAllowedError()))
+    .put((req: Request, res: Response, next: NextFunction) => next(new NotAllowedError()))
+    .delete((req: Request, res: Response, next: NextFunction) => next(new NotAllowedError()));
+
+authRouter
     .route("/logout")
     .post(verifyAccessToken, (req: Request, res: Response, next: NextFunction) => {
         const { tokenClaims } = res.locals;

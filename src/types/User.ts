@@ -15,6 +15,13 @@ export interface ICreateUserData {
     identityProvider: UserIdentityProvider;
 }
 
+export interface IEditUserData {
+    /**
+     * The timestamp at which the user requested a global re-authentication
+     */
+    reauthenticationAt?: Date;
+}
+
 export interface IGetUserWhere {
     /**
      * The id of the user
