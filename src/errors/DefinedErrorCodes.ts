@@ -24,7 +24,10 @@ const DefinedErrorCodes = {
     KMPW0007: "Internal Server Error",
     KMPW0008: "Invalid query parameter passed",
     KMPW0009: "Validation Error",
-    KMPW0010: "Token generation error"
+    KMPW0010: "Token generation error",
+    KMPW0011: "Authorization header missing",
+    KMPW0012: "Token verification error",
+    KMPW0013: "Redis error"
 };
 
 export default DefinedErrorCodes;

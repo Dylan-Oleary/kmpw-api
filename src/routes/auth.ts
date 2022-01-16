@@ -1,8 +1,8 @@
 import { UserIdentityProvider } from "@prisma/client";
 import { NextFunction, Request, Response, Router } from "express";
 
-import { NotAllowedError } from "errors";
-import { validateUserAuthRequestBody } from "middlewares/auth";
+import { AuthenticationError, NotAllowedError } from "errors";
+import { validateUserAuthRequestBody } from "middlewares";
 import { AuthorizationService, UserService } from "services";
 
 const authRouter = Router({ caseSensitive: true });
@@ -18,9 +18,9 @@ authRouter
             .then((user) => auth.generateTokenSetFromUser(user))
             .then(([accessToken, refreshToken]) => {
                 res.cookie("refresh", refreshToken, {
+                    expires: new Date(auth.getTokenExpiry(refreshToken) * 1000),
                     httpOnly: process?.env?.NODE_ENV === "production",
-                    maxAge: auth.getTokenExpiry(refreshToken),
-                    path: "/refresh"
+                    path: "/auth/refresh"
                 });
 
                 return res.status(200).json({ accessToken });
@@ -29,6 +29,33 @@ authRouter
     })
     .get((req: Request, res: Response, next: NextFunction) => next(new NotAllowedError()))
     .patch((req: Request, res: Response, next: NextFunction) => next(new NotAllowedError()))
+    .put((req: Request, res: Response, next: NextFunction) => next(new NotAllowedError()))
+    .delete((req: Request, res: Response, next: NextFunction) => next(new NotAllowedError()));
+
+authRouter
+    .route("/refresh")
+    .get((req: Request, res: Response, next: NextFunction) => {
+        const { refresh } = req.cookies;
+
+        if (!refresh) return next(new AuthenticationError("Refresh token missing"));
+
+        const auth = new AuthorizationService();
+
+        return auth
+            .generateTokenSetFromRefreshToken(refresh)
+            .then(([accessToken, refreshToken]) => {
+                res.cookie("refresh", refreshToken, {
+                    expires: new Date(auth.getTokenExpiry(refreshToken) * 1000),
+                    httpOnly: process?.env?.NODE_ENV === "production",
+                    path: "/auth/refresh"
+                });
+
+                return res.status(200).json({ accessToken });
+            })
+            .catch(next);
+    })
+    .patch((req: Request, res: Response, next: NextFunction) => next(new NotAllowedError()))
+    .post((req: Request, res: Response, next: NextFunction) => next(new NotAllowedError()))
     .put((req: Request, res: Response, next: NextFunction) => next(new NotAllowedError()))
     .delete((req: Request, res: Response, next: NextFunction) => next(new NotAllowedError()));
 

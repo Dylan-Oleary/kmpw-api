@@ -1,5 +1,6 @@
 import { ApolloServer } from "apollo-server-express";
 import compression from "compression";
+import cookieParser from "cookie-parser";
 import express, { Express, NextFunction, Request, Response } from "express";
 
 import { buildGqlSchema } from "gql";
@@ -18,6 +19,7 @@ const initializeApplication: () => Promise<Express> = async () => {
         app.use(express.json());
         app.use(express.urlencoded({ extended: true }));
         app.use(compression());
+        app.use(cookieParser());
 
         app.use("/", baseRouter);
         app.use("/auth", authRouter);
