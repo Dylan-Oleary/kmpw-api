@@ -27,7 +27,8 @@ const DefinedErrorCodes = {
     KMPW0010: "Token generation error",
     KMPW0011: "Authorization header missing",
     KMPW0012: "Invalid token",
-    KMPW0013: "Redis error"
+    KMPW0013: "Redis error",
+    KMPW0014: "Authorization Error"
 };
 
 export default DefinedErrorCodes;

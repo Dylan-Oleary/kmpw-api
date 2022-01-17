@@ -1,4 +1,5 @@
 export * from "./AuthenticationError";
+export * from "./AuthorizationError";
 export * from "./BadRequestError";
 export * from "./ConflictError";
 export * from "./DefinedErrorCodes";

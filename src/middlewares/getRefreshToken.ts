@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
-import { AuthenticationError } from "errors";
+import { AuthorizationError } from "errors";
 
 /**
  * Checks if a refresh token has been passed with the request and passes it along to
@@ -17,7 +17,7 @@ const getRefreshToken: (req: Request, res: Response, next: NextFunction) => void
 ) => {
     const { refresh } = req.cookies;
 
-    if (!refresh) return next(new AuthenticationError("Refresh token missing"));
+    if (!refresh) return next(new AuthorizationError("Refresh token missing"));
 
     res.locals.refresh = refresh;
 

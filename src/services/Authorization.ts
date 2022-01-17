@@ -3,7 +3,7 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import ms from "ms";
 import { nanoid } from "nanoid";
 
-import { AuthenticationError, DefinedErrorCodes, ServerError } from "errors";
+import { AuthorizationError, DefinedErrorCodes, ServerError } from "errors";
 import { SessionService, UserService } from "services";
 import { AccessToken, IGenerateTokenOptions, RefreshToken } from "types";
 
@@ -82,7 +82,7 @@ class AuthorizationService {
                         );
 
                         return Promise.reject(
-                            new AuthenticationError(DefinedErrorCodes.KMPW0012, [
+                            new AuthorizationError(DefinedErrorCodes.KMPW0012, [
                                 `Error verifying token: ${error?.message || error}`
                             ]).setErrorCode("KMPW0012")
                         );
@@ -102,7 +102,7 @@ class AuthorizationService {
                     // If the session is present in the blacklist – the token is invalid
                     if (isSessionBlacklisted) {
                         return Promise.reject(
-                            new AuthenticationError(DefinedErrorCodes.KMPW0012, [
+                            new AuthorizationError(DefinedErrorCodes.KMPW0012, [
                                 "Session no longer exists"
                             ]).setErrorCode("KMPW0012")
                         );
@@ -112,7 +112,7 @@ class AuthorizationService {
                         await session.addSessionToBlacklist(sid, this.refreshTokenLifespan);
 
                         return Promise.reject(
-                            new AuthenticationError(DefinedErrorCodes.KMPW0012, [
+                            new AuthorizationError(DefinedErrorCodes.KMPW0012, [
                                 "Session no longer exists"
                             ]).setErrorCode("KMPW0012")
                         );
@@ -236,7 +236,7 @@ class AuthorizationService {
                 async (error, decoded) => {
                     if (error) {
                         return reject(
-                            new AuthenticationError(DefinedErrorCodes.KMPW0012, [
+                            new AuthorizationError(DefinedErrorCodes.KMPW0012, [
                                 `Error verifying token: ${error?.message || error}`
                             ]).setErrorCode("KMPW0012")
                         );
@@ -254,7 +254,7 @@ class AuthorizationService {
                         // If the session is present in the blacklist – the token is invalid
                         if (isSessionBlacklisted) {
                             return reject(
-                                new AuthenticationError(DefinedErrorCodes.KMPW0012, [
+                                new AuthorizationError(DefinedErrorCodes.KMPW0012, [
                                     "Session no longer exists"
                                 ]).setErrorCode("KMPW0012")
                             );
@@ -264,7 +264,7 @@ class AuthorizationService {
                             await session.addSessionToBlacklist(sid, this.refreshTokenLifespan);
 
                             return reject(
-                                new AuthenticationError(DefinedErrorCodes.KMPW0012, [
+                                new AuthorizationError(DefinedErrorCodes.KMPW0012, [
                                     "Session no longer exists"
                                 ]).setErrorCode("KMPW0012")
                             );

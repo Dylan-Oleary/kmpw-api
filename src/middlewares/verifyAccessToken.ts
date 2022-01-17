@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
-import { AuthenticationError } from "errors";
+import { AuthorizationError } from "errors";
 import { AuthorizationService } from "services";
 
 /**
@@ -20,7 +20,7 @@ const verifyAccessToken: (req: Request, res: Response, next: NextFunction) => vo
 
     if (!authorization) {
         return next(
-            new AuthenticationError("Authorization header missing from request").setErrorCode(
+            new AuthorizationError("Authorization header missing from request").setErrorCode(
                 "KMPW0011"
             )
         );
@@ -30,7 +30,7 @@ const verifyAccessToken: (req: Request, res: Response, next: NextFunction) => vo
 
     if (!accessToken) {
         return next(
-            new AuthenticationError("Access token missing from request").setErrorCode("KMPW0011")
+            new AuthorizationError("Access token missing from request").setErrorCode("KMPW0011")
         );
     }
 
