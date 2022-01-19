@@ -1,4 +1,6 @@
+import { AuthenticationError } from "apollo-server-express";
 import { NextFunction, Request, Response } from "express";
+import { JwtPayload } from "jsonwebtoken";
 
 import { AuthorizationError } from "errors";
 import { AuthorizationService } from "services";
@@ -44,5 +46,27 @@ const verifyAccessToken: (req: Request, res: Response, next: NextFunction) => vo
         .catch(next);
 };
 
+/**
+ * Verifies the authorization header attached to the GraphQL request
+ *
+ * @param req The express request object passed in by Apollo
+ * @returns An access token payload
+ */
+const verifyAccessTokenGraphQL: (req: Request) => Promise<JwtPayload> = (req) => {
+    const authorization = req?.headers?.authorization;
+
+    if (!authorization) {
+        throw new AuthenticationError("Authorization header missing from request");
+    }
+
+    const accessToken = authorization?.split(" ")?.[1]?.trim();
+
+    if (!accessToken) {
+        throw new AuthenticationError("Access token missing from request");
+    }
+
+    return new AuthorizationService().verifyAccessToken(accessToken);
+};
+
 export default verifyAccessToken;
-export { verifyAccessToken };
+export { verifyAccessToken, verifyAccessTokenGraphQL };

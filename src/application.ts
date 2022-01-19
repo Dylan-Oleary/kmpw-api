@@ -4,8 +4,9 @@ import cookieParser from "cookie-parser";
 import express, { Express, NextFunction, Request, Response } from "express";
 
 import { buildGqlSchema } from "gql";
-import { catchAllHandler, globalErrorHandler } from "middlewares";
+import { catchAllHandler, globalErrorHandler, verifyAccessTokenGraphQL } from "middlewares";
 import { authRouter, baseRouter } from "routes";
+import { UserService } from "services";
 
 /**
  * Initializes and configures an express application
@@ -24,7 +25,24 @@ const initializeApplication: () => Promise<Express> = async () => {
         app.use("/", baseRouter);
         app.use("/auth", authRouter);
 
-        const gqlServer = new ApolloServer({ schema: buildGqlSchema() });
+        const gqlServer = new ApolloServer({
+            context: async ({ req }) => {
+                try {
+                    if (req?.body?.operationName === "IntrospectionQuery") {
+                        return {};
+                    }
+
+                    const { sub: id } = await verifyAccessTokenGraphQL(req);
+                    const user = await new UserService().getUser({ id });
+
+                    return { user };
+                } catch (error) {
+                    throw error;
+                }
+            },
+            introspection: process?.env?.NODE_ENV !== "production",
+            schema: buildGqlSchema()
+        });
 
         await gqlServer.start();
         gqlServer.applyMiddleware({

@@ -2,7 +2,7 @@ import { User } from "@prisma/client";
 import { isValueOfType } from "@theonlydevsever/utilities";
 import bcrypt from "bcrypt";
 
-import { AuthenticationError, ConflictError, NotFoundError } from "errors";
+import { AuthenticationError, BadRequestError, ConflictError, NotFoundError } from "errors";
 import { prismaClient } from "lib";
 import { ICreateUserData, IEditUserData, IGetUserWhere } from "types";
 
@@ -128,6 +128,10 @@ class UserService {
 
         for (const [key, value] of Object.entries(where)) {
             if (isValueOfType(value, "undefined")) delete where[key];
+        }
+
+        if (!where.id && !where.email) {
+            return Promise.reject(new BadRequestError("Cannot find user without an id or email"));
         }
 
         return prismaClient.user
