@@ -1,4 +1,6 @@
+export * from "./_Base";
 export * from "./Authorization";
+export * from "./Dog";
 export * from "./DogApi";
 export * from "./SafetyLevel";
 export * from "./Session";

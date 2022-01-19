@@ -66,8 +66,8 @@ model Dog {
   profilePicture String?
   heightImperial Float?
   heightMetric   Float?
-  weightImperial Float?
-  weightMetric   Float?
+  weightImperial Float
+  weightMetric   Float
   altNames       String?
   attributes     DogAttributesOnDogs[]
   breed          Breed                 @relation(fields: [breedId], references: [id])
