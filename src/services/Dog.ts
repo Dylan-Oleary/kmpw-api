@@ -1,9 +1,9 @@
 import { DefinedErrorCodes, NotFoundError, ValidationError } from "errors";
 import { prismaClient } from "lib";
-import { BaseService, UserService } from "services";
+import { ModelService } from "services";
 import { IServiceField } from "types";
 
-class DogService extends BaseService {
+class DogService extends ModelService {
     readonly modelFields: IServiceField[] = [
         ...this.baseModelFields,
         this.generateServiceField({
@@ -11,11 +11,13 @@ class DogService extends BaseService {
             type: "string",
             validation: async (value) => {
                 if (value?.trim()?.length === 0)
-                    throw new ValidationError(DefinedErrorCodes.KMPW0009, ["Name cannot be empty"]);
+                    throw new ValidationError(DefinedErrorCodes.KMPW0015, [
+                        "Name cannot be empty"
+                    ]).setErrorCode("KMPW0015");
                 if (value?.trim().length > 50)
-                    throw new ValidationError(DefinedErrorCodes.KMPW0009, [
+                    throw new ValidationError(DefinedErrorCodes.KMPW0015, [
                         "Name cannot be more than 50 characters"
-                    ]);
+                    ]).setErrorCode("KMPW0015");
             }
         }),
         this.generateServiceField({
@@ -24,9 +26,9 @@ class DogService extends BaseService {
             type: "string",
             validation: async (value) => {
                 if (value?.trim().length > 250)
-                    throw new ValidationError(DefinedErrorCodes.KMPW0009, [
+                    throw new ValidationError(DefinedErrorCodes.KMPW0015, [
                         "Description cannot be more than 250 characters"
-                    ]);
+                    ]).setErrorCode("KMPW0015");
             }
         }),
         this.generateServiceField({
@@ -35,9 +37,9 @@ class DogService extends BaseService {
             type: "string",
             validation: async (value) => {
                 if (isNaN(Date.parse(value))) {
-                    throw new ValidationError(DefinedErrorCodes.KMPW0009, [
+                    throw new ValidationError(DefinedErrorCodes.KMPW0015, [
                         `${value} is not a valid date`
-                    ]);
+                    ]).setErrorCode("KMPW0015");
                 }
             }
         }),
@@ -47,9 +49,9 @@ class DogService extends BaseService {
             type: "string",
             validation: async (value) => {
                 if (value?.trim().length > 250) {
-                    throw new ValidationError(DefinedErrorCodes.KMPW0009, [
+                    throw new ValidationError(DefinedErrorCodes.KMPW0015, [
                         "Profile picture cannot be more than 250 characters"
-                    ]);
+                    ]).setErrorCode("KMPW0015");
                 }
             }
         }),
@@ -59,9 +61,9 @@ class DogService extends BaseService {
             type: "number",
             validation: async (value) => {
                 if (Number(value) === 0) {
-                    throw new ValidationError(DefinedErrorCodes.KMPW0009, [
+                    throw new ValidationError(DefinedErrorCodes.KMPW0015, [
                         "Height must be greater than 0"
-                    ]);
+                    ]).setErrorCode("KMPW0015");
                 }
             }
         }),
@@ -77,9 +79,9 @@ class DogService extends BaseService {
             type: "number",
             validation: async (value) => {
                 if (Number(value) === 0) {
-                    throw new ValidationError(DefinedErrorCodes.KMPW0009, [
+                    throw new ValidationError(DefinedErrorCodes.KMPW0015, [
                         "Weight must be greater than 0"
-                    ]);
+                    ]).setErrorCode("KMPW0015");
                 }
             }
         }),
@@ -97,7 +99,9 @@ class DogService extends BaseService {
                 await prismaClient.breed.findUnique({ where: { id } }).catch((error) => {
                     console.error(error);
 
-                    throw new NotFoundError("Breed not found", [`Breed not found using id: ${id}`]);
+                    throw new NotFoundError("Breed not found", [
+                        `Breed not found using id: ${id}`
+                    ]).setErrorCode("KMPW0015");
                 });
             }
         }),
@@ -111,12 +115,7 @@ class DogService extends BaseService {
         this.generateServiceField({
             name: "userId",
             canEdit: false,
-            type: "string",
-            validation: async (id) => {
-                await new UserService().getUser({ id }).catch((error) => {
-                    throw error;
-                });
-            }
+            type: "string"
         })
     ];
 
@@ -124,7 +123,7 @@ class DogService extends BaseService {
         super();
     }
 
-    createDog(data) {
+    public createDog(data) {
         console.info(this.getPrismaSelectConfig(), data);
         return;
     }

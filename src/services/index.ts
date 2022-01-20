@@ -1,4 +1,4 @@
-export * from "./_Base";
+export * from "./_Model";
 export * from "./Authorization";
 export * from "./Dog";
 export * from "./DogApi";
