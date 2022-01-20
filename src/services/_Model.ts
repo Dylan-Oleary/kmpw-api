@@ -66,9 +66,7 @@ abstract class ModelService {
      * @param data The data used to create a record
      * @returns The passed create data object
      */
-    public async validateCreateData(
-        data: Record<string, unknown>
-    ): Promise<Record<string, unknown>> {
+    public async validateCreateData<T = Record<string, unknown>>(data: T): Promise<T> {
         const creatableFields = this.modelFields.filter(({ canCreate }) => canCreate);
         const requiredFields = this.modelFields.filter(
             ({ isRequiredOnCreate }) => isRequiredOnCreate

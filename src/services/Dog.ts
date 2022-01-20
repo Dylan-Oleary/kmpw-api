@@ -1,7 +1,10 @@
+import { isValueOfType } from "@theonlydevsever/utilities";
+import convert from "convert-units";
+
 import { DefinedErrorCodes, NotFoundError, ValidationError } from "errors";
 import { prismaClient } from "lib";
 import { ModelService } from "services";
-import { IServiceField } from "types";
+import { ICreateDogData, IServiceField } from "types";
 
 class DogService extends ModelService {
     readonly modelFields: IServiceField[] = [
@@ -96,13 +99,18 @@ class DogService extends ModelService {
             name: "breedId",
             type: "string",
             validation: async (id) => {
-                await prismaClient.breed.findUnique({ where: { id } }).catch((error) => {
-                    console.error(error);
-
-                    throw new NotFoundError("Breed not found", [
-                        `Breed not found using id: ${id}`
-                    ]).setErrorCode("KMPW0015");
-                });
+                await prismaClient.breed
+                    .findUnique({ where: { id } })
+                    .then((breed) => {
+                        if (!breed) {
+                            throw new NotFoundError("Breed not found", [
+                                `Breed not found using id: ${id}`
+                            ]).setErrorCode("KMPW0015");
+                        }
+                    })
+                    .catch((error) => {
+                        throw error;
+                    });
             }
         }),
         this.generateServiceField({
@@ -123,9 +131,63 @@ class DogService extends ModelService {
         super();
     }
 
-    public createDog(data) {
-        console.info(this.getPrismaSelectConfig(), data);
-        return;
+    /**
+     * Creates a new dog record based on the passed data
+     *
+     * @param data Data used to create a dog record
+     * @returns A dog record
+     */
+    public async createDog(data: ICreateDogData) {
+        try {
+            const validatedData = await super.validateCreateData<ICreateDogData>(data);
+            const sizeId = await this.getDogSizeFromWeight(validatedData.weightImperial);
+            const createData: ICreateDogData & {
+                heightMetric?: number;
+                sizeId: string;
+                weightMetric: number;
+            } = {
+                ...validatedData,
+                sizeId,
+                weightMetric: Number(
+                    convert(validatedData.weightImperial).from("lb").to("kg").toFixed(1)
+                )
+            };
+            const { heightImperial } = createData;
+
+            if (isValueOfType(heightImperial, "number")) {
+                createData.heightMetric = Number(
+                    convert(heightImperial).from("in").to("cm").toFixed(1)
+                );
+            }
+
+            return prismaClient.dog.create({ data: createData });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    /**
+     * Returns the size id based on the passed weight and sizes
+     *
+     * @param weight The weight (in lbs) used to determine the correct size
+     * @returns A size record id
+     */
+    private getDogSizeFromWeight(weight: number): Promise<string> {
+        return prismaClient.dogSize.findMany().then((sizes) => {
+            if (!isValueOfType(sizes, "array") || sizes?.length === 0) {
+                return Promise.reject(new NotFoundError("Sizes not found"));
+            }
+
+            const { id } =
+                weight >= 99
+                    ? sizes.find(({ weightClass }) => weightClass === "LARGE")
+                    : sizes.find(
+                          ({ weightImperialMin, weightImperialMax }) =>
+                              weight >= weightImperialMin && weight < weightImperialMax
+                      );
+
+            return id;
+        });
     }
 }
 

@@ -2,6 +2,7 @@ import { gql } from "apollo-server-express";
 import { DocumentNode } from "graphql";
 import extend from "extend";
 
+import { resolvers as breedResolvers, typeDefinitions as breedTypeDefs } from "./breed";
 import { resolvers as dogResolvers, typeDefinitions as dogTypeDefs } from "./dog";
 import {
     resolvers as safetyLevelResolvers,
@@ -13,11 +14,18 @@ import {
 } from "./weatherApi";
 
 const typeDefinitions: DocumentNode = gql`
+    ${breedTypeDefs}
     ${dogTypeDefs}
     ${safetyLevelTypeDefs}
     ${weatherApiTypeDefs}
 `;
 
-const resolvers = extend(true, dogResolvers, safetyLevelResolvers, weatherApiResolvers);
+const resolvers = extend(
+    true,
+    breedResolvers,
+    dogResolvers,
+    safetyLevelResolvers,
+    weatherApiResolvers
+);
 
 export { resolvers, typeDefinitions };

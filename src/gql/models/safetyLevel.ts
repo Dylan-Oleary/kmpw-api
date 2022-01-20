@@ -21,13 +21,13 @@ export const typeDefinitions: DocumentNode = gql`
     }
 
     extend type Query {
-        getSafetyLevel(temperatureFarenheit: Float!, dog: SafetyLevelDogData!): SafetyLevel
+        safetyLevel(temperatureFarenheit: Float!, dog: SafetyLevelDogData!): SafetyLevel
     }
 `;
 
 export const resolvers = {
     Query: {
-        getSafetyLevel: (_, args) => {
+        safetyLevel: (_, args) => {
             const { dog, temperatureFarenheit } = args;
 
             return new SafetyLevelService()
