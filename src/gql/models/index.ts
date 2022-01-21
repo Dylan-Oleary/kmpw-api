@@ -8,6 +8,7 @@ import {
     resolvers as safetyLevelResolvers,
     typeDefinitions as safetyLevelTypeDefs
 } from "./safetyLevel";
+import { resolvers as userResolvers, typeDefinitions as userTypeDefs } from "./user";
 import {
     resolvers as weatherApiResolvers,
     typeDefinitions as weatherApiTypeDefs
@@ -17,6 +18,7 @@ const typeDefinitions: DocumentNode = gql`
     ${breedTypeDefs}
     ${dogTypeDefs}
     ${safetyLevelTypeDefs}
+    ${userTypeDefs}
     ${weatherApiTypeDefs}
 `;
 
@@ -25,6 +27,7 @@ const resolvers = extend(
     breedResolvers,
     dogResolvers,
     safetyLevelResolvers,
+    userResolvers,
     weatherApiResolvers
 );
 
