@@ -1,8 +1,9 @@
 import { gql } from "apollo-server-express";
 import { DocumentNode } from "graphql";
 
+import { BadRequestError } from "errors";
 import { addUserToRequestData, prismaClient } from "lib";
-import { DogService } from "services";
+import { DogService, SafetyLevelService } from "services";
 import { ICreateDogData } from "types";
 
 export const typeDefinitions: DocumentNode = gql`
@@ -35,6 +36,7 @@ export const typeDefinitions: DocumentNode = gql`
         weightMetric: Float!
         breed: Breed!
         size: DogSize!
+        safetyLevel: SafetyLevel!
     }
 
     input CreateDogData {
@@ -48,17 +50,31 @@ export const typeDefinitions: DocumentNode = gql`
     }
 
     extend type Mutation {
-        createDog(data: CreateDogData!): Dog
+        createDog(data: CreateDogData!, temperatureFarenheit: Float): Dog
     }
 `;
 
 export const resolvers = {
     Dog: {
         breed: ({ breedId: id }) => prismaClient.breed.findUnique({ where: { id } }),
+        safetyLevel: (dog) => {
+            const { temperatureFarenheit } = dog;
+
+            if (!temperatureFarenheit) {
+                throw new BadRequestError("Temperature missing from request");
+            }
+
+            return new SafetyLevelService()
+                .setTemperature(temperatureFarenheit)
+                .setDog(dog)
+                .then((service) => service.calculateSafetyLevel().getSafetyLevel());
+        },
         size: ({ sizeId: id }) => prismaClient.dogSize.findUnique({ where: { id } })
     },
     Mutation: {
-        createDog: (_, { data }, { user }) =>
-            new DogService().createDog(addUserToRequestData<ICreateDogData>(user, data))
+        createDog: (_, { data, temperatureFarenheit }, { user }) =>
+            new DogService()
+                .createDog(addUserToRequestData<ICreateDogData>(user, data))
+                .then((dog) => ({ ...dog, temperatureFarenheit }))
     }
 };

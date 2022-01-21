@@ -1,8 +1,7 @@
 import { WeightClass } from "@prisma/client";
 
-export interface ISafetyLevelSetDogData {
+export interface ISafetyLevelSetBreedData {
     id: string;
-    model: "Breed";
     weightImperial?: number;
 }
 
@@ -20,3 +19,8 @@ export type SafetyLevelDog = {
 export type SafetyLevelDogSizeWhere =
     | { weightClass: { equals: WeightClass } }
     | { weightImperialMin: { lte: number }; weightImperialMax: { gte: number } };
+
+export enum SafetyLevelModel {
+    BREED = "Breed",
+    DOG = "Dog"
+}

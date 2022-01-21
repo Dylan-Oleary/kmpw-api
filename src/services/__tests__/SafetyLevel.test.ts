@@ -1,6 +1,7 @@
 import { WeightClass } from "@prisma/client";
 
 import { SafetyLevelService } from "../index";
+import { SafetyLevelModel } from "../../types";
 
 describe("Safety Level Service", () => {
     const getRandomIndex = (arr) => Math.floor(Math.random() * arr.length);
@@ -139,7 +140,6 @@ describe("Safety Level Service", () => {
             return service
                 .setDog({
                     id: "abc123",
-                    model: "Breed",
                     weightImperial: -100
                 })
                 .catch((error) => {
@@ -158,18 +158,28 @@ describe("Safety Level Service", () => {
             const service = new SafetyLevelService();
 
             return service
-                .setDog({
-                    id: "abc123",
-                    //@ts-ignore - Passing invalid value
-                    model: "People",
-                    weightImperial: 50
-                })
+                .setDog(
+                    {
+                        id: "abc123",
+                        weightImperial: 50
+                    },
+                    //@ts-ignore - Passing invalid model
+                    "PEOPLE"
+                )
                 .catch((error) => {
                     expect(error).toEqual(
                         expect.objectContaining({
-                            details: [],
+                            details: [
+                                {
+                                    message: `Model must be one of ${Object.entries(
+                                        SafetyLevelModel
+                                    )
+                                        .map(([, v]) => `'${v}'`)
+                                        .join(", ")}`
+                                }
+                            ],
                             errorCode: "KMPW0009",
-                            message: "Invalid model passed",
+                            message: "Invalid model",
                             statusCode: 422
                         })
                     );

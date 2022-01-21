@@ -1,7 +1,9 @@
 import { gql } from "apollo-server-express";
 import { DocumentNode } from "graphql";
 
+import { BadRequestError } from "errors";
 import { SafetyLevelService } from "services";
+import { SafetyLevelModel } from "types";
 
 export const typeDefinitions: DocumentNode = gql`
     type SafetyLevel {
@@ -9,30 +11,28 @@ export const typeDefinitions: DocumentNode = gql`
         message: String!
     }
 
-    enum SafetyLevelModel {
-        BREED
-        DOG
-    }
-
-    input SafetyLevelDogData {
+    input SafetyLevelBreedData {
         id: String!
-        model: SafetyLevelModel!
         weightImperial: Float
     }
 
     extend type Query {
-        safetyLevel(temperatureFarenheit: Float!, dog: SafetyLevelDogData!): SafetyLevel
+        breedSafetyLevel(breed: SafetyLevelBreedData!, temperatureFarenheit: Float!): SafetyLevel
     }
 `;
 
 export const resolvers = {
     Query: {
-        safetyLevel: (_, args) => {
-            const { dog, temperatureFarenheit } = args;
+        breedSafetyLevel: (_, args) => {
+            const { breed, temperatureFarenheit } = args;
+
+            if (!temperatureFarenheit) {
+                throw new BadRequestError("Temperature missing from request");
+            }
 
             return new SafetyLevelService()
                 .setTemperature(temperatureFarenheit)
-                .setDog(dog)
+                .setDog(breed, SafetyLevelModel.BREED)
                 .then((service) => service.calculateSafetyLevel().getSafetyLevel());
         }
     }
