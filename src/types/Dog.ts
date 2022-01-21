@@ -32,3 +32,14 @@ export interface ICreateDogData {
      */
     heightImperial?: number;
 }
+
+export interface IDeleteDogData {
+    /**
+     * The id of the dog to delete
+     */
+    id: string;
+    /**
+     * The id of the user who owns the dog
+     */
+    userId: string;
+}

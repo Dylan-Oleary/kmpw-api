@@ -4,7 +4,7 @@ import { DocumentNode } from "graphql";
 import { BadRequestError } from "errors";
 import { addUserToRequestData, prismaClient } from "lib";
 import { DogService, SafetyLevelService } from "services";
-import { ICreateDogData } from "types";
+import { ICreateDogData, IDeleteDogData } from "types";
 
 export const typeDefinitions: DocumentNode = gql`
     enum WeightClass {
@@ -14,7 +14,7 @@ export const typeDefinitions: DocumentNode = gql`
     }
 
     type DogSize {
-        id: String!
+        id: ID!
         createdAt: DateTime!
         updatedAt: DateTime!
         isDeleted: Boolean!
@@ -22,7 +22,7 @@ export const typeDefinitions: DocumentNode = gql`
     }
 
     type Dog {
-        id: String!
+        id: ID!
         createdAt: DateTime!
         updatedAt: DateTime!
         isDeleted: Boolean!
@@ -51,6 +51,7 @@ export const typeDefinitions: DocumentNode = gql`
 
     extend type Mutation {
         createDog(data: CreateDogData!, temperatureFarenheit: Float): Dog
+        deleteDog(id: ID!): ID!
     }
 `;
 
@@ -75,6 +76,10 @@ export const resolvers = {
         createDog: (_, { data, temperatureFarenheit }, { user }) =>
             new DogService()
                 .createDog(addUserToRequestData<ICreateDogData>(user, data))
-                .then((dog) => ({ ...dog, temperatureFarenheit }))
+                .then((dog) => ({ ...dog, temperatureFarenheit })),
+        deleteDog: (_, args, { user }) =>
+            new DogService()
+                .deleteDog(addUserToRequestData<IDeleteDogData>(user, args))
+                .then(({ id }) => id)
     }
 };

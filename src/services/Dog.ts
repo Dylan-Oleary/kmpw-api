@@ -1,10 +1,11 @@
+import { Dog } from "@prisma/client";
 import { isValueOfType } from "@theonlydevsever/utilities";
 import convert from "convert-units";
 
-import { DefinedErrorCodes, NotFoundError, ValidationError } from "errors";
+import { BadRequestError, DefinedErrorCodes, NotFoundError, ValidationError } from "errors";
 import { prismaClient } from "lib";
 import { ModelService } from "services";
-import { ICreateDogData, IServiceField } from "types";
+import { ICreateDogData, IDeleteDogData, IServiceField } from "types";
 
 class DogService extends ModelService {
     readonly modelFields: IServiceField[] = [
@@ -137,7 +138,7 @@ class DogService extends ModelService {
      * @param data Data used to create a dog record
      * @returns A dog record
      */
-    public async createDog(data: ICreateDogData) {
+    public async createDog(data: ICreateDogData): Promise<Dog> {
         try {
             const validatedData = await super.validateCreateData<ICreateDogData>(data);
             const sizeId = await this.getDogSizeFromWeight(validatedData.weightImperial);
@@ -164,6 +165,39 @@ class DogService extends ModelService {
         } catch (error) {
             throw error;
         }
+    }
+
+    /**
+     * Deletes a dog record
+     *
+     * @param id The id of the dog to delete
+     * @param user The user that owns the dog
+     * @returns The deleted dog record
+     */
+    public deleteDog(data: IDeleteDogData): Promise<Dog> {
+        if (!isValueOfType(data?.id, "string")) {
+            return Promise.reject(
+                new BadRequestError("Invalid data", [
+                    `Expected id to be of type string, but received ${typeof data?.id}`
+                ])
+            );
+        }
+
+        if (!isValueOfType(data?.userId, "string")) {
+            return Promise.reject(
+                new BadRequestError("Invalid data", [
+                    `Expected userId to be of type string, but received ${typeof data?.userId}`
+                ])
+            );
+        }
+
+        return prismaClient.dog.findFirst({ where: data }).then((dog) => {
+            if (!dog) {
+                return Promise.reject(new NotFoundError("Dog not found"));
+            }
+
+            return prismaClient.dog.update({ data: { isDeleted: true }, where: { id: dog.id } });
+        });
     }
 
     /**

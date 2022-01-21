@@ -6,7 +6,7 @@ import { UserService } from "services";
 
 export const typeDefinitions: DocumentNode = gql`
     type User {
-        id: String!
+        id: ID!
         createdAt: DateTime!
         updatedAt: DateTime!
         isDeleted: Boolean!
@@ -28,7 +28,7 @@ export const resolvers = {
     User: {
         dogs: ({ id: userId, temperatureFarenheit }) =>
             prismaClient.dog
-                .findMany({ where: { userId } })
+                .findMany({ where: { isDeleted: false, userId } })
                 .then((dogs) => dogs.map((dog) => ({ ...dog, temperatureFarenheit })))
     }
 };

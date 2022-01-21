@@ -5,7 +5,7 @@ import { prismaClient } from "lib";
 
 export const typeDefinitions: DocumentNode = gql`
     type BreedGroup {
-        id: String!
+        id: ID!
         createdAt: DateTime!
         updatedAt: DateTime!
         isDeleted: Boolean!
@@ -14,7 +14,7 @@ export const typeDefinitions: DocumentNode = gql`
     }
 
     type Breed {
-        id: String!
+        id: ID!
         createdAt: DateTime!
         updatedAt: DateTime!
         isDeleted: Boolean!
