@@ -1,7 +1,7 @@
 import { UserIdentityProvider } from "@prisma/client";
 import { NextFunction, Request, Response, Router } from "express";
 
-import { NotAllowedError } from "errors";
+import { NotAllowedError, ValidationError } from "errors";
 import { getRefreshToken, validateUserAuthRequestBody, verifyAccessToken } from "middlewares";
 import { AuthorizationService, SessionService, UserService } from "services";
 
@@ -116,15 +116,30 @@ authRouter
 authRouter
     .route("/register")
     .post(validateUserAuthRequestBody, (req: Request, res: Response, next: NextFunction) => {
-        const { email, password } = req.body;
+        const { confirmPassword, email, password } = req.body;
+
+        if (confirmPassword !== password) {
+            return next(new ValidationError("Passwords do not match"));
+        }
+
+        const auth = new AuthorizationService();
 
         return new UserService()
             .createUser({
                 email: email.trim(),
-                password: password.trim(),
+                password,
                 identityProvider: UserIdentityProvider.LOCAL
             })
-            .then((user) => res.status(201).json(user))
+            .then((user) => auth.generateTokenSetFromUser(user))
+            .then(([accessToken, refreshToken]) => {
+                res.cookie("refresh", refreshToken, {
+                    expires: new Date(auth.getTokenExpiry(refreshToken) * 1000),
+                    httpOnly: process?.env?.NODE_ENV === "production",
+                    path: "/auth/refresh"
+                });
+
+                return res.status(200).json({ accessToken });
+            })
             .catch(next);
     })
     .get((req: Request, res: Response, next: NextFunction) => next(new NotAllowedError()))

@@ -55,7 +55,7 @@ class UserService extends ModelService<User> {
         }),
         this.generateServiceField({
             name: "reauthenticationAt",
-            type: "string",
+            type: "object",
             isRequiredOnCreate: false,
             canCreate: false
         }),
