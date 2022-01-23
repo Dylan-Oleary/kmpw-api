@@ -138,7 +138,7 @@ authRouter
                     path: "/auth/refresh"
                 });
 
-                return res.status(200).json({ accessToken });
+                return res.status(201).json({ accessToken });
             })
             .catch(next);
     })
