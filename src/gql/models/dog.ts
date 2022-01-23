@@ -4,7 +4,7 @@ import { DocumentNode } from "graphql";
 import { BadRequestError } from "errors";
 import { addUserToRequestData, prismaClient } from "lib";
 import { DogService, SafetyLevelService } from "services";
-import { ICreateDogData, IDeleteDogData } from "types";
+import { ICreateDogData, IDogIdentifier } from "types";
 
 export const typeDefinitions: DocumentNode = gql`
     enum WeightClass {
@@ -49,9 +49,20 @@ export const typeDefinitions: DocumentNode = gql`
         breedId: String!
     }
 
+    input UpdateDogData {
+        name: String
+        description: String
+        birthday: DateTime
+        profilePicture: String
+        heightImperial: Float
+        weightImperial: Float
+        breedId: String
+    }
+
     extend type Mutation {
         createDog(data: CreateDogData!, temperatureFarenheit: Float): Dog
         deleteDog(id: ID!): ID!
+        updateDog(id: ID!, data: UpdateDogData!, temperatureFarenheit: Float): Dog
     }
 `;
 
@@ -79,7 +90,14 @@ export const resolvers = {
                 .then((dog) => ({ ...dog, temperatureFarenheit })),
         deleteDog: (_, args, { user }) =>
             new DogService()
-                .deleteDog(addUserToRequestData<IDeleteDogData>(user, args))
-                .then(({ id }) => id)
+                .deleteDog(addUserToRequestData<IDogIdentifier>(user, args))
+                .then(({ id }) => id),
+        updateDog: (_, { data, id, temperatureFarenheit }, { user }) =>
+            new DogService()
+                .updateDog(
+                    addUserToRequestData<IDogIdentifier>(user, { id } as IDogIdentifier),
+                    data
+                )
+                .then((dog) => ({ ...dog, temperatureFarenheit }))
     }
 };

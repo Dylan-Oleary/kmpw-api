@@ -89,34 +89,66 @@ abstract class ModelService {
         }
 
         for (const [key, value] of Object.entries(data)) {
-            const fieldConfig = creatableFields.find(({ name }) => name === key);
-
-            if (!fieldConfig) {
-                return Promise.reject(
-                    new ValidationError(DefinedErrorCodes.KMPW0015, [
-                        `${key} is not allowed on create`
-                    ]).setErrorCode("KMPW0015")
-                );
-            }
-
-            const { type, validation } = fieldConfig;
-
-            if (!isValueOfType(value, type)) {
-                return Promise.reject(
-                    new ValidationError(DefinedErrorCodes.KMPW0015, [
-                        `Expected ${key} to be of type ${type}, but received ${typeof value}`
-                    ]).setErrorCode("KMPW0015")
-                );
-            }
-
-            if (isValueOfType(validation, "function")) {
-                await fieldConfig
-                    ?.validation(value as ExtendedPrimitiveType)
-                    .catch((error) => Promise.reject(error));
-            }
+            await this.validateFieldData(creatableFields, { key, value }, "CREATE");
         }
 
         return data;
+    }
+
+    /**
+     * Validates update data against the model field configuration
+     *
+     * @param data The data used to update a record
+     * @returns The passed update data object
+     */
+    public async validateUpdateData<T = Record<string, unknown>>(data: T): Promise<T> {
+        const editableFields = this.modelFields.filter(({ canEdit }) => canEdit);
+
+        for (const [key, value] of Object.entries(data)) {
+            await this.validateFieldData(editableFields, { key, value }, "EDIT");
+        }
+
+        return data;
+    }
+
+    /**
+     * Validates passed data based on its field configuration
+     *
+     * @param fields A list of fields existing on the model
+     * @param data The key/value pair of the passed data
+     * @param operation The type of operation – Create or Update
+     */
+    public async validateFieldData(
+        fields: IServiceField[],
+        data: { key: string; value: unknown },
+        operation: "CREATE" | "EDIT" = "CREATE"
+    ): Promise<void> {
+        const { key, value } = data;
+        const fieldConfig = (fields || []).find(({ name }) => name === key);
+
+        if (!fieldConfig) {
+            return Promise.reject(
+                new ValidationError(DefinedErrorCodes.KMPW0015, [
+                    `${key} is not allowed on ${operation.toLowerCase()}`
+                ]).setErrorCode("KMPW0015")
+            );
+        }
+
+        const { type, validation } = fieldConfig;
+
+        if (!isValueOfType(value, type)) {
+            return Promise.reject(
+                new ValidationError(DefinedErrorCodes.KMPW0015, [
+                    `Expected ${key} to be of type ${type}, but received ${typeof value}`
+                ]).setErrorCode("KMPW0015")
+            );
+        }
+
+        if (isValueOfType(validation, "function")) {
+            await fieldConfig
+                ?.validation(value as ExtendedPrimitiveType)
+                .catch((error) => Promise.reject(error));
+        }
     }
 }
 

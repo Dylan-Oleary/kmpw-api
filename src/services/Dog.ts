@@ -5,7 +5,7 @@ import convert from "convert-units";
 import { BadRequestError, DefinedErrorCodes, NotFoundError, ValidationError } from "errors";
 import { prismaClient } from "lib";
 import { ModelService } from "services";
-import { ICreateDogData, IDeleteDogData, IServiceField } from "types";
+import { ICreateDogData, IDogIdentifier, IServiceField, IUpdateDogData } from "types";
 
 class DogService extends ModelService {
     readonly modelFields: IServiceField[] = [
@@ -168,13 +168,65 @@ class DogService extends ModelService {
     }
 
     /**
+     * Updates an existing dog record based on the passed data
+     *
+     * @param opts The identifying information used to find the dog record
+     * @param data The data used to update the dog
+     * @returns An updated dog record
+     */
+    public async updateDog(opts: IDogIdentifier, data: IUpdateDogData): Promise<Dog> {
+        try {
+            const { id, userId } = opts;
+            const dog = await prismaClient.dog.findFirst({
+                where: { id, userId, isDeleted: false }
+            });
+
+            if (!dog) {
+                return Promise.reject(
+                    new NotFoundError("Dog not found", [
+                        `Dog with id '${opts?.id}' owned by user '${opts?.userId}' does not exist  `
+                    ])
+                );
+            }
+
+            const validatedData = await super.validateUpdateData<IUpdateDogData>(data);
+            const updateData: IUpdateDogData & {
+                heightMetric?: number;
+                sizeId?: string;
+                weightMetric?: number;
+            } = { ...validatedData };
+
+            if (validatedData.weightImperial) {
+                const sizeId = await this.getDogSizeFromWeight(validatedData.weightImperial);
+
+                updateData.sizeId = sizeId;
+                updateData.weightMetric = Number(
+                    convert(validatedData.weightImperial).from("lb").to("kg").toFixed(1)
+                );
+            }
+
+            const { heightImperial } = updateData;
+
+            if (isValueOfType(heightImperial, "number")) {
+                updateData.heightMetric = Number(
+                    convert(heightImperial).from("in").to("cm").toFixed(1)
+                );
+            }
+
+            return prismaClient.dog.update({ where: { id }, data: updateData });
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    /**
      * Deletes a dog record
      *
      * @param id The id of the dog to delete
      * @param user The user that owns the dog
      * @returns The deleted dog record
      */
-    public deleteDog(data: IDeleteDogData): Promise<Dog> {
+    public deleteDog(data: IDogIdentifier): Promise<Dog> {
         if (!isValueOfType(data?.id, "string")) {
             return Promise.reject(
                 new BadRequestError("Invalid data", [
