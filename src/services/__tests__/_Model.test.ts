@@ -38,6 +38,12 @@ class DummyService extends ModelService {
         this.generateServiceField({
             name: "requiredOnCreate",
             type: "string"
+        }),
+        this.generateServiceField({
+            name: "noUpdate",
+            canEdit: false,
+            isRequiredOnCreate: false,
+            type: "string"
         })
     ];
 
@@ -279,4 +285,67 @@ describe("Model Service", () => {
             });
         }); // close describe("Type Validation")
     }); // close describe("validateCreateData")
+
+    describe("validateUpdateData", () => {
+        test("throws an error if a passed field that cannot be updated", () => {
+            const key = "noUpdate";
+
+            return dummy
+                .validateUpdateData({ [key]: "w00t!", requiredOnCreate: "blah" })
+                .then(() => {
+                    throw new Error("Expected an error to be thrown");
+                })
+                .catch((error) => {
+                    expect(error).toEqual(
+                        expect.objectContaining({
+                            details: [{ message: `${key} is not allowed on edit` }],
+                            errorCode: "KMPW0015",
+                            message: DefinedErrorCodes.KMPW0015,
+                            statusCode: ErrorStatus.UnprocessableEntity
+                        })
+                    );
+                    expect(error instanceof ValidationError).toEqual(true);
+                });
+        });
+
+        test("throws an error if the passed field fails validation", async () => {
+            const key = "name";
+            const minLengthFail = "";
+            const maxLengthFail = "BTBAM".repeat(20);
+
+            await dummy
+                .validateUpdateData({ [key]: minLengthFail, requiredOnCreate: "blah" })
+                .then(() => {
+                    throw new Error("Expected an error to be thrown");
+                })
+                .catch((error) => {
+                    expect(error).toEqual(
+                        expect.objectContaining({
+                            details: [{ message: `${key} cannot be empty` }],
+                            errorCode: "KMPW0015",
+                            message: DefinedErrorCodes.KMPW0015,
+                            statusCode: ErrorStatus.UnprocessableEntity
+                        })
+                    );
+                    expect(error instanceof ValidationError).toEqual(true);
+                });
+
+            await dummy
+                .validateUpdateData({ [key]: maxLengthFail, requiredOnCreate: "blah" })
+                .then(() => {
+                    throw new Error("Expected an error to be thrown");
+                })
+                .catch((error) => {
+                    expect(error).toEqual(
+                        expect.objectContaining({
+                            details: [{ message: `${key} cannot be more than 50 characters` }],
+                            errorCode: "KMPW0015",
+                            message: DefinedErrorCodes.KMPW0015,
+                            statusCode: ErrorStatus.UnprocessableEntity
+                        })
+                    );
+                    expect(error instanceof ValidationError).toEqual(true);
+                });
+        });
+    }); // close describe("validateUpdateDta")
 }); // close describe("Model Service")
