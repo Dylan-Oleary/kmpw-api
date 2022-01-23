@@ -1,23 +1,85 @@
-import { User } from "@prisma/client";
+import { User, UserIdentityProvider } from "@prisma/client";
 import { isValueOfType } from "@theonlydevsever/utilities";
 import bcrypt from "bcrypt";
 
-import { AuthenticationError, BadRequestError, ConflictError, NotFoundError } from "errors";
+import {
+    AuthenticationError,
+    BadRequestError,
+    ConflictError,
+    DefinedErrorCodes,
+    NotFoundError,
+    ValidationError
+} from "errors";
 import { prismaClient } from "lib";
-import { ICreateUserData, IEditUserData, IGetUserWhere } from "types";
+import { ModelService } from "services";
+import { ICreateUserData, IGetUserWhere, IServiceField, IUpdateUserData } from "types";
 
-class UserService {
-    private readonly _prismaUserSelectConfig = {
-        id: true,
-        identityProvider: true,
-        email: true,
-        createdAt: true,
-        updatedAt: true,
-        reauthenticationAt: true,
-        password: true
-    };
+/**
+ * Service used for administering `User` models
+ */
+class UserService extends ModelService<User> {
+    readonly modelFields: IServiceField[] = [
+        ...this.baseModelFields,
+        this.generateServiceField({
+            name: "email",
+            type: "string",
+            validation: async (value) => {
+                if (value?.trim()?.length === 0)
+                    throw new ValidationError(DefinedErrorCodes.KMPW0015, [
+                        "Email cannot be empty"
+                    ]).setErrorCode("KMPW0015");
+                if (value?.trim().length > 150)
+                    throw new ValidationError(DefinedErrorCodes.KMPW0015, [
+                        "Email cannot be more than 150 characters"
+                    ]).setErrorCode("KMPW0015");
+                if (!UserService.isValidEmail(value))
+                    throw new ValidationError(DefinedErrorCodes.KMPW0015, [
+                        "Email is invalid"
+                    ]).setErrorCode("KMPW0015");
+            }
+        }),
+        this.generateServiceField({
+            name: "password",
+            type: "string",
+            canEdit: false,
+            validation: async (value) => {
+                if (/\s/.test(value))
+                    throw new ValidationError(DefinedErrorCodes.KMPW0015, [
+                        "Password cannot contain spaces"
+                    ]).setErrorCode("KMPW0015");
+                if (value?.trim()?.length < 8 || value?.trim()?.length > 50)
+                    throw new ValidationError(DefinedErrorCodes.KMPW0015, [
+                        "Password must be between 8 and 50 characters"
+                    ]).setErrorCode("KMPW0015");
+            }
+        }),
+        this.generateServiceField({
+            name: "reauthenticationAt",
+            type: "string",
+            isRequiredOnCreate: false,
+            canCreate: false
+        }),
+        this.generateServiceField({
+            name: "identityProvider",
+            type: "string",
+            canEdit: false,
+            validation: async (value) => {
+                const validValues = Object.entries(UserIdentityProvider).map(([, v]) => v);
 
-    constructor() {}
+                //@ts-ignore
+                if (validValues.indexOf(value) === -1)
+                    throw new ValidationError(DefinedErrorCodes.KMPW0015, [
+                        `Invalid identity provider. Expected one of ${validValues.join(
+                            ", "
+                        )} but received: ${value}`
+                    ]).setErrorCode("KMPW0015");
+            }
+        })
+    ];
+
+    constructor() {
+        super();
+    }
 
     /**
      * Authenticates a user against the passed email and password
@@ -30,7 +92,7 @@ class UserService {
         return prismaClient.user
             .findFirst({
                 where: { email, isDeleted: false },
-                select: this._prismaUserSelectConfig
+                select: this.getPrismaSelectConfig()
             })
             .then(async (user) => {
                 if (!user) {
@@ -67,27 +129,32 @@ class UserService {
      * @param data User creation data
      * @returns A user record
      */
-    public createUser(data: ICreateUserData): Promise<Partial<User>> {
-        const { email, identityProvider, password } = data;
+    public async createUser(data: ICreateUserData): Promise<Partial<User>> {
+        try {
+            const validatedData = await super.validateCreateData<ICreateUserData>(data);
+            const { email, identityProvider, password } = validatedData;
 
-        return prismaClient.user
-            .findUnique({ where: { email } })
-            .then((user) => {
-                if (user) {
-                    return Promise.reject(
-                        new ConflictError(`User with email '${email}' already exists`)
-                    );
-                }
+            return prismaClient.user
+                .findUnique({ where: { email } })
+                .then((user) => {
+                    if (user) {
+                        return Promise.reject(
+                            new ConflictError(`User with email '${email}' already exists`)
+                        );
+                    }
 
-                return bcrypt.hash(password, 10);
-            })
-            .then((hashedPassword) =>
-                prismaClient.user.create({
-                    data: { email, password: hashedPassword, identityProvider },
-                    select: this._prismaUserSelectConfig
+                    return bcrypt.hash(password, 10);
                 })
-            )
-            .then((newUser) => this.cleanUserRecord(newUser));
+                .then((hashedPassword) =>
+                    prismaClient.user.create({
+                        data: { email, password: hashedPassword, identityProvider },
+                        select: this.getPrismaSelectConfig()
+                    })
+                )
+                .then((newUser) => this.cleanUserRecord(newUser));
+        } catch (error) {
+            throw error;
+        }
     }
 
     /**
@@ -97,20 +164,20 @@ class UserService {
      * @param data The data to update the user with
      * @returns The updated user record
      */
-    public updateUser(id: string, data: IEditUserData): Promise<Partial<User>> {
-        const editData = { ...data };
+    public async updateUser(id: string, data: IUpdateUserData): Promise<Partial<User>> {
+        try {
+            const validatedData = await super.validateUpdateData<IUpdateUserData>(data);
 
-        for (const [key, value] of Object.entries(editData)) {
-            if (isValueOfType(value, "undefined")) delete editData[key];
+            return prismaClient.user.update({ where: { id }, data: validatedData }).then((user) => {
+                if (!user) {
+                    return Promise.reject(new NotFoundError("User not found"));
+                }
+
+                return this.cleanUserRecord(user);
+            });
+        } catch (error) {
+            throw error;
         }
-
-        return prismaClient.user.update({ where: { id }, data: editData }).then((user) => {
-            if (!user) {
-                return Promise.reject(new NotFoundError("User not found"));
-            }
-
-            return this.cleanUserRecord(user);
-        });
     }
 
     /**
@@ -135,7 +202,7 @@ class UserService {
         }
 
         return prismaClient.user
-            .findFirst({ where, select: this._prismaUserSelectConfig })
+            .findFirst({ where, select: this.getPrismaSelectConfig() })
             .then((user) => {
                 if (!user) {
                     return Promise.reject(new NotFoundError("User not found"));

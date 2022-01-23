@@ -7,7 +7,10 @@ import { prismaClient } from "lib";
 import { ModelService } from "services";
 import { ICreateDogData, IDogIdentifier, IServiceField, IUpdateDogData } from "types";
 
-class DogService extends ModelService {
+/**
+ * Service used for administering `Dog` models
+ */
+class DogService extends ModelService<Dog> {
     readonly modelFields: IServiceField[] = [
         ...this.baseModelFields,
         this.generateServiceField({

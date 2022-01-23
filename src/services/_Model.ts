@@ -5,7 +5,7 @@ import { IServiceField } from "types";
 /**
  * An abstract class used for administering custom data models in the system
  */
-abstract class ModelService {
+abstract class ModelService<T = Record<string, unknown>> {
     private readonly serviceFieldDefaults = {
         canCreate: true,
         canEdit: true,
@@ -50,14 +50,14 @@ abstract class ModelService {
         return { ...this.serviceFieldDefaults, ...fieldOpts } as IServiceField;
     }
 
-    public getPrismaSelectConfig(): Record<string, boolean> {
+    public getPrismaSelectConfig(): Record<keyof T, boolean> {
         const config = {};
 
         for (const { name, isSelectable } of this.modelFields) {
             if (isSelectable) config[name] = true;
         }
 
-        return config;
+        return config as Record<keyof T, boolean>;
     }
 
     /**

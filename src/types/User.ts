@@ -15,7 +15,7 @@ export interface ICreateUserData {
     identityProvider: UserIdentityProvider;
 }
 
-export interface IEditUserData {
+export interface IUpdateUserData {
     /**
      * The timestamp at which the user requested a global re-authentication
      */
