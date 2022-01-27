@@ -10,3 +10,4 @@ db
 *.d.ts
 *.sql
 *.toml
+*.yml

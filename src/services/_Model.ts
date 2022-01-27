@@ -25,14 +25,14 @@ abstract class ModelService<T = Record<string, unknown>> {
             canCreate: false,
             canEdit: false,
             isRequiredOnCreate: false,
-            type: "string"
+            type: "date"
         }),
         this.generateServiceField({
             name: "updatedAt",
             canCreate: false,
             canEdit: false,
             isRequiredOnCreate: false,
-            type: "string"
+            type: "date"
         }),
         this.generateServiceField({
             name: "isDeleted",

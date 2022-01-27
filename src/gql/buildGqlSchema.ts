@@ -2,7 +2,7 @@ import { gql } from "apollo-server-express";
 import extend from "extend";
 import { makeExecutableSchema } from "@graphql-tools/schema";
 import { GraphQLSchema } from "graphql";
-import { GraphQLDateTime } from "graphql-iso-date";
+import { DateTimeResolver, DateTimeTypeDefinition } from "graphql-scalars";
 
 import { resolvers, typeDefinitions } from "./models";
 
@@ -14,18 +14,18 @@ import { resolvers, typeDefinitions } from "./models";
 export const buildGqlSchema: () => GraphQLSchema = () =>
     makeExecutableSchema({
         typeDefs: gql`
-            scalar DateTime
             type Mutation {
                 _: Boolean
             }
             type Query {
                 _: Boolean
             }
+            ${DateTimeTypeDefinition}
             ${typeDefinitions}
         `,
         resolvers: extend(
             true,
-            { DateTime: GraphQLDateTime, Mutation: { _: () => true }, Query: { _: () => true } },
+            { DateTime: DateTimeResolver, Mutation: { _: () => true }, Query: { _: () => true } },
             resolvers
         )
     });

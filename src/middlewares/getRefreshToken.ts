@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
 import { AuthorizationError } from "errors";
+import { ValidClientType } from "types";
 
 /**
  * Checks if a refresh token has been passed with the request and passes it along to
@@ -15,11 +16,22 @@ const getRefreshToken: (req: Request, res: Response, next: NextFunction) => void
     res,
     next
 ) => {
-    const { refresh } = req.cookies;
+    const { client = ValidClientType.WEB } = req.body;
+    let refreshToken;
 
-    if (!refresh) return next(new AuthorizationError("Refresh token missing"));
+    if (client === ValidClientType.WEB) {
+        const { refresh } = req.cookies;
 
-    res.locals.refresh = refresh;
+        refreshToken = refresh;
+    } else if (client === ValidClientType.NATIVE) {
+        const { refresh } = req?.body;
+
+        refreshToken = refresh;
+    }
+
+    if (!refreshToken) return next(new AuthorizationError("Refresh token missing"));
+
+    res.locals.refresh = refreshToken;
 
     return next();
 };

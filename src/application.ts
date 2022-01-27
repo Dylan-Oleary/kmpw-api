@@ -3,7 +3,7 @@ import compression from "compression";
 import cookieParser from "cookie-parser";
 import express, { Express, NextFunction, Request, Response } from "express";
 
-import { buildGqlSchema } from "gql";
+import { buildGqlSchema, convertErrorToGqlError, formatGqlError } from "gql";
 import { catchAllHandler, globalErrorHandler, verifyAccessTokenGraphQL } from "middlewares";
 import { authRouter, baseRouter } from "routes";
 import { UserService } from "services";
@@ -37,9 +37,10 @@ const initializeApplication: () => Promise<Express> = async () => {
 
                     return { user };
                 } catch (error) {
-                    throw error;
+                    throw convertErrorToGqlError(error);
                 }
             },
+            formatError: formatGqlError,
             introspection: process?.env?.NODE_ENV !== "production",
             schema: buildGqlSchema()
         });

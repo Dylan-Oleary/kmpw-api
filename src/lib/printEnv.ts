@@ -11,14 +11,17 @@ const printEnv: () => void = () => {
     console.info(":".repeat(packageName.length));
     console.info("");
     console.info(`Environment: ${process.env.NODE_ENV}`);
+    console.info("");
 
     const envKeys = [
         "PORT",
-        "REDIS_PORT",
+        "REDIS_HOST",
         "ACCESS_TOKEN_SECRET",
         "ACCESS_TOKEN_LIFESPAN",
         "REFRESH_TOKEN_SECRET",
-        "REFRESH_TOKEN_LIFESPAN"
+        "REFRESH_TOKEN_LIFESPAN",
+        "DOG_API_BASE_URL",
+        "WEATHER_API_BASE_URL"
     ];
 
     envKeys.sort();
@@ -30,6 +33,8 @@ const printEnv: () => void = () => {
     envKeys.forEach((key) => {
         console.info(`ENV: ${key.padEnd(longestKey.length, " ")} -> ${process.env[key]}`);
     });
+
+    console.info("");
 };
 
 export default printEnv;
