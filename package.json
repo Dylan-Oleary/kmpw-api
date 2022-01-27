@@ -34,6 +34,7 @@
     "prepare": "husky install",
     "prettier": "prettier --check \"./src/*\"",
     "prettier:fix": "prettier --write \"./src/*\"",
+    "primsa:deploy": "npx prisma migrate deploy",
     "prisma:migrate": "npx prisma migrate dev",
     "prisma:reset": "npx prisma migrate reset",
     "prisma:seed": "ts-node -r tsconfig-paths/register prisma/seed.ts",
@@ -89,7 +90,7 @@
   "dependencies": {
     "@graphql-tools/schema": "^8.3.1",
     "@prisma/client": "^3.7.0",
-    "@theonlydevsever/utilities": "^1.8.4",
+    "@theonlydevsever/utilities": "^1.9.0",
     "apollo-server-express": "^3.5.0",
     "axios": "^0.24.0",
     "bcrypt": "^5.0.1",
