@@ -1,0 +1,75 @@
+version: 2.1
+
+jobs:
+  Deploy Database (Production):
+    docker:
+      - image: cimg/node:17.4.0
+        environment:
+          DATABASE_URL: $DATABASE_URL_PRODUCTION
+          DOG_API_KEY: $DOG_API_KEY
+          DOG_API_BASE_URL: $DOG_API_BASE_URL
+          WEATHER_API_KEY: $WEATHER_API_KEY
+          WEATHER_API_BASE_URL: $WEATHER_API_BASE_URL
+    steps:
+      - checkout
+      - run:
+          name: Set Environment Variables
+          command: |
+            echo DATABASE_URL="$DATABASE_URL" >> "${BASH_ENV}"
+            echo DOG_API_KEY="$DOG_API_KEY" >> "${BASH_ENV}"
+            echo DOG_API_BASE_URL="$DOG_API_BASE_URL" >> "${BASH_ENV}"
+            echo WEATHER_API_KEY="$WEATHER_API_KEY" >> "${BASH_ENV}"
+            echo WEATHER_API_BASE_URL="$WEATHER_API_BASE_URL" >> "${BASH_ENV}"
+      - run: 
+          name: Install Dependencies
+          command: yarn install
+      - run:
+          name: Run Database Migrations
+          command: yarn prisma:deploy
+      - run:
+          name: Seed Database
+          command: yarn prisma:seed
+  Deploy Database (Staging):
+    docker:
+      - image: cimg/node:17.4.0
+        environment:
+          DATABASE_URL: $DATABASE_URL_STAGING
+          DOG_API_KEY: $DOG_API_KEY
+          DOG_API_BASE_URL: $DOG_API_BASE_URL
+          WEATHER_API_KEY: $WEATHER_API_KEY
+          WEATHER_API_BASE_URL: $WEATHER_API_BASE_URL
+    steps:
+      - checkout
+      - run:
+          name: Set Environment Variables
+          command: |
+            echo DATABASE_URL="$DATABASE_URL" >> "${BASH_ENV}"
+            echo DOG_API_KEY="$DOG_API_KEY" >> "${BASH_ENV}"
+            echo DOG_API_BASE_URL="$DOG_API_BASE_URL" >> "${BASH_ENV}"
+            echo WEATHER_API_KEY="$WEATHER_API_KEY" >> "${BASH_ENV}"
+            echo WEATHER_API_BASE_URL="$WEATHER_API_BASE_URL" >> "${BASH_ENV}"
+      - run: 
+          name: Install Dependencies
+          command: yarn install
+      - run:
+          name: Run Database Migrations
+          command: yarn prisma:deploy
+      - run:
+          name: Seed Database
+          command: yarn prisma:seed
+
+workflows:
+  Deploy (Production):
+    jobs:
+      - Deploy Database (Production):
+        filters:
+          branches:
+            only:
+              - main
+  Deploy (Staging):
+    jobs:
+      - Deploy Database (Staging):
+          filters:
+            branches:
+              only:
+                - staging
