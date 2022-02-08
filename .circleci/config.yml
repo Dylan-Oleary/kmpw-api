@@ -62,10 +62,10 @@ workflows:
   Deploy (Production):
     jobs:
       - Deploy Production Database:
-        filters:
-          branches:
-            only:
-              - main
+          filters:
+            branches:
+              only:
+                - main
   Deploy (Staging):
     jobs:
       - Deploy Staging Database:
