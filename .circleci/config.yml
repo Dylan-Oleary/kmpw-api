@@ -1,7 +1,7 @@
 version: 2.1
 
 jobs:
-  Deploy Production Database:
+  Deploy Production:
     docker:
       - image: cimg/node:17.4.0
         environment:
@@ -13,13 +13,21 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Set Environment Variables
+          name: Setup Environment
           command: |
+            echo 'export PACKAGE_VERSION=$(cat package.json \
+              | grep version \
+              | head -1 \
+              | awk -F: '{ print $2 }' \
+              | sed 's/[",]//g')' >> $BASH_ENV
+            echo 'export IMAGE_NAME=kmpw-api' >> $BASH_ENV
             echo DATABASE_URL="$DATABASE_URL" >> "${BASH_ENV}"
             echo DOG_API_KEY="$DOG_API_KEY" >> "${BASH_ENV}"
             echo DOG_API_BASE_URL="$DOG_API_BASE_URL" >> "${BASH_ENV}"
             echo WEATHER_API_KEY="$WEATHER_API_KEY" >> "${BASH_ENV}"
             echo WEATHER_API_BASE_URL="$WEATHER_API_BASE_URL" >> "${BASH_ENV}"
+      - setup_remote_docker:
+          version: 19.03.13
       - run: 
           name: Install Dependencies
           command: yarn install
@@ -29,7 +37,15 @@ jobs:
       - run:
           name: Seed Database
           command: yarn prisma:seed
-  Deploy Staging Database:
+      - run:
+          name: Build & Push Docker Image
+          command: |
+            docker build -t dylanolearydev/$IMAGE_NAME:$PACKAGE_VERSION .
+            docker build -t dylanolearydev/$IMAGE_NAME:latest .
+            echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
+            docker push dylanolearydev/$IMAGE_NAME:$PACKAGE_VERSION
+            docker push dylanolearydev/$IMAGE_NAME:latest
+  Deploy Staging:
     docker:
       - image: cimg/node:17.4.0
         environment:
@@ -41,13 +57,16 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Set Environment Variables
+          name: Setup Environment
           command: |
+            echo 'export IMAGE_NAME=kmpw-api' >> $BASH_ENV
             echo DATABASE_URL="$DATABASE_URL" >> "${BASH_ENV}"
             echo DOG_API_KEY="$DOG_API_KEY" >> "${BASH_ENV}"
             echo DOG_API_BASE_URL="$DOG_API_BASE_URL" >> "${BASH_ENV}"
             echo WEATHER_API_KEY="$WEATHER_API_KEY" >> "${BASH_ENV}"
             echo WEATHER_API_BASE_URL="$WEATHER_API_BASE_URL" >> "${BASH_ENV}"
+      - setup_remote_docker:
+          version: 19.03.13
       - run: 
           name: Install Dependencies
           command: yarn install
@@ -57,18 +76,24 @@ jobs:
       - run:
           name: Seed Database
           command: yarn prisma:seed
+      - run:
+          name: Build & Push Docker Image
+          command: |
+            docker build -t dylanolearydev/$IMAGE_NAME:staging .
+            echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
+            docker push dylanolearydev/$IMAGE_NAME:staging
 
 workflows:
   Deploy (Production):
     jobs:
-      - Deploy Production Database:
+      - Deploy Production:
           filters:
             branches:
               only:
                 - main
   Deploy (Staging):
     jobs:
-      - Deploy Staging Database:
+      - Deploy Staging:
           filters:
             branches:
               only:
