@@ -1,7 +1,7 @@
 version: 2.1
 
 jobs:
-  Deploy Database (Production):
+  Deploy Production Database:
     docker:
       - image: cimg/node:17.4.0
         environment:
@@ -29,7 +29,7 @@ jobs:
       - run:
           name: Seed Database
           command: yarn prisma:seed
-  Deploy Database (Staging):
+  Deploy Staging Database:
     docker:
       - image: cimg/node:17.4.0
         environment:
@@ -61,14 +61,14 @@ jobs:
 workflows:
   Deploy (Production):
     jobs:
-      - Deploy Database (Production):
+      - Deploy Production Database:
         filters:
           branches:
             only:
               - main
   Deploy (Staging):
     jobs:
-      - Deploy Database (Staging):
+      - Deploy Staging Database:
           filters:
             branches:
               only:
