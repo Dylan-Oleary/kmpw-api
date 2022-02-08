@@ -34,7 +34,7 @@
     "prepare": "husky install",
     "prettier": "prettier --check \"./src/*\"",
     "prettier:fix": "prettier --write \"./src/*\"",
-    "primsa:deploy": "npx prisma migrate deploy",
+    "prisma:deploy": "npx prisma migrate deploy",
     "prisma:migrate": "npx prisma migrate dev",
     "prisma:reset": "npx prisma migrate reset",
     "prisma:seed": "ts-node -r tsconfig-paths/register prisma/seed.ts",
