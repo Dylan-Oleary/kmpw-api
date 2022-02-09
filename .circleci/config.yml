@@ -28,15 +28,15 @@ jobs:
             echo WEATHER_API_BASE_URL="$WEATHER_API_BASE_URL" >> "${BASH_ENV}"
       - setup_remote_docker:
           version: 19.03.13
-      - run: 
-          name: Install Dependencies
-          command: yarn install
-      - run:
-          name: Run Database Migrations
-          command: yarn prisma:deploy
-      - run:
-          name: Seed Database
-          command: yarn prisma:seed
+      # - run: 
+      #     name: Install Dependencies
+      #     command: yarn install
+      # - run:
+      #     name: Run Database Migrations
+      #     command: yarn prisma:deploy
+      # - run:
+      #     name: Seed Database
+      #     command: yarn prisma:seed
       - run:
           name: Build & Push Docker Image
           command: |
