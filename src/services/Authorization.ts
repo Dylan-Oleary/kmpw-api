@@ -92,7 +92,7 @@ class AuthorizationService {
                 }
 
                 try {
-                    const { iat, sid, sub } = decoded;
+                    const { iat, sid, sub } = decoded as JwtPayload;
                     const [isSessionBlacklisted, isUserRequiredToReauthenticate] =
                         await Promise.all([
                             session.isSessionBlacklisted(sid),
@@ -244,7 +244,7 @@ class AuthorizationService {
 
                     try {
                         const session = new SessionService();
-                        const { iat, sid, sub } = decoded;
+                        const { iat, sid, sub } = decoded as JwtPayload;
                         const [isSessionBlacklisted, isUserRequiredToReauthenticate] =
                             await Promise.all([
                                 session.isSessionBlacklisted(sid),
@@ -270,7 +270,7 @@ class AuthorizationService {
                             );
                         }
 
-                        return resolve(decoded);
+                        return resolve(decoded as JwtPayload);
                     } catch (e) {
                         return reject(e);
                     }
