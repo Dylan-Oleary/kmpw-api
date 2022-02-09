@@ -15,7 +15,7 @@ jobs:
       - run:
           name: Setup Environment
           command: |
-            echo 'export PACKAGE_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g')' >> $BASH_ENV
+            echo 'export PACKAGE_VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g')'' >> $BASH_ENV
             echo 'export IMAGE_NAME=kmpw-api' >> $BASH_ENV
             echo DATABASE_URL="$DATABASE_URL" >> "${BASH_ENV}"
             echo DOG_API_KEY="$DOG_API_KEY" >> "${BASH_ENV}"
