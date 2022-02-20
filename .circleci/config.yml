@@ -87,10 +87,7 @@ jobs:
       #       docker push dylanolearydev/$IMAGE_NAME:staging
       - run:
           name: Deploy Container
-          command: |
-            echo $CIRCLE_CI |
-            echo $DEPLOY_IP |
-            ssh -oStrictHostKeyChecking=no -v $CIRCLE_CI@$DEPLOY_IP "./restartApiStaging.sh"
+          command: ssh -oStrictHostKeyChecking=no -v circleci@159.203.1.254 "./restartApiStaging.sh"
 
 workflows:
   Deploy (Production):
