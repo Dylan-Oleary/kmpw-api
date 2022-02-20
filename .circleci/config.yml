@@ -45,6 +45,9 @@ jobs:
             echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
             docker push dylanolearydev/$IMAGE_NAME:$PACKAGE_VERSION
             docker push dylanolearydev/$IMAGE_NAME:latest
+      - run:
+          name: Deploy Container
+          command: ssh -oStrictHostKeyChecking=no -v $CIRCLE_CI@$DEPLOY_IP "./restartApiProduction.sh"
   Deploy Staging:
     docker:
       - image: cimg/node:17.4.0
@@ -82,6 +85,9 @@ jobs:
             docker build -t dylanolearydev/$IMAGE_NAME:staging .
             echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
             docker push dylanolearydev/$IMAGE_NAME:staging
+      - run:
+          name: Deploy Container
+          command: ssh -oStrictHostKeyChecking=no -v $CIRCLE_CI@$DEPLOY_IP "./restartApiStaging.sh"
 
 workflows:
   Deploy (Production):
