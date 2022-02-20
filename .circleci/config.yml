@@ -47,7 +47,9 @@ jobs:
             docker push dylanolearydev/$IMAGE_NAME:latest
       - run:
           name: Deploy Container
-          command: ssh -oStrictHostKeyChecking=no -v $CIRCLE_CI@$DEPLOY_IP "./restartApiProduction.sh"
+      - run:
+          name: Deploy Container
+          command: ssh -o StrictHostKeyChecking=no $DROPLET_USER@$DROPLET_HOST $DEPLOY_PRODUCTION $PACKAGE_VERSION
   Deploy Staging:
     docker:
       - image: cimg/node:17.4.0
