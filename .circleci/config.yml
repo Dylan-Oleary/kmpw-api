@@ -47,8 +47,6 @@ jobs:
             docker push dylanolearydev/$IMAGE_NAME:latest
       - run:
           name: Deploy Container
-      - run:
-          name: Deploy Container
           command: ssh -o StrictHostKeyChecking=no $DROPLET_USER@$DROPLET_HOST $DEPLOY_PRODUCTION $PACKAGE_VERSION
   Deploy Staging:
     docker:
