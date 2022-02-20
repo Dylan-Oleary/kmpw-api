@@ -79,15 +79,18 @@ jobs:
       # - run:
       #     name: Seed Database
       #     command: yarn prisma:seed
-      - run:
-          name: Build & Push Docker Image
-          command: |
-            docker build -t dylanolearydev/$IMAGE_NAME:staging .
-            echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
-            docker push dylanolearydev/$IMAGE_NAME:staging
+      # - run:
+      #     name: Build & Push Docker Image
+      #     command: |
+      #       docker build -t dylanolearydev/$IMAGE_NAME:staging .
+      #       echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
+      #       docker push dylanolearydev/$IMAGE_NAME:staging
       - run:
           name: Deploy Container
-          command: ssh -oStrictHostKeyChecking=no -v $CIRCLE_CI@$DEPLOY_IP "./restartApiStaging.sh"
+          command: |
+            echo $CIRCLE_CI |
+            echo $DEPLOY_IP |
+            ssh -oStrictHostKeyChecking=no -v $CIRCLE_CI@$DEPLOY_IP "./restartApiStaging.sh"
 
 workflows:
   Deploy (Production):
