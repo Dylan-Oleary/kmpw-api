@@ -39,6 +39,10 @@ jobs:
             docker build -t dylanolearydev/$IMAGE_NAME:$PACKAGE_VERSION .
             echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
             docker push dylanolearydev/$IMAGE_NAME:$PACKAGE_VERSION
+            docker push dylanolearydev/$IMAGE_NAME:latest
+      - run:
+          name: Deploy Container
+          command: ssh -o StrictHostKeyChecking=no $DROPLET_USER@$DROPLET_HOST $DEPLOY_PRODUCTION $PACKAGE_VERSION
   Deploy Staging:
     docker:
       - image: cimg/node:17.4.0
@@ -70,12 +74,15 @@ jobs:
       # - run:
       #     name: Seed Database
       #     command: yarn prisma:seed
+      # - run:
+      #     name: Build & Push Docker Image
+      #     command: |
+      #       docker build -t dylanolearydev/$IMAGE_NAME:staging .
+      #       echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
+      #       docker push dylanolearydev/$IMAGE_NAME:staging
       - run:
-          name: Build & Push Docker Image
-          command: |
-            docker build -t dylanolearydev/$IMAGE_NAME:staging .
-            echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
-            docker push dylanolearydev/$IMAGE_NAME:staging
+          name: Deploy Container
+          command: ssh -o StrictHostKeyChecking=no $DROPLET_USER@$DROPLET_HOST $DEPLOY_STAGING
 
 workflows:
   Deploy (Production):
