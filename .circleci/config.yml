@@ -39,7 +39,6 @@ jobs:
             docker build -t dylanolearydev/$IMAGE_NAME:$PACKAGE_VERSION .
             echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
             docker push dylanolearydev/$IMAGE_NAME:$PACKAGE_VERSION
-            docker push dylanolearydev/$IMAGE_NAME:latest
       - run:
           name: Deploy Container
           command: ssh -o StrictHostKeyChecking=no $DROPLET_USER@$DROPLET_HOST $DEPLOY_PRODUCTION $PACKAGE_VERSION
@@ -65,21 +64,21 @@ jobs:
             echo WEATHER_API_BASE_URL="$WEATHER_API_BASE_URL" >> "${BASH_ENV}"
       - setup_remote_docker:
           version: 19.03.13
-      # - run: 
-      #     name: Install Dependencies
-      #     command: yarn install
-      # - run:
-      #     name: Run Database Migrations
-      #     command: yarn prisma:deploy
-      # - run:
-      #     name: Seed Database
-      #     command: yarn prisma:seed
-      # - run:
-      #     name: Build & Push Docker Image
-      #     command: |
-      #       docker build -t dylanolearydev/$IMAGE_NAME:staging .
-      #       echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
-      #       docker push dylanolearydev/$IMAGE_NAME:staging
+      - run: 
+          name: Install Dependencies
+          command: yarn install
+      - run:
+          name: Run Database Migrations
+          command: yarn prisma:deploy
+      - run:
+          name: Seed Database
+          command: yarn prisma:seed
+      - run:
+          name: Build & Push Docker Image
+          command: |
+            docker build -t dylanolearydev/$IMAGE_NAME:staging .
+            echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
+            docker push dylanolearydev/$IMAGE_NAME:staging
       - run:
           name: Deploy Container
           command: ssh -o StrictHostKeyChecking=no $DROPLET_USER@$DROPLET_HOST $DEPLOY_STAGING
