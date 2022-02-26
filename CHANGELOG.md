@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## v1.0.1
+
+-   Add native application authentication
+-   Improve environment logging
+
 ## v1.0.0
 
 -   Custom error codes

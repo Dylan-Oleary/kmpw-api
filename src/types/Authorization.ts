@@ -23,3 +23,8 @@ export interface IGenerateTokenOptions {
      */
     sub: string;
 }
+
+export enum ValidClientType {
+    NATIVE = "native",
+    WEB = "web"
+}
