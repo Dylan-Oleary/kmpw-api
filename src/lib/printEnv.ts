@@ -15,7 +15,6 @@ const printEnv: () => void = () => {
 
     const envKeys = [
         "PORT",
-        "REDIS_PORT",
         "REDIS_HOST",
         "ACCESS_TOKEN_SECRET",
         "ACCESS_TOKEN_LIFESPAN",
