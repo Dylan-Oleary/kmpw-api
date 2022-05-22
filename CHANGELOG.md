@@ -1,5 +1,11 @@
 # CHANGELOG
 
+# v1.1.1
+
+-   Update GraphQL queries to accept temperature and location for flexibility
+-   Remove server entrypoint from jest coverage
+-   Update README
+
 ## v1.1.0
 
 -   Add CI/CD with CircleCI

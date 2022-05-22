@@ -1,8 +1,16 @@
+import { User } from "@prisma/client";
 import { gql } from "apollo-server-express";
 import { DocumentNode } from "graphql";
 
 import { prismaClient } from "lib";
-import { UserService } from "services";
+import { UserService, WeatherApiService } from "services";
+import { ICurrentWeatherResponse } from "types";
+import { CurrentWeatherWhere } from "./weatherApi";
+
+export type MeQueryResponse = Partial<User> & {
+    temperatureFarenheit?: number;
+    weather?: ICurrentWeatherResponse;
+};
 
 export const typeDefinitions: DocumentNode = gql`
     type User {
@@ -13,22 +21,40 @@ export const typeDefinitions: DocumentNode = gql`
         reauthenticationAt: DateTime
         email: String!
         dogs: [Dog]
+        weather: CurrentWeatherResponse
     }
 
     extend type Query {
-        me(temperatureFarenheit: Float): User
+        me(location: CurrentWeatherWhere, temperatureFarenheit: Float): User
     }
 `;
 
 export const resolvers = {
     Query: {
-        me: (_, args, { user }) =>
-            new UserService().getUser({ id: user.id }).then((user) => ({ ...user, ...args }))
+        me: (
+            _,
+            args: { location?: CurrentWeatherWhere; temperatureFarenheit?: number },
+            { user }
+        ): Promise<MeQueryResponse> =>
+            new UserService().getUser({ id: user?.id }).then((user) => {
+                const { location } = args;
+
+                if (location) {
+                    return new WeatherApiService()
+                        .getCurrentWeather(location)
+                        .then(({ current, location }) => ({
+                            ...user,
+                            weather: { current, location }
+                        }));
+                }
+
+                return { ...user, ...args };
+            })
     },
     User: {
-        dogs: ({ id: userId, temperatureFarenheit }) =>
+        dogs: ({ id: userId, ...args }) =>
             prismaClient.dog
                 .findMany({ where: { isDeleted: false, userId } })
-                .then((dogs) => dogs.map((dog) => ({ ...dog, temperatureFarenheit })))
+                .then((dogs) => dogs.map((dog) => ({ ...dog, ...args })))
     }
 };

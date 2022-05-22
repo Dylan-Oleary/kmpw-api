@@ -4,10 +4,10 @@ The API application for Keep My Paws Warm!
 
 ## Environment Setup
 
-This project uses [Node](https://nodejs.org/en/) version `14.17.5`
+This project uses [Node](https://nodejs.org/en/) version `16.13.1`
 
 ```
-nvm use 14.17.5
+nvm use 16.13.1
 ```
 
 ## Installation
@@ -22,6 +22,40 @@ Using [npm](https://www.npmjs.com/)
 
 ```
 npm install
+```
+
+## Getting Started
+
+1. Add `.env` file
+
+```
+MYSQL_PORT=3306
+MYSQL_ROOT_PASSWORD=frogger
+MYSQL_DATABASE=kmpw
+MYSQL_USER=admin
+MYSQL_PASSWORD=supersecret
+REDIS_PORT=6379
+ACCESS_TOKEN_LIFESPAN=15m
+ACCESS_TOKEN_SECRET=superdupersecret
+REFRESH_TOKEN_LIFESPAN=7d
+REFRESH_TOKEN_SECRET=superdupersecret
+DATABASE_URL=mysql://root:frogger@localhost:3306/kmpw
+DOG_API_KEY=<PRIVATE>
+DOG_API_BASE_URL=https://api.thedogapi.com/v1
+WEATHER_API_KEY=<PRIVATE>
+WEATHER_API_BASE_URL=http://api.weatherapi.com/v1
+```
+
+2. Start Docker containers
+
+```
+docker-compose up -d
+```
+
+3. Hydrate database
+
+```
+yarn prisma:migrate && yarn prisma:seed
 ```
 
 ## Running the Development Server
