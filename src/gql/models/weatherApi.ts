@@ -3,6 +3,11 @@ import { DocumentNode } from "graphql";
 
 import { WeatherApiService } from "services";
 
+export type CurrentWeatherWhere = {
+    q: string;
+    aqi?: boolean;
+};
+
 export const typeDefinitions: DocumentNode = gql`
     type WeatherLocation {
         country: String

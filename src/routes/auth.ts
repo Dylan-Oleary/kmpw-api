@@ -4,26 +4,35 @@ import { NextFunction, Request, Response, Router } from "express";
 import { NotAllowedError, ValidationError } from "errors";
 import { getRefreshToken, validateUserAuthRequestBody, verifyAccessToken } from "middlewares";
 import { AuthorizationService, SessionService, UserService } from "services";
+import { ValidClientType } from "types";
 
 const authRouter = Router({ caseSensitive: true });
 
 authRouter
     .route("/login")
     .post(validateUserAuthRequestBody, (req: Request, res: Response, next: NextFunction) => {
-        const { email, password } = req.body;
+        const { client = ValidClientType.WEB, email, password } = req.body;
         const auth = new AuthorizationService();
 
         return new UserService()
             .authenticateUser(email, password)
             .then((user) => auth.generateTokenSetFromUser(user))
             .then(([accessToken, refreshToken]) => {
-                res.cookie("refresh", refreshToken, {
-                    expires: new Date(auth.getTokenExpiry(refreshToken) * 1000),
-                    httpOnly: process?.env?.NODE_ENV === "production",
-                    path: "/auth/refresh"
-                });
+                if (client === ValidClientType.WEB) {
+                    res.cookie("refresh", refreshToken, {
+                        expires: new Date(auth.getTokenExpiry(refreshToken) * 1000),
+                        httpOnly: process?.env?.NODE_ENV === "production",
+                        path: "/auth/refresh"
+                    });
+                }
 
-                return res.status(200).json({ accessToken });
+                const tokenSet: { accessToken: string; refreshToken?: string } = { accessToken };
+
+                if (client === ValidClientType.NATIVE) {
+                    tokenSet.refreshToken = refreshToken;
+                }
+
+                return res.status(201).json(tokenSet);
             })
             .catch(next);
     })
@@ -91,24 +100,33 @@ authRouter
 
 authRouter
     .route("/refresh")
-    .get(getRefreshToken, (req: Request, res: Response, next: NextFunction) => {
+    .post(getRefreshToken, (req: Request, res: Response, next: NextFunction) => {
         const { refresh } = res.locals;
+        const { client = ValidClientType.WEB } = req.body;
         const auth = new AuthorizationService();
 
         return auth
             .generateTokenSetFromRefreshToken(refresh)
             .then(([accessToken, refreshToken]) => {
-                res.cookie("refresh", refreshToken, {
-                    expires: new Date(auth.getTokenExpiry(refreshToken) * 1000),
-                    httpOnly: process?.env?.NODE_ENV === "production",
-                    path: "/auth/refresh"
-                });
+                if (client === ValidClientType.WEB) {
+                    res.cookie("refresh", refreshToken, {
+                        expires: new Date(auth.getTokenExpiry(refreshToken) * 1000),
+                        httpOnly: process?.env?.NODE_ENV === "production",
+                        path: "/auth/refresh"
+                    });
+                }
 
-                return res.status(200).json({ accessToken });
+                const tokenSet: { accessToken: string; refreshToken?: string } = { accessToken };
+
+                if (client === ValidClientType.NATIVE) {
+                    tokenSet.refreshToken = refreshToken;
+                }
+
+                return res.status(201).json(tokenSet);
             })
             .catch(next);
     })
-    .patch((req: Request, res: Response, next: NextFunction) => next(new NotAllowedError()))
+    .get((req: Request, res: Response, next: NextFunction) => next(new NotAllowedError()))
     .post((req: Request, res: Response, next: NextFunction) => next(new NotAllowedError()))
     .put((req: Request, res: Response, next: NextFunction) => next(new NotAllowedError()))
     .delete((req: Request, res: Response, next: NextFunction) => next(new NotAllowedError()));
@@ -116,7 +134,7 @@ authRouter
 authRouter
     .route("/register")
     .post(validateUserAuthRequestBody, (req: Request, res: Response, next: NextFunction) => {
-        const { confirmPassword, email, password } = req.body;
+        const { client = ValidClientType.WEB, confirmPassword, email, password } = req.body;
 
         if (confirmPassword !== password) {
             return next(new ValidationError("Passwords do not match"));
@@ -132,13 +150,21 @@ authRouter
             })
             .then((user) => auth.generateTokenSetFromUser(user))
             .then(([accessToken, refreshToken]) => {
-                res.cookie("refresh", refreshToken, {
-                    expires: new Date(auth.getTokenExpiry(refreshToken) * 1000),
-                    httpOnly: process?.env?.NODE_ENV === "production",
-                    path: "/auth/refresh"
-                });
+                if (client === ValidClientType.WEB) {
+                    res.cookie("refresh", refreshToken, {
+                        expires: new Date(auth.getTokenExpiry(refreshToken) * 1000),
+                        httpOnly: process?.env?.NODE_ENV === "production",
+                        path: "/auth/refresh"
+                    });
+                }
 
-                return res.status(201).json({ accessToken });
+                const tokenSet: { accessToken: string; refreshToken?: string } = { accessToken };
+
+                if (client === ValidClientType.NATIVE) {
+                    tokenSet.refreshToken = refreshToken;
+                }
+
+                return res.status(201).json(tokenSet);
             })
             .catch(next);
     })

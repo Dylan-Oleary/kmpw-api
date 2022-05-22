@@ -5,7 +5,8 @@ module.exports = {
         "!src/**/index.ts",
         "!src/types/*",
         "!src/gql/**/*",
-        "!src/config/*"
+        "!src/config/*",
+        "!src/server.ts"
     ],
     coverageDirectory: "coverage",
     globals: {
