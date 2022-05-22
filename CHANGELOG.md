@@ -1,9 +1,10 @@
 # CHANGELOG
 
-## v1.0.1
+## v1.1.0
 
--   Add native application authentication
--   Improve environment logging
+-   Add CI/CD with CircleCI
+-   Add GraphQL
+-   Add GitHub tagging
 
 ## v1.0.0
 
