@@ -1,6 +1,8 @@
 # CHANGELOG
 
-# v1.1.1
+## v1.2.0
+
+## v1.1.1
 
 -   Update GraphQL queries to accept temperature and location for flexibility
 -   Remove server entrypoint from jest coverage
