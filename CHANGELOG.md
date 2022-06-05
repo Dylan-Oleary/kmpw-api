@@ -2,6 +2,8 @@
 
 ## v1.2.0
 
+-   Update dog birthday type to 'date'
+
 ## v1.1.1
 
 -   Update GraphQL queries to accept temperature and location for flexibility
