@@ -41,7 +41,7 @@ class DogService extends ModelService<Dog> {
         this.generateServiceField({
             name: "birthday",
             isRequiredOnCreate: false,
-            type: "string",
+            type: "date",
             validation: async (value) => {
                 if (isNaN(Date.parse(value))) {
                     throw new ValidationError(DefinedErrorCodes.KMPW0015, [
