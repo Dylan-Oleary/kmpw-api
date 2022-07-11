@@ -11,6 +11,7 @@ export const typeDefinitions: DocumentNode = gql`
         isDeleted: Boolean!
         name: String!
         description: String
+        breeds: [Breed!]!
     }
 
     type Breed {
@@ -50,8 +51,18 @@ export const resolvers = {
         breedGroup: ({ breedGroupId: id }) => prismaClient.breedGroup.findUnique({ where: { id } }),
         size: ({ sizeId: id }) => prismaClient.dogSize.findUnique({ where: { id } })
     },
+    BreedGroup: {
+        breeds: ({ id }) =>
+            prismaClient.breed.findMany({ where: { breedGroupId: id }, orderBy: [{ name: "asc" }] })
+    },
     Query: {
-        breeds: () => prismaClient.breed.findMany(),
-        breedGroups: () => prismaClient.breedGroup.findMany()
+        breeds: () =>
+            prismaClient.breed.findMany({
+                orderBy: [{ name: "asc" }]
+            }),
+        breedGroups: () =>
+            prismaClient.breedGroup.findMany({
+                orderBy: [{ name: "asc" }]
+            })
     }
 };

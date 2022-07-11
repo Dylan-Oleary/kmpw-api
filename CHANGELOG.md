@@ -3,6 +3,7 @@
 ## v1.2.0
 
 -   Update dog birthday type to 'date'
+-   Sort breeds alphabetically in GraphQL resolver
 
 ## v1.1.1
 
