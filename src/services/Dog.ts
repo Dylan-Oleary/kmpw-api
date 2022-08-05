@@ -2,7 +2,13 @@ import { Dog } from "@prisma/client";
 import { isValueOfType } from "@theonlydevsever/utilities";
 import convert from "convert-units";
 
-import { BadRequestError, DefinedErrorCodes, NotFoundError, ValidationError } from "errors";
+import {
+    BadRequestError,
+    ConflictError,
+    DefinedErrorCodes,
+    NotFoundError,
+    ValidationError
+} from "errors";
 import { prismaClient } from "lib";
 import { ModelService } from "services";
 import { ICreateDogData, IDogIdentifier, IServiceField, IUpdateDogData } from "types";
@@ -143,6 +149,15 @@ class DogService extends ModelService<Dog> {
      */
     public async createDog(data: ICreateDogData): Promise<Dog> {
         try {
+            const numOfUserDogs = await prismaClient.dog.count({
+                where: { isDeleted: false, userId: data.userId }
+            });
+            const maxNumOfDogs = process.env.USER_MAX_NUM_OF_DOGS || 5;
+
+            if (numOfUserDogs >= maxNumOfDogs) {
+                throw new ConflictError("User currently has the maximum number of dogs");
+            }
+
             const validatedData = await super.validateCreateData<ICreateDogData>(data);
             const sizeId = await this.getDogSizeFromWeight(validatedData.weightImperial);
             const createData: ICreateDogData & {
