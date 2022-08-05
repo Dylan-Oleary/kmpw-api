@@ -6,7 +6,7 @@ import { getRefreshToken, validateUserAuthRequestBody, verifyAccessToken } from 
 import { AuthorizationService, SessionService, UserService } from "services";
 import { ValidClientType } from "types";
 
-const authRouter = Router({ caseSensitive: true });
+const authRouter: Router = Router({ caseSensitive: true });
 
 authRouter
     .route("/login")

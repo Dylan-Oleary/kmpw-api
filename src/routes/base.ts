@@ -2,7 +2,7 @@ import { NextFunction, Request, Response, Router } from "express";
 
 import { NotAllowedError } from "errors";
 
-const baseRouter = Router({ caseSensitive: true });
+const baseRouter: Router = Router({ caseSensitive: true });
 
 baseRouter
     .route("/")
