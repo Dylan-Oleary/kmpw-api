@@ -4,6 +4,7 @@
 
 -   Update dog birthday type to 'date'
 -   Sort breeds alphabetically in GraphQL resolver
+-   Implement maximum number of dogs a user can have
 
 ## v1.1.1
 
