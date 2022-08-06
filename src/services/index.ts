@@ -1,5 +1,6 @@
 export * from "./_Model";
 export * from "./Authorization";
+export * from "./Cloudinary";
 export * from "./Dog";
 export * from "./DogApi";
 export * from "./SafetyLevel";

@@ -29,7 +29,9 @@ const DefinedErrorCodes = {
     KMPW0012: "Invalid token",
     KMPW0013: "Redis error",
     KMPW0014: "Authorization Error",
-    KMPW0015: "Invalid create/update data"
+    KMPW0015: "Invalid create/update data",
+    KMPW0016: "Invalid asset upload data",
+    KMPW0017: "Asset upload processing error"
 };
 
 export default DefinedErrorCodes;

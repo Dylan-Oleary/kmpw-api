@@ -4,8 +4,13 @@ import cookieParser from "cookie-parser";
 import express, { Express, NextFunction, Request, Response } from "express";
 
 import { buildGqlSchema, convertErrorToGqlError, formatGqlError } from "gql";
-import { catchAllHandler, globalErrorHandler, verifyAccessTokenGraphQL } from "middlewares";
-import { authRouter, baseRouter } from "routes";
+import {
+    catchAllHandler,
+    globalErrorHandler,
+    verifyAccessToken,
+    verifyAccessTokenGraphQL
+} from "middlewares";
+import { assetsRouter, authRouter, baseRouter } from "routes";
 import { UserService } from "services";
 
 /**
@@ -24,6 +29,8 @@ const initializeApplication: () => Promise<Express> = async () => {
 
         app.use("/", baseRouter);
         app.use("/auth", authRouter);
+
+        app.use("/assets", verifyAccessToken, assetsRouter);
 
         const gqlServer = new ApolloServer({
             context: async ({ req }) => {
