@@ -2,6 +2,8 @@
 
 ## v1.3.0
 
+-   Add ability to upload assets to Cloudinary
+
 ## v1.2.0
 
 -   Update dog birthday type to 'date'
