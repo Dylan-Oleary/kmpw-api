@@ -60,6 +60,12 @@ class SafetyLevelService {
             return this;
         }
 
+        if (this._temperatureFarenheit >= 68) {
+            this.setSafetyLevel(3);
+
+            return this;
+        }
+
         const temperatures = Object.keys(this._dog)
             .filter((key) => key.includes("coldSafetyLevel"))
             .map((key) => this._dog[key])

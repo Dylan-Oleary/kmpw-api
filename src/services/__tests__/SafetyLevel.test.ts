@@ -78,6 +78,17 @@ describe("Safety Level Service", () => {
             expect(service._safetyLevel).toEqual(5);
         });
 
+        test("sets the safety level to 3 when the temperature is greater than or equal to 68 (20 Celsius)", () => {
+            const service = new SafetyLevelService();
+
+            //@ts-ignore - Overriding instance variable
+            service._temperatureFarenheit = Math.floor(Math.random() * (100 - 68) + 68);
+            service.calculateSafetyLevel();
+
+            //@ts-ignore - Accessing private variable
+            expect(service._safetyLevel).toEqual(3);
+        });
+
         test("returns the service", () => {
             //@ts-ignore - Accessing private function
             const service = new SafetyLevelService();
