@@ -2,6 +2,8 @@
 
 ## v1.4.0
 
+-   Implement default safety level for warm weather
+
 ## v1.3.0
 
 -   Add ability to upload assets to Cloudinary
