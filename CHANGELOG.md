@@ -1,5 +1,7 @@
 # CHANGELOG
 
+## v1.4.0
+
 ## v1.3.0
 
 -   Add ability to upload assets to Cloudinary
