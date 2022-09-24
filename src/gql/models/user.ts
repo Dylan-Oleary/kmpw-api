@@ -3,9 +3,8 @@ import { gql } from "apollo-server-express";
 import { DocumentNode } from "graphql";
 
 import { prismaClient } from "lib";
-import { UserService, WeatherApiService } from "services";
-import { ICurrentWeatherResponse } from "types";
-import { CurrentWeatherWhere } from "./weatherApi";
+import { UserService, WeatherService } from "services";
+import { ICurrentWeatherResponse, ICurrentWeatherWhere } from "types";
 
 export type MeQueryResponse = Partial<User> & {
     temperatureFarenheit?: number;
@@ -33,15 +32,15 @@ export const resolvers = {
     Query: {
         me: (
             _,
-            args: { location?: CurrentWeatherWhere; temperatureFarenheit?: number },
+            args: { location?: ICurrentWeatherWhere; temperatureFarenheit?: number },
             { user }
         ): Promise<MeQueryResponse> =>
             new UserService().getUser({ id: user?.id }).then((user) => {
                 const { location } = args;
 
                 if (location) {
-                    return new WeatherApiService()
-                        .getCurrentWeather(location)
+                    return new WeatherService()
+                        .getWeather({ id: user?.id, location })
                         .then(({ current, location }) => ({
                             ...user,
                             weather: { current, location }

@@ -1,5 +1,6 @@
 import { gql } from "apollo-server-express";
 import { DocumentNode } from "graphql";
+import { isValueOfType } from "@theonlydevsever/utilities";
 
 import { addUserToRequestData, prismaClient } from "lib";
 import { DogService, SafetyLevelService } from "services";
@@ -76,7 +77,7 @@ export const resolvers = {
                 temperatureToUse = weather?.current?.temp_f;
             }
 
-            if (!temperatureToUse) {
+            if (!isValueOfType(parseFloat(temperatureToUse), "number")) {
                 return null;
             }
 

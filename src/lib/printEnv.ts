@@ -21,7 +21,12 @@ const printEnv: () => void = () => {
         "REFRESH_TOKEN_SECRET",
         "REFRESH_TOKEN_LIFESPAN",
         "DOG_API_BASE_URL",
-        "WEATHER_API_BASE_URL"
+        "WEATHER_API_BASE_URL",
+        "WEATHER_CACHE_LIFESPAN",
+        "WEATHER_CACHE_DISTANCE_METRES",
+        "CLOUDINARY_CLOUD_NAME",
+        "CLOUDINARY_FOLDER_PREFIX",
+        "USER_MAX_NUM_OF_DOGS"
     ];
 
     envKeys.sort();

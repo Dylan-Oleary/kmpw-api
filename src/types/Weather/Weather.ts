@@ -1,0 +1,12 @@
+import { ICurrentWeatherWhere } from "types";
+
+export interface IGetWeatherOpts {
+    /**
+     * The id of the entity associated to the weather response
+     */
+    id: string;
+    /**
+     * Location query data to be sent to the Weather API
+     */
+    location: ICurrentWeatherWhere;
+}

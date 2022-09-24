@@ -1,4 +1,4 @@
-import { WeatherApiService } from "../index";
+import { WeatherApiService } from "../../Weather";
 
 describe("Weather API Service", () => {
     const getRandomIndex = (arr) => Math.floor(Math.random() * arr.length);

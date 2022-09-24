@@ -2,6 +2,8 @@
 
 ## v1.5.0
 
+-   Add user weather information caching strategy
+
 ## v1.4.0
 
 -   Implement default safety level for warm weather
