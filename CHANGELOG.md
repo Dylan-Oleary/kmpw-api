@@ -1,5 +1,7 @@
 # CHANGELOG
 
+## v1.5.0
+
 ## v1.4.0
 
 -   Implement default safety level for warm weather

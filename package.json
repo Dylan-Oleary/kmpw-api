@@ -1,6 +1,6 @@
 {
   "name": "kmpw-api",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "API application for Keep My Paws Warm",
   "main": "dist/server.js",
   "repository": {
