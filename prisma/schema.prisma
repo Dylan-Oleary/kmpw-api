@@ -22,12 +22,12 @@ model BreedGroup {
 
 model Breed {
   id                String                  @id @default(uuid())
-  dogApiId          Int                     @unique
   createdAt         DateTime                @default(now())
   updatedAt         DateTime                @updatedAt
   isDeleted         Boolean                 @default(false)
   name              String                  @unique
   description       String?                 @db.Text
+  dogApiId          Int?                    @unique
   altNames          String?
   countryCode       String?
   heightImperialMin Float?
@@ -40,6 +40,7 @@ model Breed {
   lifeSpanMax       Float?
   lifeSpanAvg       Float?
   origin            String?
+  source            BreedSource?
   weightImperialMin Float?
   weightImperialMax Float?
   weightImperialAvg Float?
@@ -174,4 +175,9 @@ enum WeightClass {
   SMALL
   MEDIUM
   LARGE
+}
+
+enum BreedSource {
+  CUSTOM
+  DOG_API
 }

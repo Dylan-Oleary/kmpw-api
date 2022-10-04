@@ -35,6 +35,7 @@
     "prettier": "prettier --check \"./src/*\"",
     "prettier:fix": "prettier --write \"./src/*\"",
     "prisma:deploy": "npx prisma migrate deploy",
+    "prisma:generate": "npx prisma generate",
     "prisma:migrate": "npx prisma migrate dev",
     "prisma:reset": "npx prisma migrate reset",
     "prisma:seed": "ts-node -r tsconfig-paths/register prisma/seed.ts",

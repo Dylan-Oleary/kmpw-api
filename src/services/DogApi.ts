@@ -3,7 +3,7 @@ import { capitalize, isValueOfType } from "@theonlydevsever/utilities";
 import axios, { AxiosInstance, AxiosResponse } from "axios";
 import convert from "convert-units";
 
-import { IDogApiBreed, IDogApiGetBreedsParams } from "types";
+import { CustomBreed, IDogApiBreed, IDogApiGetBreedsParams } from "types";
 
 class DogApiService {
     private request: AxiosInstance;
@@ -51,7 +51,7 @@ class DogApiService {
      * @param breed A breed record from the Dog API
      * @returns An object containing formatted breed measurements that match the Prisma schema
      */
-    public formatBreedMeasurements(breed: IDogApiBreed): Partial<Breed> {
+    public formatBreedMeasurements(breed: CustomBreed | IDogApiBreed): Partial<Breed> {
         const { height, life_span, weight } = breed;
         const measurementData = [
             {
@@ -169,7 +169,7 @@ class DogApiService {
      * @param breed A breed record from the Dog API
      * @returns The breed group that the breed belongs to or 'Other' if no breed group exists
      */
-    public getBreedGroupFromBreed(breed: IDogApiBreed): string {
+    public getBreedGroupFromBreed(breed: CustomBreed | IDogApiBreed): string {
         const { breed_group } = breed;
 
         return !breed_group || breed_group?.trim().length === 0 ? "Other" : breed_group;

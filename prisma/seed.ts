@@ -1,8 +1,9 @@
-import { DogAttributeType, DogSize } from "@prisma/client";
+import { BreedSource, DogAttributeType, DogSize } from "@prisma/client";
 
-import { dogSizes, safetyLevels } from "./data";
-import { DogApiService } from "../src/services";
+import { customBreeds, dogSizes, safetyLevels } from "./data";
 import { prismaClient } from "../src/lib";
+import { DogApiService } from "../src/services";
+import { CustomBreed, IDogApiBreed } from "../src/types";
 
 async function seed() {
     /**
@@ -25,8 +26,12 @@ async function seed() {
      */
     const dogApi = new DogApiService();
     const breeds = await dogApi.getBreeds();
+    const allBreeds = [
+        ...breeds.map((breed) => ({ ...breed, source: BreedSource.DOG_API })),
+        ...customBreeds
+    ];
 
-    for (const breed of breeds) {
+    for (const breed of allBreeds) {
         const {
             bred_for = "",
             country_code: countryCode,
@@ -35,7 +40,7 @@ async function seed() {
             name,
             origin,
             temperament = ""
-        } = breed;
+        } = breed as CustomBreed | IDogApiBreed;
         const breedGroup = dogApi.getBreedGroupFromBreed(breed);
 
         const breedGroupRecord = await prismaClient.breedGroup.upsert({
@@ -62,6 +67,7 @@ async function seed() {
             dogApiId: id,
             name,
             origin,
+            source: breed?.source,
             ...breedMeasurements
         };
 

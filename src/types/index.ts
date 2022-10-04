@@ -1,5 +1,6 @@
 export * from "./_Global";
 export * from "./Authorization";
+export * from "./Breed";
 export * from "./Dog";
 export * from "./DogApi";
 export * from "./Redis";
