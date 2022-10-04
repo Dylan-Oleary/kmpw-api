@@ -3,6 +3,7 @@
 ## v1.5.0
 
 -   Add user weather information caching strategy
+-   Add migrations/seed for custom breeds
 
 ## v1.4.0
 
