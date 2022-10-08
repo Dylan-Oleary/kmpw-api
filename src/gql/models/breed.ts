@@ -21,19 +21,19 @@ export const typeDefinitions: DocumentNode = gql`
         isDeleted: Boolean!
         name: String!
         description: String
-        heightImperialMin: Float!
-        heightImperialMax: Float!
-        heightImperialAvg: Float!
+        heightImperialMin: Float
+        heightImperialMax: Float
+        heightImperialAvg: Float
         heightMetricMin: Float!
         heightMetricMax: Float!
         heightMetricAvg: Float!
-        lifeSpanMin: Int!
-        lifeSpanMax: Int!
-        lifeSpanAvg: Int!
+        lifeSpanMin: Float
+        lifeSpanMax: Float
+        lifeSpanAvg: Float
         origin: String
-        weightImperialMin: Float!
-        weightImperialMax: Float!
-        weightImperialAvg: Float!
+        weightImperialMin: Float
+        weightImperialMax: Float
+        weightImperialAvg: Float
         wikipediaUrl: String
         countryCode: String
         size: DogSize!
