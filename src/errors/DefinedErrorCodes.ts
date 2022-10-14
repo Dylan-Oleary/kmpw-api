@@ -31,7 +31,8 @@ const DefinedErrorCodes = {
     KMPW0014: "Authorization Error",
     KMPW0015: "Invalid create/update data",
     KMPW0016: "Invalid asset upload data",
-    KMPW0017: "Asset upload processing error"
+    KMPW0017: "Asset upload processing error",
+    KMPW0018: "Asset deletion error"
 };
 
 export default DefinedErrorCodes;

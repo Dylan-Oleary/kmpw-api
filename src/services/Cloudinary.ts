@@ -1,5 +1,7 @@
 import { UploadApiResponse, v2 } from "cloudinary";
 
+import { ServerError } from "errors";
+
 interface IUploadImageOptions {
     path: string;
     userId: string;
@@ -29,6 +31,27 @@ class CloudinaryService {
      */
     public buildUploadFolderPath(userId: string): string {
         return `${this.folderPreFix}/${process?.env?.NODE_ENV}/${userId}`;
+    }
+
+    /**
+     * Deletes all images associated with a user in Cloudinary
+     *
+     * @param userId A user id
+     */
+    public async deleteUserImages(userId: string): Promise<void> {
+        try {
+            const folder = this.buildUploadFolderPath(userId);
+
+            await this.cloudinary.api.delete_resources_by_prefix(`${folder}/`);
+            await this.cloudinary.api.delete_folder(folder);
+
+            return;
+        } catch (error) {
+            throw new ServerError(
+                "Failed to delete user images",
+                error?.message ? [error?.message] : []
+            ).setErrorCode("KMPW0018");
+        }
     }
 
     /**

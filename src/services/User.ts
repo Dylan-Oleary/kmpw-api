@@ -1,6 +1,7 @@
 import { User, UserIdentityProvider } from "@prisma/client";
 import { isValueOfType } from "@theonlydevsever/utilities";
 import bcrypt from "bcrypt";
+import { v4 as uuid } from "uuid";
 
 import {
     AuthenticationError,
@@ -152,6 +153,27 @@ class UserService extends ModelService<User> {
                     })
                 )
                 .then((newUser) => this.cleanUserRecord(newUser));
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    /**
+     * Performs a soft delete on an existing user record
+     *
+     * @param id The id of the user to delete
+     */
+    public async deleteUser(id: string): Promise<void> {
+        try {
+            const userRecord = await this.getUser({ id, isDeleted: false });
+            const email = `${userRecord?.email}_${uuid()}`;
+
+            await prismaClient.user.update({
+                where: { id },
+                data: { email, isDeleted: true, reauthenticationAt: new Date() }
+            });
+
+            return;
         } catch (error) {
             throw error;
         }

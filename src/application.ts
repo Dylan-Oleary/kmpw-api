@@ -10,7 +10,7 @@ import {
     verifyAccessToken,
     verifyAccessTokenGraphQL
 } from "middlewares";
-import { assetsRouter, authRouter, baseRouter } from "routes";
+import { assetsRouter, authRouter, baseRouter, userRouter } from "routes";
 import { UserService } from "services";
 
 /**
@@ -31,6 +31,7 @@ const initializeApplication: () => Promise<Express> = async () => {
         app.use("/auth", authRouter);
 
         app.use("/assets", verifyAccessToken, assetsRouter);
+        app.use("/users", verifyAccessToken, userRouter);
 
         const gqlServer = new ApolloServer({
             context: async ({ req }) => {
