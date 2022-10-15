@@ -2,6 +2,8 @@
 
 ## v1.6.0
 
+-   Add ability to delete user accounts
+
 ## v1.5.0
 
 -   Add user weather information caching strategy
