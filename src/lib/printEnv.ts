@@ -26,7 +26,9 @@ const printEnv: () => void = () => {
         "WEATHER_CACHE_DISTANCE_METRES",
         "CLOUDINARY_CLOUD_NAME",
         "CLOUDINARY_FOLDER_PREFIX",
-        "USER_MAX_NUM_OF_DOGS"
+        "USER_MAX_NUM_OF_DOGS",
+        "WEATHER_API_SEVERE_ALERT_CODES",
+        "WEATHER_API_MODERATE_ALERT_CODES"
     ];
 
     envKeys.sort();

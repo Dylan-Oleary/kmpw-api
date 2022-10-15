@@ -2,7 +2,7 @@ import getDistance from "geolib/es/getDistance";
 import { GeolibInputCoordinates } from "geolib/es/types";
 
 import { WeatherApiService, WeatherCacheService } from "services";
-import { ICurrentWeatherResponse, IGetWeatherOpts } from "types";
+import { ICurrentWeather, IGetWeatherOpts } from "types";
 
 class WeatherService {
     private readonly weatherCacheDistance: number;
@@ -21,7 +21,7 @@ class WeatherService {
     public fetchAndCacheWeather(
         opts: IGetWeatherOpts,
         cache: WeatherCacheService
-    ): Promise<ICurrentWeatherResponse> {
+    ): Promise<ICurrentWeather> {
         const { id, location } = opts;
 
         return new WeatherApiService()
@@ -38,7 +38,7 @@ class WeatherService {
      * @param opts Options used to fetch weather data
      * @returns Weather response payload (live or cached) from the Weather API
      */
-    public async getWeather(opts: IGetWeatherOpts): Promise<ICurrentWeatherResponse> {
+    public async getWeather(opts: IGetWeatherOpts): Promise<ICurrentWeather> {
         try {
             const { id, location } = opts;
             const weatherCache = new WeatherCacheService();

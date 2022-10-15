@@ -1,4 +1,6 @@
-export interface IWeatherLocation {
+import { IWeatherAlert } from "types";
+
+export interface IWeatherApiLocation {
     /**
      * The country of the location
      */
@@ -33,7 +35,7 @@ export interface IWeatherLocation {
     localtime_epoch?: string;
 }
 
-export interface ICurrentWeather {
+export interface IWeatherApiCurrentWeather {
     /**
      * Local time when the real time data was updated
      */
@@ -61,20 +63,7 @@ export interface ICurrentWeather {
     /**
      * Weather condition information
      */
-    condition: {
-        /**
-         * Unique weather condition code
-         */
-        code: number;
-        /**
-         * Weather icon url
-         */
-        icon: string;
-        /**
-         * Weather condition text
-         */
-        text: string;
-    };
+    condition: IWeatherApiCondition;
     /**
      * Wind speed in miles per hour
      */
@@ -134,10 +123,25 @@ export interface ICurrentWeather {
     /**
      * The current air quality
      */
-    air_quality?: IWeatherAirQuality;
+    air_quality?: IWeatherApiAirQuality;
 }
 
-export interface IWeatherAirQuality {
+export interface IWeatherApiCondition {
+    /**
+     * Unique weather condition code
+     */
+    code: number;
+    /**
+     * Weather icon url
+     */
+    icon: string;
+    /**
+     * Weather condition text
+     */
+    text: string;
+}
+
+export interface IWeatherApiAirQuality {
     /**
      * Carbon Monoxide (μg/m3)
      */
@@ -175,13 +179,17 @@ export interface ICurrentWeatherWhere {
     q: string;
 }
 
-export interface ICurrentWeatherResponse {
+export interface IWeatherApiResponse {
     /**
      * The current weather from the matching location
      */
-    current: ICurrentWeather;
+    current: IWeatherApiCurrentWeather;
     /**
      * The matching location matched from the request parameters
      */
-    location: IWeatherLocation;
+    location: IWeatherApiLocation;
+}
+
+export interface ICurrentWeather extends IWeatherApiResponse {
+    alert?: IWeatherAlert;
 }

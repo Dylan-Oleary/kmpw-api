@@ -9,6 +9,17 @@ export type CurrentWeatherWhere = {
 };
 
 export const typeDefinitions: DocumentNode = gql`
+    enum WeatherAlertType {
+        MODERATE
+        SEVERE
+    }
+
+    type WeatherAlert {
+        condition: WeatherCondition
+        recommendedSafetyLevel: Int
+        type: WeatherAlertType
+    }
+
     type WeatherLocation {
         country: String
         name: String
@@ -66,6 +77,7 @@ export const typeDefinitions: DocumentNode = gql`
     }
 
     type CurrentWeatherResponse {
+        alert: WeatherAlert
         current: CurrentWeather
         location: WeatherLocation
     }

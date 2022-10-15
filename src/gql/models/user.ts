@@ -4,11 +4,11 @@ import { DocumentNode } from "graphql";
 
 import { prismaClient } from "lib";
 import { UserService, WeatherService } from "services";
-import { ICurrentWeatherResponse, ICurrentWeatherWhere } from "types";
+import { ICurrentWeather, ICurrentWeatherWhere } from "types";
 
 export type MeQueryResponse = Partial<User> & {
     temperatureFarenheit?: number;
-    weather?: ICurrentWeatherResponse;
+    weather?: ICurrentWeather;
 };
 
 export const typeDefinitions: DocumentNode = gql`
@@ -41,9 +41,9 @@ export const resolvers = {
                 if (location) {
                     return new WeatherService()
                         .getWeather({ id: user?.id, location })
-                        .then(({ current, location }) => ({
+                        .then(({ alert, current, location }) => ({
                             ...user,
-                            weather: { current, location }
+                            weather: { alert, current, location }
                         }));
                 }
 

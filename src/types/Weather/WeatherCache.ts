@@ -1,4 +1,4 @@
-import { ICurrentWeatherResponse } from "types";
+import { ICurrentWeather } from "types";
 
 export interface IGetCachedWeatherOpts {
     /**
@@ -15,5 +15,5 @@ export interface ISetCachedWeatherOpts {
     /**
      * The weather response to be cached
      */
-    value: ICurrentWeatherResponse;
+    value: ICurrentWeather;
 }

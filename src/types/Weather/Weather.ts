@@ -1,4 +1,4 @@
-import { ICurrentWeatherWhere } from "types";
+import { ICurrentWeatherWhere, IWeatherApiCondition } from "types";
 
 export interface IGetWeatherOpts {
     /**
@@ -9,4 +9,15 @@ export interface IGetWeatherOpts {
      * Location query data to be sent to the Weather API
      */
     location: ICurrentWeatherWhere;
+}
+
+export interface IWeatherAlert {
+    condition: IWeatherApiCondition;
+    recommendedSafetyLevel: number;
+    type: WeatherAlertType;
+}
+
+export enum WeatherAlertType {
+    MODERATE = "MODERATE",
+    SEVERE = "SEVERE"
 }

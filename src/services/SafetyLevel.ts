@@ -231,7 +231,7 @@ class SafetyLevelService {
      * @param level The new safety level
      * @returns The instantiated service
      */
-    private setSafetyLevel(level: number): this {
+    public setSafetyLevel(level: number): this {
         if (!isValueOfType(level, "number")) {
             throw new ValidationError("Safety level must be a number");
         }

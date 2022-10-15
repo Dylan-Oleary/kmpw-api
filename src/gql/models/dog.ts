@@ -1,10 +1,16 @@
 import { gql } from "apollo-server-express";
 import { DocumentNode } from "graphql";
+import { Dog, SafetyLevel } from "@prisma/client";
 import { isValueOfType } from "@theonlydevsever/utilities";
 
 import { addUserToRequestData, prismaClient } from "lib";
 import { DogService, SafetyLevelService } from "services";
-import { ICreateDogData, IDogIdentifier } from "types";
+import { ICreateDogData, ICurrentWeather, IDogIdentifier } from "types";
+
+export type DogWithResolverArgs = Dog & {
+    temperatureFarenheit?: number;
+    weather?: ICurrentWeather;
+};
 
 export const typeDefinitions: DocumentNode = gql`
     enum WeightClass {
@@ -68,15 +74,29 @@ export const typeDefinitions: DocumentNode = gql`
 
 export const resolvers = {
     Dog: {
-        breed: ({ breedId: id }) => prismaClient.breed.findUnique({ where: { id } }),
-        safetyLevel: (dog) => {
+        breed: ({ breedId: id }: DogWithResolverArgs) =>
+            prismaClient.breed.findUnique({ where: { id } }),
+        safetyLevel: (dog: DogWithResolverArgs): Promise<SafetyLevel> => {
             const { temperatureFarenheit, weather } = dog;
             let temperatureToUse = temperatureFarenheit;
 
             if (weather) {
+                const { alert } = weather;
+
+                if (alert) {
+                    return new SafetyLevelService()
+                        .setSafetyLevel(alert?.recommendedSafetyLevel)
+                        .getSafetyLevel()
+                        .then((safetyLevel) => ({
+                            ...safetyLevel,
+                            message: "Use your best judgment!"
+                        }));
+                }
+
                 temperatureToUse = weather?.current?.temp_f;
             }
 
+            // @ts-ignore
             if (!isValueOfType(parseFloat(temperatureToUse), "number")) {
                 return null;
             }

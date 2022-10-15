@@ -1,7 +1,7 @@
 import ms from "ms";
 
 import { RedisService } from "services";
-import { ICurrentWeatherResponse, IGetCachedWeatherOpts, ISetCachedWeatherOpts } from "types";
+import { ICurrentWeather, IGetCachedWeatherOpts, ISetCachedWeatherOpts } from "types";
 
 class WeatherCacheService extends RedisService {
     private cacheKeyPrefix: string;
@@ -28,7 +28,7 @@ class WeatherCacheService extends RedisService {
      * @param opts Options used to fetch the correct data
      * @returns Response payload from the Weather API
      */
-    public getCachedWeather(opts: IGetCachedWeatherOpts): Promise<ICurrentWeatherResponse> {
+    public getCachedWeather(opts: IGetCachedWeatherOpts): Promise<ICurrentWeather> {
         const { id } = opts;
 
         return this.getValue(this.buildCacheKey(id)).then((value) => JSON.parse(value));
