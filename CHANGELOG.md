@@ -3,6 +3,7 @@
 ## v1.6.0
 
 -   Add ability to delete user accounts
+-   Add weather alerts based on Weather API codes
 
 ## v1.5.0
 
