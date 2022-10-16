@@ -227,7 +227,9 @@ class UserService extends ModelService<User> {
             .findFirst({ where, select: this.getPrismaSelectConfig() })
             .then((user) => {
                 if (!user) {
-                    return Promise.reject(new NotFoundError("User not found"));
+                    return Promise.reject(
+                        new NotFoundError("User not found").setErrorCode("KMPW0020")
+                    );
                 }
 
                 return this.cleanUserRecord(user);

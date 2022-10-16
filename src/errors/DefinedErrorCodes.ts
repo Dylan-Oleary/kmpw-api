@@ -32,7 +32,9 @@ const DefinedErrorCodes = {
     KMPW0015: "Invalid create/update data",
     KMPW0016: "Invalid asset upload data",
     KMPW0017: "Asset upload processing error",
-    KMPW0018: "Asset deletion error"
+    KMPW0018: "Asset deletion error",
+    KMPW0019: "Asset moderation error",
+    KMPW0020: "User not found error"
 };
 
 export default DefinedErrorCodes;

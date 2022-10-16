@@ -22,7 +22,14 @@ userRouter
                     new AuthorizationService().getRefreshTokenLifespan()
                 )
             )
-            .then(() => new CloudinaryService().deleteUserImages(tokenClaims?.sub))
+            .then(() =>
+                new CloudinaryService().deleteUserImages(tokenClaims?.sub).catch((error) => {
+                    //TODO: Log this error, but don't have the request throw an error
+                    console.error(error);
+
+                    return;
+                })
+            )
             .then(() => {
                 res.locals = {};
                 return res.sendStatus(204);

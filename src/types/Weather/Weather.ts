@@ -13,6 +13,7 @@ export interface IGetWeatherOpts {
 
 export interface IWeatherAlert {
     condition: IWeatherApiCondition;
+    message?: string;
     recommendedSafetyLevel: number;
     type: WeatherAlertType;
 }

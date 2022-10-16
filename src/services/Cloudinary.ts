@@ -1,6 +1,7 @@
 import { UploadApiResponse, v2 } from "cloudinary";
 
-import { ServerError } from "errors";
+import { DefinedErrorCodes, ServerError } from "errors";
+import { prismaClient } from "lib";
 
 interface IUploadImageOptions {
     path: string;
@@ -42,13 +43,19 @@ class CloudinaryService {
         try {
             const folder = this.buildUploadFolderPath(userId);
 
-            await this.cloudinary.api.delete_resources_by_prefix(`${folder}/`);
-            await this.cloudinary.api.delete_folder(folder);
+            const userImageCount = await prismaClient.dog.count({
+                where: { userId, profilePicture: { not: null } }
+            });
+
+            if (userImageCount > 0) {
+                await this.cloudinary.api.delete_resources_by_prefix(`${folder}/`);
+                await this.cloudinary.api.delete_folder(folder);
+            }
 
             return;
         } catch (error) {
             throw new ServerError(
-                "Failed to delete user images",
+                DefinedErrorCodes.KMPW0018,
                 error?.message ? [error?.message] : []
             ).setErrorCode("KMPW0018");
         }

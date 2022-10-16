@@ -1,8 +1,11 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
+import fs from "fs";
 import { MulterError } from "multer";
 
 import { DefinedErrorCodes, ServerError, ValidationError } from "errors";
 import BaseError from "errors/BaseError";
+import { removeImageFromLocalEnvironment } from "lib";
+import { AwsRekognition } from "services";
 
 /**
  * Validates the assets to be uploaded
@@ -16,7 +19,7 @@ const validateAssetUpload: (
 ) => (req: Request, res: Response, next: NextFunction) => void =
     (upload, multiple = false) =>
     (req, res, next) => {
-        upload(req, res, (error) => {
+        upload(req, res, async (error) => {
             if (error instanceof MulterError) {
                 return next(
                     new ServerError(DefinedErrorCodes.KMPW0017, [
@@ -44,6 +47,25 @@ const validateAssetUpload: (
                         "No image found in the request"
                     ]).setErrorCode("KMPW0016")
                 );
+            }
+
+            if (AwsRekognition.isServiceActive()) {
+                try {
+                    const { ModerationLabels = [] } =
+                        await new AwsRekognition().getImageModerationLabels({
+                            Bytes: fs.readFileSync(req?.file?.path)
+                        });
+
+                    if (ModerationLabels?.length > 0) {
+                        throw new ValidationError(DefinedErrorCodes.KMPW0019, [
+                            "Explicit and/or suggestive content detected"
+                        ]).setErrorCode("KMPW0019");
+                    }
+                } catch (error) {
+                    await removeImageFromLocalEnvironment(req?.file?.path);
+
+                    return next(error);
+                }
             }
 
             return next();

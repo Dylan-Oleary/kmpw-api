@@ -14,11 +14,7 @@ const printEnv: () => void = () => {
     console.info("");
 
     const envKeys = [
-        "PORT",
-        "REDIS_HOST",
-        "ACCESS_TOKEN_SECRET",
         "ACCESS_TOKEN_LIFESPAN",
-        "REFRESH_TOKEN_SECRET",
         "REFRESH_TOKEN_LIFESPAN",
         "DOG_API_BASE_URL",
         "WEATHER_API_BASE_URL",
@@ -28,7 +24,10 @@ const printEnv: () => void = () => {
         "CLOUDINARY_FOLDER_PREFIX",
         "USER_MAX_NUM_OF_DOGS",
         "WEATHER_API_SEVERE_ALERT_CODES",
-        "WEATHER_API_MODERATE_ALERT_CODES"
+        "WEATHER_API_MODERATE_ALERT_CODES",
+        "AWS_REKOGNITION",
+        "AWS_ACCESS_KEY_ID",
+        "AWS_REKOGNITION_REGION"
     ];
 
     envKeys.sort();

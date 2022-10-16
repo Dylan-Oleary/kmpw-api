@@ -2,6 +2,7 @@ export * from "./abstract";
 
 export * from "./_Model";
 export * from "./Authorization";
+export * from "./Aws";
 export * from "./Cloudinary";
 export * from "./Dog";
 export * from "./DogApi";

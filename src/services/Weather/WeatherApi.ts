@@ -94,7 +94,13 @@ class WeatherApiService {
         const { code } = condition;
 
         if (temp_f >= 68) {
-            return { condition, recommendedSafetyLevel: 3, type: WeatherAlertType.MODERATE };
+            return {
+                condition,
+                message:
+                    "It's hot out there! Use your best judgement & watch out for signs of dehydration.",
+                recommendedSafetyLevel: 5,
+                type: WeatherAlertType.SEVERE
+            };
         }
 
         if (!isValueOfType(code, "number")) {

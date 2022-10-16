@@ -1,7 +1,27 @@
 import { Request } from "express";
+import { unlink } from "fs";
 import { FileFilterCallback } from "multer";
 
 import { DefinedErrorCodes, ValidationError } from "errors";
+
+/**
+ * Removes an image from the file system
+ *
+ * @param imagePath The path to the image in the file system
+ */
+export const removeImageFromLocalEnvironment: (imagePath: string) => Promise<void> = (
+    imagePath = ""
+) =>
+    new Promise((resolve) =>
+        unlink(imagePath, (error) => {
+            if (error) {
+                // TODO: Log this to monitoring
+                console.error("Unable to delete uploaded image");
+            }
+
+            resolve();
+        })
+    );
 
 export const validateMimeType: (
     req: Request,

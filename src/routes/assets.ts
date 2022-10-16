@@ -1,9 +1,8 @@
 import { NextFunction, Request, Response, Router } from "express";
-import fs from "fs";
 import multer from "multer";
 
 import { NotAllowedError } from "errors";
-import { validateMimeType } from "lib";
+import { removeImageFromLocalEnvironment, validateMimeType } from "lib";
 import { validateAssetUpload } from "middlewares";
 import { CloudinaryService } from "services";
 
@@ -28,15 +27,10 @@ assetsRouter
 
             return new CloudinaryService()
                 .uploadImage({ path, userId: tokenClaims?.sub })
-                .then(({ secure_url }) => {
-                    return fs.unlink(path, (error) => {
-                        if (error) {
-                            // TODO: Log this to monitoring
-                            console.error("Unable to delete uploaded image");
-                        }
+                .then(async ({ secure_url }) => {
+                    await removeImageFromLocalEnvironment(path);
 
-                        return res.status(201).json({ secure_url });
-                    });
+                    return res.status(201).json({ secure_url });
                 })
                 .catch(next);
         }

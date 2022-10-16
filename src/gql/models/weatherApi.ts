@@ -16,6 +16,7 @@ export const typeDefinitions: DocumentNode = gql`
 
     type WeatherAlert {
         condition: WeatherCondition
+        message: String
         recommendedSafetyLevel: Int
         type: WeatherAlertType
     }
