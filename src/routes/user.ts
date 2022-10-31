@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/node";
 import { NextFunction, Request, Response, Router } from "express";
 
 import { NotAllowedError } from "errors";
@@ -24,8 +25,7 @@ userRouter
             )
             .then(() =>
                 new CloudinaryService().deleteUserImages(tokenClaims?.sub).catch((error) => {
-                    //TODO: Log this error, but don't have the request throw an error
-                    console.error(error);
+                    Sentry.captureException(error);
 
                     return;
                 })

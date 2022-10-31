@@ -1,8 +1,10 @@
+import * as Sentry from "@sentry/node";
 import { ApolloError } from "apollo-server-express";
 import { GraphQLError } from "graphql";
 
 import { ErrorStatus } from "errors";
 import BaseError from "errors/BaseError";
+import { shouldSendErrorToSentry } from "lib";
 
 export const GraphQLErrorCodeMap = {
     400: "BAD_REQUEST",
@@ -44,6 +46,14 @@ export const formatGqlError = (error: GraphQLError) => {
     const { extensions } = error;
     const { code, exception } = extensions;
     const { statusCode } = exception as BaseError;
+
+    if (shouldSendErrorToSentry(exception as BaseError)) {
+        Sentry.captureException(error, (scope) => {
+            scope.setContext("Error Data", exception);
+
+            return scope;
+        });
+    }
 
     if (statusCode && GraphQLErrorCodeMap[statusCode] !== code) {
         return {

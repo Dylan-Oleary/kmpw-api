@@ -91,6 +91,8 @@
     "@aws-sdk/client-rekognition": "3.188.0",
     "@graphql-tools/schema": "8.3.1",
     "@prisma/client": "3.9.1",
+    "@sentry/node": "^7.17.2",
+    "@sentry/tracing": "^7.17.2",
     "@theonlydevsever/utilities": "1.9.0",
     "apollo-server-express": "3.6.3",
     "axios": "0.24.0",

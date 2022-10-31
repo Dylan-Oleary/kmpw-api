@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/node";
 import { AuthenticationError } from "apollo-server-express";
 import { NextFunction, Request, Response } from "express";
 import { JwtPayload } from "jsonwebtoken";
@@ -41,6 +42,8 @@ const verifyAccessToken: (req: Request, res: Response, next: NextFunction) => vo
         .then((tokenClaims) => {
             res.locals.tokenClaims = tokenClaims;
 
+            Sentry.setUser({ id: tokenClaims?.sub });
+
             return next();
         })
         .catch(next);
@@ -65,7 +68,11 @@ const verifyAccessTokenGraphQL: (req: Request) => Promise<JwtPayload> = (req) =>
         throw new AuthenticationError("Access token missing from request");
     }
 
-    return new AuthorizationService().verifyAccessToken(accessToken);
+    return new AuthorizationService().verifyAccessToken(accessToken).then((tokenClaims) => {
+        Sentry.setUser({ id: tokenClaims?.sub });
+
+        return tokenClaims;
+    });
 };
 
 export default verifyAccessToken;

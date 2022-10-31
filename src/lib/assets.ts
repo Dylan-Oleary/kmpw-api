@@ -1,8 +1,9 @@
+import * as Sentry from "@sentry/node";
 import { Request } from "express";
 import { unlink } from "fs";
 import { FileFilterCallback } from "multer";
 
-import { DefinedErrorCodes, ValidationError } from "errors";
+import { DefinedErrorCodes, ServerError, ValidationError } from "errors";
 
 /**
  * Removes an image from the file system
@@ -15,8 +16,16 @@ export const removeImageFromLocalEnvironment: (imagePath: string) => Promise<voi
     new Promise((resolve) =>
         unlink(imagePath, (error) => {
             if (error) {
-                // TODO: Log this to monitoring
-                console.error("Unable to delete uploaded image");
+                Sentry.captureException(
+                    new ServerError(error?.message || "Asset failed to unlink").setErrorCode(
+                        "KMPW0021"
+                    ),
+                    (scope) => {
+                        scope.setLevel("fatal");
+
+                        return scope;
+                    }
+                );
             }
 
             resolve();

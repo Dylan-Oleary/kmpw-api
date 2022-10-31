@@ -1,9 +1,15 @@
+import "@sentry/tracing";
+
+import * as Sentry from "@sentry/node";
 import { ApolloServer } from "apollo-server-express";
 import compression from "compression";
 import cookieParser from "cookie-parser";
 import express, { Express, NextFunction, Request, Response } from "express";
 
+import { SENTRY_CONFIG } from "config";
+import BaseError from "errors/BaseError";
 import { buildGqlSchema, convertErrorToGqlError, formatGqlError } from "gql";
+import { shouldSendErrorToSentry } from "lib";
 import {
     catchAllHandler,
     globalErrorHandler,
@@ -22,6 +28,10 @@ const initializeApplication: () => Promise<Express> = async () => {
     const app = express();
 
     try {
+        Sentry.init(SENTRY_CONFIG);
+
+        app.use(Sentry.Handlers.requestHandler({ ip: true, transaction: true })); // Sentry must be the first middleware in the app
+
         app.use(express.json());
         app.use(express.urlencoded({ extended: true }));
         app.use(compression());
@@ -45,6 +55,10 @@ const initializeApplication: () => Promise<Express> = async () => {
 
                     return { user };
                 } catch (error) {
+                    if (shouldSendErrorToSentry(error)) {
+                        Sentry.captureException(error);
+                    }
+
                     throw convertErrorToGqlError(error);
                 }
             },
@@ -60,6 +74,11 @@ const initializeApplication: () => Promise<Express> = async () => {
         });
 
         app.use("*", catchAllHandler);
+        app.use(
+            Sentry.Handlers.errorHandler({
+                shouldHandleError: (error: BaseError) => shouldSendErrorToSentry(error)
+            })
+        );
 
         // Disable linting for `next` as it is unused, but required as an argument
         // eslint-disable-next-line

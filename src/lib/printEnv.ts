@@ -27,7 +27,10 @@ const printEnv: () => void = () => {
         "WEATHER_API_MODERATE_ALERT_CODES",
         "AWS_REKOGNITION",
         "AWS_ACCESS_KEY_ID",
-        "AWS_REKOGNITION_REGION"
+        "AWS_REKOGNITION_REGION",
+        "SENTRY_ENABLED",
+        "SENTRY_DSN",
+        "SENTRY_SAMPLE_RATE"
     ];
 
     envKeys.sort();
