@@ -5,6 +5,7 @@
 -   Add ability to delete user accounts
 -   Add weather alerts based on Weather API codes
 -   Add AWS Rekognition to detect NSFW images
+-   Add Sentry for error logging and tracing
 
 ## v1.5.0
 
