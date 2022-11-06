@@ -97,7 +97,7 @@ class WeatherApiService {
             return {
                 condition,
                 message:
-                    "It's hot out there! Use your best judgement & watch out for signs of dehydration.",
+                    "It's hot out there! Please exercise caution and use your best judgment when deciding if it is safe for a walk. Watch out for signs of dehydration and make sure the ground is not too hot.",
                 recommendedSafetyLevel: 5,
                 type: WeatherAlertType.SEVERE
             };

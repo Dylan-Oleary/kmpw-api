@@ -1,7 +1,7 @@
 {
-  "name": "kmpw-api",
+  "name": "woxy-api",
   "version": "1.6.1",
-  "description": "API application for Keep My Paws Warm",
+  "description": "API application for Woxy",
   "main": "dist/server.js",
   "repository": {
     "type": "git",

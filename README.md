@@ -1,6 +1,6 @@
-# Keep My Paws Warm API
+# Woxy API
 
-The API application for Keep My Paws Warm!
+The API application for Woxy
 
 ## Environment Setup
 

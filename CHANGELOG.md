@@ -2,6 +2,8 @@
 
 ## v1.6.1
 
+-   Update copy for warm weather warning
+
 ## v1.6.0
 
 -   Add ability to delete user accounts
