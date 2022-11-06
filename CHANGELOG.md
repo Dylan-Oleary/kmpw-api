@@ -1,5 +1,7 @@
 # CHANGELOG
 
+## v1.6.1
+
 ## v1.6.0
 
 -   Add ability to delete user accounts
