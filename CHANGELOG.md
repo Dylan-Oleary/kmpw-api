@@ -1,5 +1,7 @@
 # CHANGELOG
 
+## v2.0.0
+
 ## v1.6.1
 
 -   Update copy for warm weather warning
