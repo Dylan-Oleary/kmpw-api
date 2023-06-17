@@ -10,7 +10,7 @@ abstract class RedisService {
     constructor(opts: IRedisServiceConstructorOpts) {
         const { expiresInSeconds } = opts;
 
-        this.redis = new RedisClient({ host: process?.env?.REDIS_HOST || "localhost" });
+        this.redis = new RedisClient(process?.env?.REDIS_HOST ?? "localhost");
         this.defaultExpiresInSeconds = expiresInSeconds;
     }
 
