@@ -9,19 +9,22 @@ jobs:
   create-db-branch:
     runs-on: ubuntu-latest
     steps:
-    - name: checkout
+    - name: Checkout
       uses: actions/checkout@v3
-    - name: Create a branch
-      uses: planetscale/create-branch-action@v2
-      id: create_branch
-      with:
-        org_name: dylanolearydev
-        database_name: woxy
-        branch_name: main-candidate
-        from: main
+    - name: Create branch
+      id: create-db-branch
+      timeout-minutes: 3
+
       env:
+        BRANCH_NAME: main-candidate
+        DB_NAME: woxy
+        GITHUB_USER: ${{ github.actor }}
+        ORG_NAME: dylanolearydev
         PLANETSCALE_SERVICE_TOKEN_ID: ${{ secrets.PLANETSCALE_SERVICE_TOKEN_ID }}
         PLANETSCALE_SERVICE_TOKEN: ${{ secrets.PLANETSCALE_SERVICE_TOKEN }}
+      working-directory: ${{env.pscale_base_directory}}/cli-helper-scripts/
+      run: |
+        ./create-branch.sh "$BRANCH_NAME"
 
 # trigger-cloudbuild:
 #   runs-on: ubuntu-latest
