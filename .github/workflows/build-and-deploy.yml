@@ -1,5 +1,8 @@
 name: Build and Deploy Application
 
+env:
+  pscale_base_directory: .pscale
+
 on:
   push:
     branches:
