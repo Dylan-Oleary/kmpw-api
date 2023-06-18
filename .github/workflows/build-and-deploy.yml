@@ -6,26 +6,38 @@ on:
     - feat/upstash
 
 jobs:
-  build-api-image:
+  create-db-branch:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - id: 'auth'
-      uses: 'google-github-actions/auth@v1'
+    - name: checkout
+      uses: actions/checkout@v3
+    - name: Create a branch
+      uses: planetscale/create-branch-action@v2
+      id: create_branch
       with:
-        credentials_json: '${{ secrets.GCP_GITHUB_CLOUDBUILD_CREDENTIALS }}'
-    - name: 'Set up Cloud SDK'
-      uses: 'google-github-actions/setup-gcloud@v1'
-    - name: 'Use gcloud CLI'
-      run: 'gcloud info'
-    - name: 'Authenticate service account'
-      run: gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
-    - name: 'Start Google Cloud Build trigger'
-      run: |
-        export CLOUDSDK_CORE_DISABLE_PROMPTS=1
-        gcloud builds triggers run ${{ secrets.GCP_BUILD_API_IMAGE_TRIGGER_ID }}
-  # check-database:
-  #   needs: build-api-image
-  #   steps:
-  #   - name: Test
-  #     run: 'echo "Testing Build"'
+        org_name: dylanolearydev
+        database_name: woxy
+        branch_name: main-candidate
+        from: main
+      env:
+        PLANETSCALE_SERVICE_TOKEN_ID: ${{ secrets.PLANETSCALE_SERVICE_TOKEN_ID }}
+        PLANETSCALE_SERVICE_TOKEN: ${{ secrets.PLANETSCALE_SERVICE_TOKEN }}
+
+# trigger-cloudbuild:
+#   runs-on: ubuntu-latest
+#   steps:
+#   - uses: actions/checkout@v2
+#   - id: 'auth'
+#     uses: 'google-github-actions/auth@v1'
+#     with:
+#       credentials_json: '${{ secrets.GCP_GITHUB_CLOUDBUILD_CREDENTIALS }}'
+#   - name: 'Set up Cloud SDK'
+#     uses: 'google-github-actions/setup-gcloud@v1'
+#   - name: 'Use gcloud CLI'
+#     run: 'gcloud info'
+#   - name: 'Authenticate service account'
+#     run: gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
+#   - name: 'Start Google Cloud Build trigger'
+#     run: |
+#       export CLOUDSDK_CORE_DISABLE_PROMPTS=1
+#       gcloud builds triggers run ${{ secrets.GCP_BUILD_API_IMAGE_TRIGGER_ID }}
