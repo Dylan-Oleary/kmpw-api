@@ -19,7 +19,7 @@ jobs:
     - name: 'Use gcloud CLI'
       run: 'gcloud info'
     - name: 'Authenticate service account'
-      run: gcloud auth activate-service-account
+      run: gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
     - name: 'Start Google Cloud Build trigger'
       run: |
         export CLOUDSDK_CORE_DISABLE_PROMPTS=1
