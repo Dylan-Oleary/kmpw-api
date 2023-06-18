@@ -21,6 +21,12 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
+    - name: Setup Node
+      uses: actions/setup-node@v3
+      with:
+        version: 18.5
+    - name: Install Dependencies
+      run: npm install
     - name: Create candidate DB branch
       id: create-db-candidate-branch
       timeout-minutes: 3
