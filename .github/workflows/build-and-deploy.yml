@@ -10,7 +10,7 @@ on:
 
 jobs:
   create-db-candidate-branch:
-  - include: create-db-candidate-branch.yml
+    extends: ./create-db-candidate-branch.yml
 # trigger-cloudbuild:
 #   runs-on: ubuntu-latest
 #   steps:
