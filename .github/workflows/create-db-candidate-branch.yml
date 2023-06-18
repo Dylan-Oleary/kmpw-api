@@ -1,5 +1,6 @@
 name: Create DB Candidate Branch
 runs-on: ubuntu-latest
+on: workflow_call
 env:
   BRANCH_NAME: main-candidate
   DB_NAME: woxy
