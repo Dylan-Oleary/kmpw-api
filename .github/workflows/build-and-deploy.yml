@@ -22,8 +22,8 @@ jobs:
       run: |
         export CLOUDSDK_CORE_DISABLE_PROMPTS=1
         gcloud builds triggers run ${{ secrets.GCP_BUILD_API_IMAGE_TRIGGER_ID }} --substitutions SHORT_SHA=${GITHUB_SHA}
-  check-database:
-    needs: build-api-image
-    steps:
-    - name: Test
-      run: 'echo "Testing Build"'
+  # check-database:
+  #   needs: build-api-image
+  #   steps:
+  #   - name: Test
+  #     run: 'echo "Testing Build"'
