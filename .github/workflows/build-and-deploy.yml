@@ -27,7 +27,7 @@ jobs:
       working-directory: ${{env.pscale_base_directory}}/cli-helper-scripts/
       run: |
         ./create-branch.sh "$BRANCH_NAME"
-     - name: Delete candidate DB branch
+    - name: Delete candidate DB branch
       id: delete-candidate-db-branch
       timeout-minutes: 3
       working-directory: ${{env.pscale_base_directory}}/cli-helper-scripts/
