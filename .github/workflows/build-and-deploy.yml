@@ -9,7 +9,7 @@ on:
     - feat/upstash
 
 jobs:
-  create-db-candidate-branch:
+  prepare-db:
     runs-on: ubuntu-latest
     env:
       BRANCH_NAME: main-candidate
@@ -21,12 +21,18 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
-    - name: Create branch
-      id: create-db-branch
+    - name: Create candidate DB branch
+      id: create-db-candidate-branch
       timeout-minutes: 3
       working-directory: ${{env.pscale_base_directory}}/cli-helper-scripts/
       run: |
         ./create-branch.sh "$BRANCH_NAME"
+     - name: Delete candidate DB branch
+      id: delete-candidate-db-branch
+      timeout-minutes: 3
+      working-directory: ${{env.pscale_base_directory}}/cli-helper-scripts/
+      run: |
+        ./delete-branch.sh "$BRANCH_NAME"
 
 # trigger-cloudbuild:
 #   runs-on: ubuntu-latest

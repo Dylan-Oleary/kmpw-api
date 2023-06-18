@@ -36,6 +36,22 @@ function create-db-branch {
     fi
 }
 
+function delete-db-branch {
+    local DB_NAME=$1
+    local BRANCH_NAME=$2
+    local ORG_NAME=$3
+    local recreate_branch=$4
+
+    wait_for_branch_readiness 10 "$DB_NAME" "$BRANCH_NAME" "$ORG_NAME" 20
+    if [ $? -ne 0 ]; then
+        echo "Branch $BRANCH_NAME is not ready"
+        exit 1
+    fi
+
+    echo "Deleting branch $BRANCH_NAME ..."
+    pscale branch delete "$DB_NAME" "$BRANCH_NAME" --force --org "$ORG_NAME" 2>/dev/null
+}
+
 function create-schema-change {
     local DB_NAME=$1
     local BRANCH_NAME=$2
