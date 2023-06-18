@@ -91,7 +91,7 @@
   "dependencies": {
     "@aws-sdk/client-rekognition": "3.188.0",
     "@graphql-tools/schema": "^9.0.6",
-    "@prisma/client": "3.9.1",
+    "@prisma/client": "^4.15.0",
     "@sentry/node": "^7.17.2",
     "@sentry/tracing": "^7.17.2",
     "@theonlydevsever/utilities": "1.9.0",
@@ -111,10 +111,10 @@
     "ioredis": "^5.3.2",
     "jsonwebtoken": "8.5.1",
     "module-alias": "2.2.2",
-    "ms": "2.1.3",
+    "ms": "^2.1.3",
     "multer": "1.4.5-lts.1",
     "nanoid": "3.2.0",
-    "prisma": "3.9.1",
+    "prisma": "^4.15.0",
     "tsconfig-paths": "3.12.0"
   }
 }

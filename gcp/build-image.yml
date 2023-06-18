@@ -1,0 +1,20 @@
+steps:
+
+# Build the container image
+- name: "gcr.io/cloud-builders/docker"
+  id: Build API Image
+  args:
+  - "build"
+  - "-t"
+  - "us-east1-docker.pkg.dev/$PROJECT_ID/woxy-api/api:$SHORT_SHA"
+  - "."
+
+# Push the image to the artifact registry
+- name: "gcr.io/cloud-builders/docker"
+  id: Push API Image
+  args:
+  - "push"
+  - "us-east1-docker.pkg.dev/$PROJECT_ID/woxy-api/api:$SHORT_SHA"
+
+options:
+  logging: CLOUD_LOGGING_ONLY
