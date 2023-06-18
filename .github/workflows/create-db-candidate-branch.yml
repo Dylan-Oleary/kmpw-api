@@ -1,0 +1,20 @@
+name: Create DB Candidate Branch
+runs-on: ubuntu-latest
+steps:
+  env:
+    BRANCH_NAME: main-candidate
+    DB_NAME: woxy
+    GITHUB_USER: ${{ github.actor }}
+    ORG_NAME: dylanolearydev
+    PLANETSCALE_SERVICE_TOKEN_ID: ${{ secrets.PLANETSCALE_SERVICE_TOKEN_ID }}
+    PLANETSCALE_SERVICE_TOKEN: ${{ secrets.PLANETSCALE_SERVICE_TOKEN }}
+    pscale_base_directory: .pscale
+  steps:
+  - name: Checkout
+    uses: actions/checkout@v3
+  - name: Create branch
+    id: create-db-branch
+    timeout-minutes: 3
+    working-directory: ${{env.pscale_base_directory}}/cli-helper-scripts/
+    run: |
+      ./create-branch.sh "$BRANCH_NAME"
