@@ -29,6 +29,7 @@ steps:
 - name: 'node'
   id: Apply Prisma Migrations
   entrypoint: 'yarn'
+  secretEnv: ['DATABASE_URL']
   args: ['prisma:migrate']
 
 - name: 'node'
