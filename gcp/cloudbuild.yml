@@ -16,14 +16,6 @@ steps:
 #   - "push"
 #   - "us-east1-docker.pkg.dev/$PROJECT_ID/woxy-api/api:$SHORT_SHA"
 
-- name: 'gcr.io/cloud-builders/gcloud'
-  entrypoint: 'bash'
-  secretEnv: ['DATABASE_URL']
-  args:
-  - '-c'
-  - |
-    export DATABASE_URL=$$DATABASE_URL
-
 - name: 'node'
   id: Install Dependencies
   entrypoint: 'yarn'
@@ -41,7 +33,11 @@ steps:
 
 - name: 'node'
   id: Seed Prisma Database
-  entrypoint: 'yarn'
+  entrypoint: 'bash'
+  args:
+  - -c
+  - |
+    DATABASE_URL=$$DATABASE_URL && yarn prisma:seed
   args: ['prisma:seed']
 
 availableSecrets:
