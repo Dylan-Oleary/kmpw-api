@@ -35,8 +35,6 @@ steps:
   id: Seed Prisma Database
   entrypoint: 'yarn'
   secretEnv: ['DATABASE_URL']
-  env:
-  - 'DATABASE_URL=$$DATABASE_URL'
   args: ['prisma:seed']
 
 availableSecrets:
