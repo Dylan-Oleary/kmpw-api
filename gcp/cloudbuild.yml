@@ -34,12 +34,8 @@ steps:
 
 - name: 'node'
   id: Seed Prisma Database
-  entrypoint: 'bash'
+  entrypoint: 'yarn'
   secretEnv: ['DATABASE_URL']
-  args:
-  - -c
-  - |
-    DATABASE_URL=$$DATABASE_URL && yarn prisma:seed
   args: ['prisma:seed']
 
 availableSecrets:
