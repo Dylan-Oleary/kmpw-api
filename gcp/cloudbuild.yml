@@ -45,11 +45,11 @@ steps:
 #   args: ['prisma:seed']
 
 # Pull the image from Artifact Registry
-# - name: 'gcr.io/cloud-builders/docker'
-#   id: Pull API Docker Image
-#   args:
-#   - 'pull'
-#   - 'us-east1-docker.pkg.dev/$PROJECT_ID/woxy-api/api:d469285'
+- name: 'gcr.io/cloud-builders/docker'
+  id: Pull API Docker Image
+  args:
+  - 'pull'
+  - 'us-east1-docker.pkg.dev/$PROJECT_ID/woxy-api/api:d469285'
 
 - name: 'gcr.io/cloud-builders/gcloud'
   id: Deploy Application
