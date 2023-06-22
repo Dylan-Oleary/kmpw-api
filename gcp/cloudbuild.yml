@@ -45,11 +45,42 @@ steps:
 #   args: ['prisma:seed']
 
 # Pull the image from Artifact Registry
-- name: 'gcr.io/cloud-builders/docker'
-  id: Pull API Docker Image
+# - name: 'gcr.io/cloud-builders/docker'
+#   id: Pull API Docker Image
+#   args:
+#   - 'pull'
+#   - 'us-east1-docker.pkg.dev/$PROJECT_ID/woxy-api/api:d469285'
+
+- name: 'gcr.io/cloud-builders/gcloud'
+  id: Deploy Application
   args:
-  - 'pull'
-  - 'us-east1-docker.pkg.dev/$PROJECT_ID/woxy-api/api:d469285'
+  - 'run'
+  - 'deploy'
+  - 'woxy-api'
+  - '--image=us-east1-docker.pkg.dev/$PROJECT_ID/woxy-api/api:d469285'
+  - '--max-instances=3'
+  - '--min-instances=1'
+  - '--platform=managed'
+  - '--region=us-east1'
+  - '--tag=prod'
+  - '--timeout=30s'
+  # Env Config
+  - "--set-env-vars=ACCESS_TOKEN_LIFESPAN=1d"
+  - "--set-env-vars=AWS_REKOGNITION=1"
+  - "--set-env-vars=AWS_REKOGNITION_REGION=us-east-1"
+  - "--set-env-vars=CLOUDINARY_CLOUD_NAME=dhgpgb0yw"
+  - "--set-env-vars=CLOUDINARY_FOLDER_PREFIX=kmpw"
+  - "--set-env-vars=DOG_API_BASE_URL=https://api.thedogapi.com/v1"
+  - "--set-env-vars=REFRESH_TOKEN_LIFESPAN=1d"
+  - "--set-env-vars=SENTRY_ENABLED=1"
+  - "--set-env-vars=SENTRY_SAMPLE_RATE=0.75"
+  - "--set-env-vars=USER_MAX_NUM_OF_DOGS=5"
+  - "--set-env-vars=WEATHER_API_BASE_URL=http://api.weatherapi.com/v1"
+  - "--set-env-vars=WEATHER_API_MODERATE_ALERT_CODES="
+  - "--set-env-vars=WEATHER_API_SEVERE_ALERT_CODES=1063,1066,1069,1072,1087,1114,1117,1168,1171,1195,1201,1207,1219,1222,1225,1237,1246,1252,1258,1261,1264,1273,1276,1279,1282"
+  - "--set-env-vars=WEATHER_CACHE_DISTANCE_METRES=5000"
+  - "--set-env-vars=WEATHER_CACHE_LIFESPAN=5m"
+
 
 availableSecrets:
   secretManager:
