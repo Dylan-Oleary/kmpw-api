@@ -44,19 +44,13 @@ steps:
 #   - 'DOG_API_BASE_URL=https://api.thedogapi.com/v1'
 #   args: ['prisma:seed']
 
-# Pull the image from Artifact Registry
-- name: 'gcr.io/cloud-builders/docker'
-  id: Pull API Docker Image
-  args:
-  - 'pull'
-  - 'us-east1-docker.pkg.dev/$PROJECT_ID/woxy-api/api:d469285'
-
 - name: 'gcr.io/cloud-builders/gcloud'
   id: Deploy Application
   args:
   - 'run'
   - 'deploy'
   - 'woxy-api'
+  - '--allow-unauthenticated'
   - '--image=us-east1-docker.pkg.dev/$PROJECT_ID/woxy-api/api:d469285'
   - '--max-instances=3'
   - '--min-instances=1'
