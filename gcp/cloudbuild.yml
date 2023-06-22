@@ -19,26 +19,37 @@ steps:
 - name: 'node'
   id: Install Dependencies
   entrypoint: 'yarn'
-  args: ['install']
+  args:
+  - 'install'
 
 - name: 'node'
   id: Generate Prisma Client
   entrypoint: 'yarn'
-  args: ['prisma:generate']
+  args:
+  - 'prisma:generate'
 
 - name: 'node'
   id: Apply Prisma Migrations
   entrypoint: 'yarn'
-  secretEnv: ['DATABASE_URL']
-  args: ['prisma:migrate']
+  secretEnv:
+  - 'DATABASE_URL'
+  args:
+  - 'prisma:migrate'
 
-- name: 'node'
-  id: Seed Prisma Database
-  entrypoint: 'yarn'
-  secretEnv: ['DATABASE_URL', 'DOG_API_KEY']
-  env:
-  - 'DOG_API_BASE_URL=https://api.thedogapi.com/v1'
-  args: ['prisma:seed']
+# - name: 'node'
+#   id: Seed Prisma Database
+#   entrypoint: 'yarn'
+#   secretEnv: ['DATABASE_URL', 'DOG_API_KEY']
+#   env:
+#   - 'DOG_API_BASE_URL=https://api.thedogapi.com/v1'
+#   args: ['prisma:seed']
+
+# Pull the image from Artifact Registry
+- name: 'gcr.io/cloud-builders/docker'
+  id: Pull API Docker Image
+  args:
+  - 'pull'
+  - 'us-east1-docker.pkg.dev/$PROJECT_ID/woxy-api/api:$SHORT_SHA'
 
 availableSecrets:
   secretManager:
