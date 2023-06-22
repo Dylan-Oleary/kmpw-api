@@ -49,7 +49,7 @@ steps:
   id: Pull API Docker Image
   args:
   - 'pull'
-  - 'us-east1-docker.pkg.dev/$PROJECT_ID/woxy-api/api:$SHORT_SHA'
+  - 'us-east1-docker.pkg.dev/$PROJECT_ID/woxy-api/api:d469285'
 
 availableSecrets:
   secretManager:
