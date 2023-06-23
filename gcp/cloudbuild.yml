@@ -93,7 +93,17 @@ steps:
   - "--set-env-vars=WEATHER_CACHE_DISTANCE_METRES=5000"
   - "--set-env-vars=WEATHER_CACHE_LIFESPAN=5m"
   # Env Secrets
+  - "--set-env-vars=ACCESS_TOKEN_SECRET=$$ACCESS_TOKEN_SECRET"
+  - "--set-env-vars=AWS_ACCESS_KEY_ID=$$AWS_ACCESS_KEY_ID"
+  - "--set-env-vars=AWS_SECRET_KEY=$$AWS_SECRET_KEY"
+  - "--set-env-vars=CLOUDINARY_API_KEY=$$CLOUDINARY_API_KEY"
+  - "--set-env-vars=CLOUDINARY_API_SECRET=$$CLOUDINARY_API_SECRET"
+  - "--set-env-vars=DATABASE_URL=$$DATABASE_URL"
+  - "--set-env-vars=DOG_API_KEY=$$DOG_API_KEY"
+  - "--set-env-vars=REDIS_HOST=$$REDIS_HOST"
+  - "--set-env-vars=REFRESH_TOKEN_SECRET=$$REFRESH_TOKEN_SECRET"
   - "--set-env-vars=SENTRY_DSN=$$SENTRY_DSN"
+  - "--set-env-vars=WEATHER_API_KEY=$$WEATHER_API_KEY"
 
 
 availableSecrets:
