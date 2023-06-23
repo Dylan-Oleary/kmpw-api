@@ -93,7 +93,7 @@ steps:
   - "--set-env-vars=WEATHER_CACHE_DISTANCE_METRES=5000"
   - "--set-env-vars=WEATHER_CACHE_LIFESPAN=5m"
   # Env Secrets
-  - "--set-env-vars=SENTRY_DSN=${SENTRY_DSN}"
+  - "--set-env-vars=SENTRY_DSN=$$SENTRY_DSN"
 
 
 availableSecrets:
@@ -120,6 +120,9 @@ availableSecrets:
     env: 'SENTRY_DSN'
   - versionName: projects/$PROJECT_ID/secrets/WEATHER_API_KEY/versions/latest
     env: 'WEATHER_API_KEY'
+
+substitutions:
+  _DOLLAR_SIGN: '$'
 
 options:
   logging: CLOUD_LOGGING_ONLY
