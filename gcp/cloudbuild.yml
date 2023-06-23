@@ -132,8 +132,5 @@ availableSecrets:
   - versionName: projects/$PROJECT_ID/secrets/WEATHER_API_KEY/versions/latest
     env: 'WEATHER_API_KEY'
 
-substitutions:
-  _DOLLAR_SIGN: '$'
-
 options:
   logging: CLOUD_LOGGING_ONLY
