@@ -59,6 +59,7 @@ steps:
   - '--tag=prod'
   - '--timeout=30s'
   # Env Config
+  - "--set-env-vars=NODE_ENV=production"
   - "--set-env-vars=ACCESS_TOKEN_LIFESPAN=1d"
   - "--set-env-vars=AWS_REKOGNITION=1"
   - "--set-env-vars=AWS_REKOGNITION_REGION=us-east-1"
