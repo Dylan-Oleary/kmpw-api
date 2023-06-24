@@ -92,7 +92,7 @@ steps:
   - '--set-secrets=REDIS_HOST=REDIS_HOST:latest'
   - '--set-secrets=REFRESH_TOKEN_SECRET=REFRESH_TOKEN_SECRET:latest'
   - '--set-secrets=SENTRY_DSN=SENTRY_DSN:latest'
-  - '--set-secrets=WEATHER_API_KEY=$WEATHER_API_KEY:latest'
+  - '--set-secrets=WEATHER_API_KEY=WEATHER_API_KEY:latest'
 
 
 # availableSecrets:
