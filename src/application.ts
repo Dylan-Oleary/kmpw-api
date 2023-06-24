@@ -64,7 +64,8 @@ const initializeApplication: () => Promise<Express> = async () => {
             },
             formatError: formatGqlError,
             introspection: process?.env?.NODE_ENV !== "production",
-            schema: buildGqlSchema()
+            schema: buildGqlSchema(),
+            persistedQueries: false
         });
 
         await gqlServer.start();
