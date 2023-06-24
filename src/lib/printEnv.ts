@@ -3,7 +3,7 @@
  * This function is useful in building a starting splash screen.
  */
 const printEnv: () => void = () => {
-    const packageName = `${process.env.npm_package_name}:${process.env.npm_package_version}`;
+    const packageName = `${process.env.npm_package_name}:${process.env.COMMIT_SHA}`;
 
     console.info("");
     console.info(":".repeat(packageName.length));
