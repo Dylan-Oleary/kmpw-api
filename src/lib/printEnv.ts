@@ -3,7 +3,7 @@
  * This function is useful in building a starting splash screen.
  */
 const printEnv: () => void = () => {
-    const packageName = `${process.env.npm_package_name}:${process.env.npm_package_version}`;
+    const packageName = `${process.env.npm_package_name}:${process.env.COMMIT_SHA}`;
 
     console.info("");
     console.info(":".repeat(packageName.length));
@@ -26,7 +26,6 @@ const printEnv: () => void = () => {
         "WEATHER_API_SEVERE_ALERT_CODES",
         "WEATHER_API_MODERATE_ALERT_CODES",
         "AWS_REKOGNITION",
-        "AWS_ACCESS_KEY_ID",
         "AWS_REKOGNITION_REGION",
         "SENTRY_ENABLED",
         "SENTRY_DSN",
