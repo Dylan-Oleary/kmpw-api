@@ -3,14 +3,14 @@ import RedisClient, { Redis } from "ioredis";
 import { ServerError } from "errors";
 import { IRedisServiceConstructorOpts, ISetCacheValueOpts } from "types";
 
-abstract class RedisService {
+class RedisService {
     private redis: Redis;
     private defaultExpiresInSeconds: number;
 
     constructor(opts: IRedisServiceConstructorOpts) {
         const { expiresInSeconds } = opts;
 
-        this.redis = new RedisClient({ host: process?.env?.REDIS_HOST || "localhost" });
+        this.redis = new RedisClient(process?.env?.REDIS_HOST ?? "localhost");
         this.defaultExpiresInSeconds = expiresInSeconds;
     }
 
