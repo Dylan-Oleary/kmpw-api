@@ -82,17 +82,17 @@ steps:
   - '--set-env-vars=WEATHER_CACHE_DISTANCE_METRES=5000'
   - '--set-env-vars=WEATHER_CACHE_LIFESPAN=5m'
   # Env Secrets
-  - '--set-secrets=ACCESS_TOKEN_SECRET=projects/$PROJECT_ID/secrets/ACCESS_TOKEN_SECRET:latest'
-  - '--set-secrets=AWS_ACCESS_KEY_ID=projects/$PROJECT_ID/secrets/AWS_ACCESS_KEY_ID:latest'
-  - '--set-secrets=AWS_SECRET_KEY=projects/$PROJECT_ID/secrets/AWS_SECRET_KEY:latest'
-  - '--set-secrets=CLOUDINARY_API_KEY=projects/$PROJECT_ID/secrets/CLOUDINARY_API_KEY:latest'
-  - '--set-secrets=CLOUDINARY_API_SECRET=projects/$PROJECT_ID/secrets/CLOUDINARY_API_SECRET:latest'
-  - '--set-secrets=DATABASE_URL=projects/$PROJECT_ID/secrets/DATABASE_URL:latest'
-  - '--set-secrets=DOG_API_KEY=projects/$PROJECT_ID/secrets/DOG_API_KEY:latest'
-  - '--set-secrets=REDIS_HOST=projects/$PROJECT_ID/secrets/REDIS_HOST:latest'
-  - '--set-secrets=REFRESH_TOKEN_SECRET=projects/$PROJECT_ID/secrets/REFRESH_TOKEN_SECRET:latest'
-  - '--set-secrets=SENTRY_DSN=projects/$PROJECT_ID/secrets/SENTRY_DSN:latest'
-  - '--set-secrets=WEATHER_API_KEY=$projects/$PROJECT_ID/secrets/WEATHER_API_KEY:latest'
+  - '--set-secrets=ACCESS_TOKEN_SECRET=ACCESS_TOKEN_SECRET:latest'
+  - '--set-secrets=AWS_ACCESS_KEY_ID=AWS_ACCESS_KEY_ID:latest'
+  - '--set-secrets=AWS_SECRET_KEY=AWS_SECRET_KEY:latest'
+  - '--set-secrets=CLOUDINARY_API_KEY=CLOUDINARY_API_KEY:latest'
+  - '--set-secrets=CLOUDINARY_API_SECRET=CLOUDINARY_API_SECRET:latest'
+  - '--set-secrets=DATABASE_URL=DATABASE_URL:latest'
+  - '--set-secrets=DOG_API_KEY=DOG_API_KEY:latest'
+  - '--set-secrets=REDIS_HOST=REDIS_HOST:latest'
+  - '--set-secrets=REFRESH_TOKEN_SECRET=REFRESH_TOKEN_SECRET:latest'
+  - '--set-secrets=SENTRY_DSN=SENTRY_DSN:latest'
+  - '--set-secrets=WEATHER_API_KEY=$WEATHER_API_KEY:latest'
 
 
 # availableSecrets:
