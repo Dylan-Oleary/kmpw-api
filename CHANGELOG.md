@@ -2,11 +2,6 @@
 
 ## v2.0.0
 
--   Migrate to Cockroach DB (Postgres) from native MySQL
--   Migrate to Google Cloud from CircleCI
--   Update ioredis to v5.3.2
--   Update prisma to v4.15.0
-
 ## v1.6.1
 
 -   Update copy for warm weather warning
