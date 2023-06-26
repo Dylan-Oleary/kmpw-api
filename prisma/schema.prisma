@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "cockroachdb"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
@@ -16,7 +16,7 @@ model BreedGroup {
   updatedAt   DateTime @updatedAt
   isDeleted   Boolean  @default(false)
   name        String   @unique
-  description String?
+  description String?  @db.Text
   breeds      Breed[]
 }
 
@@ -26,7 +26,7 @@ model Breed {
   updatedAt         DateTime                @updatedAt
   isDeleted         Boolean                 @default(false)
   name              String                  @unique
-  description       String?
+  description       String?                 @db.Text
   dogApiId          Int?                    @unique
   altNames          String?
   countryCode       String?
@@ -62,7 +62,7 @@ model Dog {
   updatedAt      DateTime              @updatedAt
   isDeleted      Boolean               @default(false)
   name           String
-  description    String?
+  description    String?               @db.Text
   birthday       DateTime?
   profilePicture String?
   heightImperial Float?
