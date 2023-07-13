@@ -2,6 +2,8 @@
 
 ## v2.0.1
 
+-   Update Cloud Run config
+
 ## v2.0.0
 
 -   Migrate to Cockroach DB (Postgres) from native MySQL
