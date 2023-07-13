@@ -1,6 +1,6 @@
 {
   "name": "woxy-api",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "API application for Woxy",
   "main": "dist/server.js",
   "repository": {

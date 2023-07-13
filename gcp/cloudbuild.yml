@@ -44,6 +44,11 @@ steps:
   - 'DOG_API_BASE_URL=https://api.thedogapi.com/v1'
   args: ['prisma:seed']
 
+## TODO: Configure
+## Minimum Instances: 0
+## Max Instances: 1
+## Idle Timeout: 5 minutes
+
 # Deploy the application using Cloud Run
 - name: 'gcr.io/cloud-builders/gcloud'
   id: Deploy Application
