@@ -246,13 +246,11 @@ class UserService extends ModelService<User> {
      * @returns `true` if the email is valid, `false` if not
      */
     public static async isValidEmail(email: string): Promise<boolean> {
-        const res = await validateEmail({
+        const { valid = false } = await validateEmail({
             email,
             validateSMTP: false
         });
-        // eslint-disable-next-line no-console
-        console.log(res);
-        return res?.valid ?? false;
+        return valid;
     }
 }
 
