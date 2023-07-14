@@ -1,6 +1,7 @@
 import { User, UserIdentityProvider } from "@prisma/client";
 import { isValueOfType } from "@theonlydevsever/utilities";
 import bcrypt from "bcrypt";
+import validateEmail from "deep-email-validator";
 import { v4 as uuid } from "uuid";
 
 import {
@@ -33,7 +34,9 @@ class UserService extends ModelService<User> {
                     throw new ValidationError(DefinedErrorCodes.KMPW0015, [
                         "Email cannot be more than 150 characters"
                     ]).setErrorCode("KMPW0015");
-                if (!UserService.isValidEmail(value))
+
+                const isEmailValid = await UserService.isValidEmail(value);
+                if (!isEmailValid)
                     throw new ValidationError(DefinedErrorCodes.KMPW0015, [
                         "Email is invalid"
                     ]).setErrorCode("KMPW0015");
@@ -242,11 +245,9 @@ class UserService extends ModelService<User> {
      * @param email The email to test
      * @returns `true` if the email is valid, `false` if not
      */
-    public static isValidEmail(email: string): boolean {
-        return new RegExp(
-            /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-            "g"
-        ).test(email);
+    public static async isValidEmail(email: string): Promise<boolean> {
+        const { valid = false } = await validateEmail(email);
+        return valid;
     }
 }
 

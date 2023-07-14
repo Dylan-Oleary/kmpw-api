@@ -1,10 +1,21 @@
 import { UserIdentityProvider } from "@prisma/client";
+import emailValidator from "deep-email-validator";
 
 import { UserService } from "..";
 import { DefinedErrorCodes, ErrorStatus, ValidationError } from "../../errors";
 import { ICreateUserData } from "../../types";
 
+jest.mock("deep-email-validator");
+
 describe("User Service", () => {
+    beforeAll(() => {
+        (emailValidator as jest.Mock).mockImplementation(() => ({ valid: true }));
+    });
+
+    afterAll(() => {
+        jest.resetAllMocks();
+    });
+
     describe("Field Validation", () => {
         describe("email", () => {
             test("throws an error when the passed value is an empty string", () => {
@@ -57,12 +68,14 @@ describe("User Service", () => {
                     });
             });
 
-            test("throws an error when the passed value is not a valid email", () => {
+            test("throws an error when the passed value is not valid", () => {
                 const data: ICreateUserData = {
                     email: "email@example@example.com",
                     password: "hey",
                     identityProvider: UserIdentityProvider.LOCAL
                 };
+
+                (emailValidator as jest.Mock).mockImplementationOnce(() => ({ valid: false }));
 
                 return new UserService()
                     .createUser(data)
@@ -213,52 +226,20 @@ describe("User Service", () => {
     }); // close describe("cleanUserRecord")
 
     describe("isValidEmail", () => {
-        describe("Valid Email Addresses", () => {
-            const emailAddresses = [
-                "email@example.com",
-                "firstname.lastname@example.com",
-                "email@subdomain.example.com",
-                "firstname+lastname@example.com",
-                `"email"@example.com`,
-                "1234567890@example.com",
-                "email@example-one.com",
-                "_______@example.com",
-                "email@example.name",
-                "email@example.museum",
-                "email@example.co.jp",
-                "firstname-lastname@example.com"
-            ];
+        test("returns false when validation fails", async () => {
+            (emailValidator as jest.Mock).mockImplementationOnce(() => ({
+                valid: false
+            }));
 
-            for (const email of emailAddresses) {
-                test(`returns true when ${email} is passed`, () => {
-                    expect(UserService.isValidEmail(email)).toEqual(true);
-                });
-            }
-        }); // close describe("Valid Email Addresses")
+            await expect(UserService.isValidEmail("fail me!")).resolves.toEqual(false);
+        });
 
-        describe("Invalid Email Addresses", () => {
-            const emailAddresses = [
-                "plainaddress",
-                "#@%^%#$@#$@#.com",
-                "@example.com",
-                "Joe Smith <email@example.com>",
-                "email.example.com",
-                "email@example@example.com",
-                ".email@example.com",
-                "email.@example.com",
-                "email..email@example.com",
-                "email@example.com (Joe Smith)",
-                "email@example",
-                "email@111.222.333.44444",
-                "email@example..com",
-                "Abc..123@example.com"
-            ];
+        test("returns true when validation succeeds", async () => {
+            (emailValidator as jest.Mock).mockImplementationOnce(() => ({
+                valid: true
+            }));
 
-            for (const email of emailAddresses) {
-                test(`returns true when ${email} is passed`, () => {
-                    expect(UserService.isValidEmail(email)).toEqual(false);
-                });
-            }
+            await expect(UserService.isValidEmail("pass me")).resolves.toEqual(true);
         });
     }); // close describe("isValidEmail")
 }); // close describe("User Service")
